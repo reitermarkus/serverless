@@ -1,0 +1,18 @@
+# LaTeX
+*.aux
+*.lb
+*.log
+*.nav
+*.out
+*.pdf
+*.snm
+*.synctex.gz
+*.toc
+*.watcher_pid
+*.fls
+*.fdb_latexmk
+*.vrb
+*.bbl
+*.blg
+*.bcf
+*.run.xml
