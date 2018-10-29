@@ -1,0 +1,18 @@
+version: "3"
+
+volumes:
+  target:
+services:
+  rest:
+    build: ./rocket_rest
+    volumes:
+    - ./rocket_rest:/usr/src/app
+    - target:/usr/src/app/target
+    ports:
+    - "8000:8000"
+
+  kafka:
+    image: dixn/docker-kafka
+    ports:
+      - "2181:2181"
+      - "9092:9092"
