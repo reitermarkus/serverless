@@ -16,3 +16,6 @@
 *.blg
 *.bcf
 *.run.xml
+
+#FaaS
+faas
