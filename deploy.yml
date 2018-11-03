@@ -174,13 +174,62 @@ services:
       - source: alertmanager_config
         target: /alertmanager.yml
 
-  kafka:
-    image: dixn/docker-kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:${CONFLUENT_PLATFORM_VERSION:-3.2.1}
+    hostname: zookeeper
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
     networks:
       - functions
     ports:
-      - "2181:2181"
-      - "9092:9092"
+      - 2181:2181
+
+  kafka:
+    image: confluentinc/cp-kafka:${CONFLUENT_PLATFORM_VERSION:-3.2.1}
+    hostname: kafka
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+    ports:
+     - 9092:9092
+    networks:
+      - functions
+
+  kafka-rest:
+    image: confluentinc/cp-kafka-rest:${CONFLUENT_PLATFORM_VERSION:-3.2.1}
+    hostname: kafka-rest
+    environment:
+      - ACCESS_CONTROL_ALLOW_ORIGIN_DEFAULT="*"
+      - KAFKA_REST_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_REST_HOST_NAME=kafka-rest
+      - KAFKA_REST_LISTENERS=http://kafka-rest:8082
+      - KAFKA_REST_CONSUMER_REQUEST_TIMEOUT_MS=30000
+      - KAFKA_REST_BOOTSTRAP_SERVERS=PLAINTEXT://kafka:9092
+    ports:
+      - 8082:8082
+    networks:
+      - functions
+
+  kafka-topics-ui:
+    image: landoop/kafka-topics-ui:0.9.3
+    environment:
+      - KAFKA_REST_PROXY_URL=http://kafka-rest:8082
+      - KAFKA_REST_BOOTSTRAP_SERVERS=PLAINTEXT://kafka:9092
+      - PROXY=true
+    ports:
+      - 8001:8000
+    networks:
+      - functions
+
+  connector:
+    image: alexellis2/kafka-connector:0.2.1
+    hostname: kafka-connector
+    environment:
+      gateway_url: http://gateway:8080
+      topics: "faas-request,"
+      print_reponse: "true"
+    networks:
+      - functions
 
 configs:
   prometheus_config:
