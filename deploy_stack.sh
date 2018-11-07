@@ -28,18 +28,40 @@ fi
 
 export BASIC_AUTH='true'
 
-while [ ! $# -eq 0 ]
+while [[ $# > 0 ]]
 do
-	case "$1" in
-		--no-auth | -n)
-			export BASIC_AUTH='false'
-			;;
-    --help | -h)
-			echo "Usage: \n [default]\tdeploy the OpenFaaS core services\n --no-auth [-n]\tdisable basic authentication.\n --help\tdisplays this screen"
+  KEY="$1"
+  case $KEY in
+    -r|--restart)
+      NEXT_ARG="$2"
+      while ! [[ "$NEXT_ARG" =~ -.* ]] && [[ $# > 1 ]]; do
+        TASK_ID=$(docker stack services -f "name=$NEXT_ARG" func -q | head -n 1)
+        echo "restarting $NEXT_ARG $TASK_ID"
+        docker service update --force $TASK_ID
+
+        if ! [[ "$2" =~ -.* ]]; then
+          shift
+          NEXT_ARG="$2"
+        else
+          shift
+          break
+        fi
+      done
       exit
-			;;
-	esac
-	shift
+      ;;
+    -h|--help)
+      echo "Usage: \n [default]\tdeploy the OpenFaaS core services\n --no-auth [-n]\tdisable basic authentication.\n --help\tdisplays this screen"
+      exit
+      ;;
+    -n|--no-auth)
+      export BASIC_AUTH='false'
+      ;;
+    *)
+      echo "Unknown flag $KEY"
+      exit
+    ;;
+  esac
+  shift
 done
 
 # Initialize Swarm if not already created.
