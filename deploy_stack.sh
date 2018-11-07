@@ -54,20 +54,23 @@ fi
 echo 'Creating gateway credentials…'
 
 user='admin'
-secret="$(head -c 16 /dev/urandom| $sha_cmd | cut -d ' ' -f 1)"
 
-echo '[Credentials]'
-echo "username: $user"
-echo "password: $secret"
-echo
-echo "printf '$secret' | faas-cli login --username=admin --password-stdin"
-echo
+if ! docker secret inspect basic-auth-user &>/dev/null; then
+  printf "$user" | docker secret create basic-auth-user -
+fi
 
-docker secret rm basic-auth-user &>/dev/null|| true
-docker secret rm basic-auth-password &>/dev/null|| true
+if ! docker secret inspect basic-auth-password &>/dev/null; then
+  secret="$(head -c 16 /dev/urandom| $sha_cmd | cut -d ' ' -f 1)"
 
-printf "$user" | docker secret create basic-auth-user -
-printf "$secret" | docker secret create basic-auth-password -
+  echo '[Credentials]'
+  echo "username: $user"
+  echo "password: $secret"
+  echo
+  echo "printf '$secret' | faas-cli login --username=admin --password-stdin"
+  echo
+
+  printf "$secret" | docker secret create basic-auth-password -
+fi
 
 echo
 
