@@ -11,7 +11,6 @@
 use std::error::Error;
 
 use std::io::prelude::*;
-use std::io::Write;
 use std::process::{Command, Stdio};
 use std::fs;
 use std::fs::File;
@@ -67,18 +66,15 @@ macro_rules! docker_create_secret {
 macro_rules! curl_download {
   ($url:expr, $target:expr) => {{
     let mut easy = Easy::new();
-    easy.progress(true).unwrap();
-    easy.url($url).unwrap();
+    easy.progress(true)?;
+    easy.url($url)?;
 
     easy.write_function(|data| {
-      if let Ok(mut file) = File::create($target) {
-        file.write_all(data).unwrap();
-      }
-
+      File::create($target).unwrap().write_all(data).unwrap();
       Ok(data.len())
-    });
+    })?;
 
-    easy.perform().unwrap();
+    easy.perform()?;
   }}
 }
 
@@ -151,8 +147,8 @@ fn main() -> Result<(), Box<Error>>  {
           .write_all(data).unwrap();
         process.wait().unwrap();
         Ok(data.len())
-      }).unwrap();
-      easy.perform().unwrap();
+      })?;
+      easy.perform()?;
     }
   }
 
