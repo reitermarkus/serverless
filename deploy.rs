@@ -132,7 +132,7 @@ fn main() -> Result<(), Box<Error>>  {
     return Ok(())
   }
 
-  if !which("faas-cli").unwrap().exists() {
+  if which("faas-cli").is_err() {
     if cfg!(target_os = "macos") {
       Command::new("brew").args(&["install", "faas-cli"]).status().unwrap();
     } else if cfg!(target_os = "windows") {
