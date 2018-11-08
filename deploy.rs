@@ -56,7 +56,8 @@ macro_rules! docker_create_secret {
         .stdin(Stdio::piped())
         .spawn()?;
 
-      process.stdin.as_mut().unwrap().write_all($secret.as_bytes())?;
+      process.stdin.as_mut().unwrap()
+        .write_all($secret.as_bytes())?;
 
       process.wait()?;
     }
@@ -66,11 +67,11 @@ macro_rules! docker_create_secret {
 macro_rules! curl_download {
   ($url:expr, $target:expr) => {{
     let mut easy = Easy::new();
-    easy.progress(true)?;
     easy.url($url)?;
 
     easy.write_function(|data| {
-      File::create($target).unwrap().write_all(data).unwrap();
+      File::create($target).expect("could not create file")
+        .write_all(data).expect("could not write to file");
       Ok(data.len())
     })?;
 
@@ -102,9 +103,7 @@ fn main() -> Result<(), Box<Error>>  {
   docker_create_secret!("basic-auth-password", password);
   println!("secret is: {}", password);
 
-  if matches.is_present("restart") {
-    let services: Vec<String> = values_t!(matches, "restart", String).unwrap();
-
+  if let Ok(services) = values_t!(matches, "restart", String) {
     let threads: Vec<_> = services.iter()
       .map(|service| {
         println!("Restarting {} …", service);
@@ -139,8 +138,8 @@ fn main() -> Result<(), Box<Error>>  {
       Command::new("choco").args(&["install", "faas-cli", "-y"]).status().unwrap();
     } else {
       let mut easy = Easy::new();
-      easy.progress(true)?;
       easy.url("https://cli.openfaas.com")?;
+
       easy.write_function(move |data| {
         let mut process = Command::new("sudo").args(&["-E", "sh"]).stdin(Stdio::piped()).spawn().unwrap();
         process.stdin.as_mut().unwrap()
@@ -148,6 +147,7 @@ fn main() -> Result<(), Box<Error>>  {
         process.wait().unwrap();
         Ok(data.len())
       })?;
+
       easy.perform()?;
     }
   }
