@@ -5,6 +5,8 @@
 //! clap = "~2.32.0"
 //! ```
 
+use std::error::Error;
+
 use std::io::prelude::*;
 use std::process::{Command, Stdio};
 
@@ -22,31 +24,25 @@ macro_rules! docker {
 
 macro_rules! docker_success {
   ($($t:tt),*) => {{
-    docker!($($t),*)
-      .output()
-      .expect("failed to execute `docker`")
-      .status
-      .success()
+    docker!($($t),*).output()?.status.success()
   }}
 }
 
 macro_rules! docker_create_secret {
   ($name:expr, $secret:expr) => {{
     if ! docker_success!("secret", "inspect", $name) {
-      let process = docker!("secret", "create", $name, "-")
-                      .stdin(Stdio::piped())
-                      .spawn()
-                      .expect("failed to execute `docker`");
-      process.stdin.unwrap().write_all($secret.as_bytes());
+      docker!("secret", "create", $name, "-")
+        .stdin(Stdio::piped())
+        .spawn()?.stdin.unwrap().write_all($secret.as_bytes());
     }
   }};
 }
 
-fn main() {
-  docker!("swarm", "init")
-    .output()
-    .expect("failed to execute `docker`");
+fn main() -> Result<(), Box<Error>>  {
+  docker!("swarm", "init").output()?;
 
   docker_create_secret!("basic-auth-user", "admin");
   docker_create_secret!("basic-auth-password", "password");
+
+  Ok(())
 }
