@@ -19,3 +19,7 @@
 
 #FaaS
 faas
+template
+build
+
+node_modules

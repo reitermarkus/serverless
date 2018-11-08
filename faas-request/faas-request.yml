@@ -1,0 +1,9 @@
+provider:
+  name: faas
+  gateway: http://localhost:8080
+
+functions:
+  faas-request:
+    lang: node
+    handler: .
+    image: faas-request
