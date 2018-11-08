@@ -11,13 +11,12 @@
 use std::error::Error;
 
 use std::io::prelude::*;
-use std::io::{stdout, Write};
+use std::io::Write;
 use std::process::{Command, Stdio};
 use std::fs;
 use std::fs::File;
 use std::env;
 use std::thread;
-use std::borrow::{Borrow, BorrowMut};
 
 #[macro_use]
 extern crate clap;
@@ -68,18 +67,36 @@ macro_rules! docker_create_secret {
 macro_rules! curl_download {
   ($url:expr, $target:expr) => {{
     let mut easy = Easy::new();
-    easy.progress(true);
+    easy.progress(true).unwrap();
     easy.url($url).unwrap();
+
     easy.write_function(|data| {
-      let mut file = File::create($target).unwrap();
-      file.write_all(data).unwrap();
+      if let Ok(mut file) = File::create($target) {
+        file.write_all(data).unwrap();
+      }
+
       Ok(data.len())
-    }).unwrap();
+    });
+
     easy.perform().unwrap();
   }}
 }
 
 fn main() -> Result<(), Box<Error>>  {
+  let matches = App::new("Deploy")
+                  .arg(Arg::with_name("no-auth")
+                    .short("n")
+                    .long("no-auth")
+                    .help("Deploys swarm without authentication"))
+                  .arg(Arg::with_name("restart")
+                    .short("r")
+                    .long("restart")
+                    .takes_value(true)
+                    .min_values(1)
+                    .multiple(true)
+                    .help("Restarts individual services"))
+                  .get_matches();
+
   docker!("swarm", "init").output()?;
 
   let user = "admin";
@@ -88,11 +105,6 @@ fn main() -> Result<(), Box<Error>>  {
   docker_create_secret!("basic-auth-user", user);
   docker_create_secret!("basic-auth-password", password);
   println!("secret is: {}", password);
-
-  let matches = App::new("Deploy")
-                  .arg(Arg::with_name("no-auth").long("no-auth"))
-                  .arg(Arg::with_name("restart").short("r").long("restart").takes_value(true).min_values(1).multiple(true))
-                  .get_matches();
 
   if matches.is_present("restart") {
     let services: Vec<String> = values_t!(matches, "restart", String).unwrap();
