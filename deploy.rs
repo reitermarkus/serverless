@@ -5,7 +5,7 @@
 //! clap = "~2.32.0"
 //! rand = "~0.5.0"
 //! curl = "~0.4.19"
-//! quale = "1.0"
+//! which = "2.0.0"
 //! ```
 
 use std::error::Error;
@@ -30,8 +30,8 @@ use rand::distributions::Alphanumeric;
 extern crate curl;
 use curl::easy::Easy;
 
-extern crate quale;
-use quale::which;
+extern crate which;
+use which::which;
 
 macro_rules! docker {
   () => {{
@@ -124,7 +124,7 @@ fn main() -> Result<(), Box<Error>>  {
     return Ok(())
   }
 
-  if which("faas-cli").is_none() {
+  if !which("faas-cli").unwrap().exists() {
     if cfg!(target_os = "macos") {
       Command::new("brew").args(&["install", "faas-cli"]).status().unwrap();
     } else if cfg!(target_os = "windows") {
