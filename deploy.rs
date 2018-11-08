@@ -3,12 +3,35 @@
 //! ```cargo
 //! [dependencies]
 //! clap = "~2.32.0"
+//! rand = "~0.5.0"
+//! curl = "~0.4.19"
+//! quale = "1.0"
 //! ```
 
 use std::error::Error;
 
 use std::io::prelude::*;
+use std::io::{stdout, Write};
 use std::process::{Command, Stdio};
+use std::fs;
+use std::fs::File;
+use std::env;
+use std::thread;
+use std::borrow::{Borrow, BorrowMut};
+
+#[macro_use]
+extern crate clap;
+use clap::{Arg, App};
+
+extern crate rand;
+use rand::prelude::*;
+use rand::distributions::Alphanumeric;
+
+extern crate curl;
+use curl::easy::Easy;
+
+extern crate quale;
+use quale::which;
 
 macro_rules! docker {
   () => {{
@@ -31,18 +54,115 @@ macro_rules! docker_success {
 macro_rules! docker_create_secret {
   ($name:expr, $secret:expr) => {{
     if ! docker_success!("secret", "inspect", $name) {
-      docker!("secret", "create", $name, "-")
+      let mut process = docker!("secret", "create", $name, "-")
         .stdin(Stdio::piped())
-        .spawn()?.stdin.unwrap().write_all($secret.as_bytes());
+        .spawn()?;
+
+      process.stdin.as_mut().unwrap().write_all($secret.as_bytes())?;
+
+      process.wait()?;
     }
   }};
+}
+
+macro_rules! curl_download {
+  ($url:expr, $target:expr) => {{
+    let mut easy = Easy::new();
+    easy.progress(true);
+    easy.url($url).unwrap();
+    easy.write_function(|data| {
+      let mut file = File::create($target).unwrap();
+      file.write_all(data).unwrap();
+      Ok(data.len())
+    }).unwrap();
+    easy.perform().unwrap();
+  }}
 }
 
 fn main() -> Result<(), Box<Error>>  {
   docker!("swarm", "init").output()?;
 
-  docker_create_secret!("basic-auth-user", "admin");
-  docker_create_secret!("basic-auth-password", "password");
+  let user = "admin";
+  let password: String = thread_rng().sample_iter(&Alphanumeric).take(16).collect();
+
+  docker_create_secret!("basic-auth-user", user);
+  docker_create_secret!("basic-auth-password", password);
+  println!("secret is: {}", password);
+
+  let matches = App::new("Deploy")
+                  .arg(Arg::with_name("no-auth").long("no-auth"))
+                  .arg(Arg::with_name("restart").short("r").long("restart").takes_value(true).min_values(1).multiple(true))
+                  .get_matches();
+
+  if matches.is_present("restart") {
+    let services: Vec<String> = values_t!(matches, "restart", String).unwrap();
+
+    let threads: Vec<_> = services.iter()
+      .map(|service| {
+        println!("Restarting {} …", service);
+
+        let service_clone = service.clone();
+
+        thread::spawn(move || {
+          let output = docker!("service", "inspect", "--format", "{{ .ID }}", &service_clone).output().unwrap();
+          let id = String::from_utf8_lossy(&output.stdout).trim_right().to_owned();
+          let output = docker!("service", "update", "--force", &id).output().unwrap();
+          (service_clone, id, output.status.to_owned())
+        })
+      }).collect();
+
+    for t in threads {
+      let (service, id, status) = t.join().unwrap();
+
+      if status.success() {
+        println!("Restarted {} ({}).", service, id);
+      } else {
+        println!("Failed to restart {} ({}).", service, id);
+      }
+    }
+
+    return Ok(())
+  }
+
+  if which("faas-cli").is_none() {
+    if cfg!(target_os = "macos") {
+      Command::new("brew").args(&["install", "faas-cli"]).status().unwrap();
+    } else if cfg!(target_os = "windows") {
+      Command::new("choco").args(&["install", "faas-cli", "-y"]).status().unwrap();
+    } else {
+      let mut easy = Easy::new();
+      easy.progress(true)?;
+      easy.url("https://cli.openfaas.com")?;
+      easy.write_function(move |data| {
+        let mut process = Command::new("sudo").args(&["-E", "sh"]).stdin(Stdio::piped()).spawn().unwrap();
+        process.stdin.as_mut().unwrap()
+          .write_all(data).unwrap();
+        process.wait().unwrap();
+        Ok(data.len())
+      }).unwrap();
+      easy.perform().unwrap();
+    }
+  }
+
+  if matches.is_present("no-auth") {
+    println!("Disabling basic authentication…");
+    env::set_var("BASIC_AUTH", "false");
+  } else {
+    println!("Enabling basic authentication…");
+    env::set_var("BASIC_AUTH", "true");
+  }
+
+  fs::create_dir_all("faas/prometheus")?;
+  fs::copy("deploy.yml", "faas/deploy.yml")?;
+
+  curl_download!("https://raw.githubusercontent.com/openfaas/faas/master/prometheus/alertmanager.yml", "faas/prometheus/alertmanager.yml");
+  curl_download!("https://raw.githubusercontent.com/openfaas/faas/master/prometheus/alert.rules.yml", "faas/prometheus/alert.rules.yml");
+  curl_download!("https://raw.githubusercontent.com/openfaas/faas/master/prometheus/prometheus.yml", "faas/prometheus/prometheus.yml");
+
+  docker!("stack", "deploy", "func", "--compose-file", "deploy.yml")
+    .current_dir("faas")
+    .status()
+    .unwrap();
 
   Ok(())
 }
