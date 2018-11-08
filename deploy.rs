@@ -16,6 +16,7 @@ use std::fs;
 use std::fs::File;
 use std::env;
 use std::thread;
+use std::process::exit;
 
 #[macro_use]
 extern crate clap;
@@ -94,6 +95,32 @@ fn main() -> Result<(), Box<Error>>  {
                     .help("Restarts individual services"))
                   .get_matches();
 
+  if which("docker").is_err() {
+    eprintln!("Cannot find `docker` command, please install Docker (https://www.docker.com/) and retry.");
+    exit(1);
+  }
+
+  if which("faas-cli").is_err() {
+    if cfg!(target_os = "macos") {
+      Command::new("brew").args(&["install", "faas-cli"]).status().unwrap();
+    } else if cfg!(target_os = "windows") {
+      Command::new("choco").args(&["install", "faas-cli", "-y"]).status().unwrap();
+    } else {
+      let mut easy = Easy::new();
+      easy.url("https://cli.openfaas.com")?;
+
+      easy.write_function(move |data| {
+        let mut process = Command::new("sudo").args(&["-E", "sh"]).stdin(Stdio::piped()).spawn().unwrap();
+        process.stdin.as_mut().unwrap()
+          .write_all(data).unwrap();
+        process.wait().unwrap();
+        Ok(data.len())
+      })?;
+
+      easy.perform()?;
+    }
+  }
+
   docker!("swarm", "init").output()?;
 
   let user = "admin";
@@ -124,32 +151,11 @@ fn main() -> Result<(), Box<Error>>  {
       if status.success() {
         println!("Restarted {} ({}).", service, id);
       } else {
-        println!("Failed to restart {} ({}).", service, id);
+        eprintln!("Failed to restart {} ({}).", service, id);
       }
     }
 
     return Ok(())
-  }
-
-  if which("faas-cli").is_err() {
-    if cfg!(target_os = "macos") {
-      Command::new("brew").args(&["install", "faas-cli"]).status().unwrap();
-    } else if cfg!(target_os = "windows") {
-      Command::new("choco").args(&["install", "faas-cli", "-y"]).status().unwrap();
-    } else {
-      let mut easy = Easy::new();
-      easy.url("https://cli.openfaas.com")?;
-
-      easy.write_function(move |data| {
-        let mut process = Command::new("sudo").args(&["-E", "sh"]).stdin(Stdio::piped()).spawn().unwrap();
-        process.stdin.as_mut().unwrap()
-          .write_all(data).unwrap();
-        process.wait().unwrap();
-        Ok(data.len())
-      })?;
-
-      easy.perform()?;
-    }
   }
 
   if matches.is_present("no-auth") {
