@@ -8,23 +8,21 @@
 //! which = "2.0.0"
 //! ```
 
-use std::error::Error;
-
-use std::io::prelude::*;
-use std::process::{Command, Stdio};
-use std::fs;
-use std::fs::File;
-use std::env;
-use std::thread;
-use std::process::exit;
+use std::{
+  env,
+  error::Error,
+  fs::{self, File},
+  io::prelude::*,
+  process::{exit, Command, Stdio},
+  thread,
+};
 
 #[macro_use]
 extern crate clap;
-use clap::{Arg, App};
+use clap::{App, Arg};
 
 extern crate rand;
-use rand::prelude::*;
-use rand::distributions::Alphanumeric;
+use rand::{distributions::Alphanumeric, prelude::*};
 
 extern crate curl;
 use curl::easy::Easy;
@@ -37,7 +35,7 @@ macro_rules! docker {
     Command::new("docker")
   }};
   ($e:expr) => {{
-    docker!().arg(stringify!($e))
+    docker!().arg($e)
   }};
   ($($es:expr),+) => {{
     docker!().args(&[$($es),+])
@@ -52,7 +50,7 @@ macro_rules! docker_success {
 
 macro_rules! docker_create_secret {
   ($name:expr, $secret:expr) => {{
-    if ! docker_success!("secret", "inspect", $name) {
+    if !docker_success!("secret", "inspect", $name) {
       let mut process = docker!("secret", "create", $name, "-")
         .stdin(Stdio::piped())
         .spawn()?;
@@ -80,7 +78,7 @@ macro_rules! curl_download {
   }}
 }
 
-fn main() -> Result<(), Box<Error>>  {
+fn main() -> Result<(), Box<Error>> {
   let matches = App::new("Deploy")
                   .arg(Arg::with_name("no-auth")
                     .short("n")
@@ -143,7 +141,8 @@ fn main() -> Result<(), Box<Error>>  {
           let output = docker!("service", "update", "--force", &id).output().unwrap();
           (service_clone, id, output.status.to_owned())
         })
-      }).collect();
+      })
+      .collect();
 
     for t in threads {
       let (service, id, status) = t.join().unwrap();
