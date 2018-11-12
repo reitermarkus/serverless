@@ -19,7 +19,7 @@ const prepareDB = () => {
 
     console.error("DB connecting");
 
-    mongoClient.connect(url, (err, database) => {
+    mongoClient.connect(url, { useNewUrlParser: true }, (err, database) => {
       if(err) {
         return reject(err)
       }
@@ -36,10 +36,10 @@ module.exports = (context, callback) => {
       if(insertErr) {
         console.error(insertErr.toString())
       }
-    }).catch(err => {
-      console.error(err.toString())
     })
 
     callback(undefined, `saved ${context} in database.`)
+  }).catch(err => {
+    console.error(err.toString())
   })
 }

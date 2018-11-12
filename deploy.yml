@@ -240,6 +240,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: root
       MONGO_INITDB_DATABASE: sensor
+      MONGO_HOST: mongo
     networks:
       - functions
 
