@@ -1,45 +1,51 @@
 "use strict"
-const mongoClient = require('mongodb').MongoClient
+const MongoClient = require('mongodb').MongoClient
+const Server      = require('mongodb').Server
 
 const MONGO_HOST = process.env.MONGO_HOST || 'localhost'
+const MONGO_PORT = process.env.MONGO_PORT || 27017
 const MONGO_DB = process.env.MONGO_INITDB_DATABASE || 'sensor'
 const MONGO_USER = process.env.MONGO_INITDB_ROOT_USERNAME || 'admin'
 const MONGO_PASSWORD = process.env.MONGO_INITDB_ROOT_PASSWORD || 'root'
 
-var sensorDB;  // Cached connection-pool for further requests.
+const MONGO_URL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB}?authMechanism=DEFAULT&authSource=admin`
+const client = new MongoClient(MONGO_URL, { poolSize: 10, useNewUrlParser: true })
+
+var database
 
 const prepareDB = () => {
-  const url = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:27017/${MONGO_DB}?authSource=admin`
-
   return new Promise((resolve, reject) => {
-    if(sensorDB) {
-      console.error("DB already connected.")
-      return resolve(sensorDB)
+    if (database) {
+      return resolve([database, " Database connection was cached."])
     }
 
-    console.error("DB connecting");
-
-    mongoClient.connect(url, { useNewUrlParser: true }, (err, database) => {
-      if(err) {
+    client.connect((err, db) => {
+      if (err) {
         return reject(err)
       }
 
-      sensorDB = database.db(MONGO_DB)
-      return resolve(sensorDB)
+      database = db.db(MONGO_DB)
+
+      return resolve([database, " Database connection was not cached."])
     })
   })
 }
 
-module.exports = (context, callback) => {
-  prepareDB().then((sensor) => {
-    sensor.collection("request").insertOne({ name: "req", value: context }, (insertErr) => {
-      if(insertErr) {
-        console.error(insertErr.toString())
-      }
-    })
+module.exports = (event, context) => {
+  prepareDB().then(([db, message]) => {
+    const value = event.body
 
-    callback(undefined, `saved ${context} in database.`)
+    db.collection("request")
+      .insertOne({ name: "req", value: value }, err => {
+        if (err) {
+          context.fail(err.toString())
+        }
+
+        context
+          .status(200)
+          .succeed(`Saved '${value}' in database.` + message);
+      })
   }).catch(err => {
-    console.error(err.toString())
+    context.fail(err.toString());
   })
 }

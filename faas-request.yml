@@ -1,8 +1,13 @@
 provider:
   name: faas
   gateway: http://127.0.0.1:8080
+
 functions:
   faas-request:
-    lang: node
+    lang: node8-express
     handler: ./faas-request
     image: faas-request:latest
+    environment:
+      write_timeout: 10s
+      read_timeout: 10s
+      MONGO_HOST: mongo
