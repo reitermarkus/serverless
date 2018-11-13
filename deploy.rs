@@ -65,16 +65,24 @@ macro_rules! docker_create_secret {
 
 macro_rules! curl_download {
   ($url:expr, $target:expr) => {{
-    let mut easy = Easy::new();
-    easy.url($url)?;
+    let mut handle = Easy::new();
+    handle.url($url)?;
 
-    easy.write_function(|data| {
-      File::create($target).expect("could not create file")
-        .write_all(data).expect("could not write to file");
-      Ok(data.len())
-    })?;
+    let mut buf = Vec::new();
 
-    easy.perform()?;
+    {
+      let mut transfer = handle.transfer();
+      transfer.write_function(|data| {
+        buf.extend_from_slice(data);
+        return Ok(data.len())
+      })?;
+      transfer.perform()?;
+    }
+
+    let mut file = File::create($target)?;
+
+    file.write_all(&buf)?;
+    file.sync_all()?;
   }}
 }
 
