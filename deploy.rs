@@ -19,7 +19,7 @@ use std::{
 
 #[macro_use]
 extern crate clap;
-use clap::{App, Arg};
+use clap::{App, Arg, SubCommand};
 
 extern crate rand;
 use rand::{distributions::Alphanumeric, prelude::*};
@@ -99,6 +99,23 @@ fn main() -> Result<(), Box<Error>> {
                     .min_values(1)
                     .multiple(true)
                     .help("Restarts individual services"))
+                  .subcommand(SubCommand::with_name("func")
+                    .arg(Arg::with_name("deploy")
+                      .short("d")
+                      .long("deploy")
+                      .help("Deploy a function")
+                      .takes_value(true)
+                      .min_values(1)
+                      .max_values(1)
+                      .multiple(true))
+                    .arg(Arg::with_name("build")
+                      .short("b")
+                      .long("build")
+                      .help("Build a function")
+                      .takes_value(true)
+                      .min_values(1)
+                      .max_values(1)
+                      .multiple(true)))
                   .get_matches();
 
   if which("docker").is_err() {
@@ -136,33 +153,45 @@ fn main() -> Result<(), Box<Error>> {
   docker_create_secret!("basic-auth-password", password);
   println!("secret is: {}", password);
 
-  if let Ok(services) = values_t!(matches, "restart", String) {
-    let threads: Vec<_> = services.iter()
-      .map(|service| {
-        println!("Restarting {} …", service);
+  if matches.is_present("restart") {
+    if let Ok(services) = values_t!(matches, "restart", String) {
+      let threads: Vec<_> = services.iter()
+        .map(|service| {
+          println!("Restarting {} …", service);
 
-        let service_clone = service.clone();
+          let service_clone = service.clone();
 
-        thread::spawn(move || {
-          let output = docker!("service", "inspect", "--format", "{{ .ID }}", &service_clone).output().unwrap();
-          let id = String::from_utf8_lossy(&output.stdout).trim_right().to_owned();
-          let output = docker!("service", "update", "--force", &id).output().unwrap();
-          (service_clone, id, output.status.to_owned())
+          thread::spawn(move || {
+            let output = docker!("service", "inspect", "--format", "{{ .ID }}", &service_clone).output().unwrap();
+            let id = String::from_utf8_lossy(&output.stdout).trim_right().to_owned();
+            let output = docker!("service", "update", "--force", &id).output().unwrap();
+            (service_clone, id, output.status.to_owned())
+          })
         })
-      })
-      .collect();
+        .collect();
 
-    for t in threads {
-      let (service, id, status) = t.join().unwrap();
+      for t in threads {
+        let (service, id, status) = t.join().unwrap();
 
-      if status.success() {
-        println!("Restarted {} ({}).", service, id);
-      } else {
-        eprintln!("Failed to restart {} ({}).", service, id);
+        if status.success() {
+          println!("Restarted {} ({}).", service, id);
+        } else {
+          eprintln!("Failed to restart {} ({}).", service, id);
+        }
       }
-    }
 
-    return Ok(())
+      return Ok(())
+    }
+  }
+
+  if let Some(sub_matches) = matches.subcommand_matches("func") {
+    if sub_matches.is_present("build") {
+      Command::new("faas-cli").args(&["build", "-f", &value_t!(sub_matches, "build", String).unwrap()]).status().unwrap();
+      return Ok(())
+    } else if sub_matches.is_present("deploy") {
+      Command::new("faas-cli").args(&["deploy", "-f", &value_t!(sub_matches, "deploy", String).unwrap()]).status().unwrap();
+      return Ok(())
+    }
   }
 
   if matches.is_present("no-auth") {
