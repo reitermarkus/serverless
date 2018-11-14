@@ -146,13 +146,6 @@ fn main() -> Result<(), Box<Error>> {
 
   docker!("swarm", "init").output()?;
 
-  let user = "admin";
-  let password: String = thread_rng().sample_iter(&Alphanumeric).take(16).collect();
-
-  docker_create_secret!("basic-auth-user", user);
-  docker_create_secret!("basic-auth-password", password);
-  println!("secret is: {}", password);
-
   if matches.is_present("restart") {
     if let Ok(services) = values_t!(matches, "restart", String) {
       let threads: Vec<_> = services.iter()
@@ -193,6 +186,13 @@ fn main() -> Result<(), Box<Error>> {
       return Ok(())
     }
   }
+
+  let user = "admin";
+  let password: String = thread_rng().sample_iter(&Alphanumeric).take(16).collect();
+
+  docker_create_secret!("basic-auth-user", user);
+  docker_create_secret!("basic-auth-password", password);
+  println!("secret is: {}", password);
 
   if matches.is_present("no-auth") {
     println!("Disabling basic authentication…");
