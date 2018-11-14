@@ -6,6 +6,7 @@
 //! rand = "~0.5.0"
 //! curl = "~0.4.19"
 //! which = "2.0.0"
+//! dockworker = { git = "git://github.com/reitermarkus/dockworker.git" }
 //! ```
 
 use std::{
@@ -29,6 +30,9 @@ use curl::easy::Easy;
 
 extern crate which;
 use which::which;
+
+extern crate dockworker;
+use dockworker::Docker;
 
 macro_rules! docker {
   () => {{
@@ -145,7 +149,12 @@ fn main() -> Result<(), Box<Error>> {
     }
   }
 
-  docker!("swarm", "init").output()?;
+  let docker = Docker::from_env()?;
+  let swarm_state = docker.system_info()?.swarm.local_node_state;
+
+  if swarm_state != "active" {
+    docker.init_swarm(None, None, None, None)?;
+  }
 
   if matches.is_present("restart") {
     if let Ok(services) = values_t!(matches, "restart", String) {
