@@ -50,27 +50,6 @@ macro_rules! docker {
   }};
 }
 
-macro_rules! docker_success {
-  ($($t:tt),*) => {{
-    docker!($($t),*).output()?.status.success()
-  }}
-}
-
-macro_rules! docker_create_secret {
-  ($name:expr, $secret:expr) => {{
-    if !docker_success!("secret", "inspect", $name) {
-      let mut process = docker!("secret", "create", $name, "-")
-        .stdin(Stdio::piped())
-        .spawn()?;
-
-      process.stdin.as_mut().unwrap()
-        .write_all($secret.as_bytes())?;
-
-      process.wait()?;
-    }
-  }};
-}
-
 macro_rules! curl_download {
   ($url:expr, $target:expr) => {{
     let mut handle = Easy::new();
@@ -204,8 +183,9 @@ fn main() -> Result<(), Box<Error>> {
   let user = "admin";
   let password: String = thread_rng().sample_iter(&Alphanumeric).take(16).collect();
 
-  docker_create_secret!("basic-auth-user", user);
-  docker_create_secret!("basic-auth-password", password);
+  let _ = docker.secret_create("basic-auth-user", user);
+  let _ = docker.secret_create("basic-auth-password", &password);
+
   println!("secret is: {}", password);
 
   if matches.is_present("no-auth") {
