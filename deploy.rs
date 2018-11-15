@@ -100,6 +100,7 @@ fn main() -> Result<(), Box<Error>> {
                     .multiple(true)
                     .help("Restarts individual services"))
                   .subcommand(SubCommand::with_name("func")
+                    .about("Interacts with \"faas-cli\"")
                     .arg(Arg::with_name("deploy")
                       .short("d")
                       .long("deploy")
