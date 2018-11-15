@@ -7,6 +7,7 @@
 //! curl = "~0.4.19"
 //! which = "2.0.0"
 //! dockworker = { git = "git://github.com/reitermarkus/dockworker.git" }
+//! failure = "0.1"
 //! ```
 
 use std::{
@@ -22,17 +23,20 @@ use std::{
 extern crate clap;
 use clap::{App, Arg, SubCommand};
 
-extern crate rand;
-use rand::{distributions::Alphanumeric, prelude::*};
-
 extern crate curl;
 use curl::easy::Easy;
 
-extern crate which;
-use which::which;
-
 extern crate dockworker;
 use dockworker::Docker;
+
+extern crate failure;
+use failure::ResultExt;
+
+extern crate rand;
+use rand::{distributions::Alphanumeric, prelude::*};
+
+extern crate which;
+use which::which;
 
 macro_rules! docker {
   () => {{
@@ -149,11 +153,11 @@ fn main() -> Result<(), Box<Error>> {
     }
   }
 
-  let docker = Docker::from_env()?;
-  let swarm_state = docker.system_info()?.swarm.local_node_state;
+  let docker = Docker::from_env().compat()?;
+  let swarm_state = docker.system_info().compat()?.swarm.local_node_state;
 
   if swarm_state != "active" {
-    docker.init_swarm(None, None, None, None)?;
+    docker.init_swarm(None, None, None, None).compat()?;
   }
 
   if matches.is_present("restart") {
