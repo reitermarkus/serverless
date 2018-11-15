@@ -38,9 +38,6 @@ use rand::{distributions::Alphanumeric, prelude::*};
 extern crate which;
 use which::which;
 
-extern crate dockworker;
-use dockworker::Docker;
-
 macro_rules! docker {
   () => {{
     Command::new("docker")
