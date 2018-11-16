@@ -183,8 +183,8 @@ fn main() -> Result<(), Box<Error>> {
   let user = "admin";
   let password: String = thread_rng().sample_iter(&Alphanumeric).take(16).collect();
 
-  let _ = docker.secret_create("basic-auth-user", user);
-  let _ = docker.secret_create("basic-auth-password", &password);
+  docker.secret_create("basic-auth-user", user).compat()?;
+  docker.secret_create("basic-auth-password", &password).compat()?;
 
   println!("secret is: {}", password);
 
