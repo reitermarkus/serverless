@@ -136,7 +136,7 @@ fn main() -> Result<(), Box<Error>> {
   let swarm_state = docker.system_info().compat()?.swarm.local_node_state;
 
   if swarm_state != "active" {
-    docker.init_swarm(None, None, None, None).compat()?;
+    docker.swarm_init(None, None, None, None).compat()?;
   }
 
   if matches.is_present("restart") {
@@ -146,10 +146,9 @@ fn main() -> Result<(), Box<Error>> {
           println!("Restarting {} …", service);
 
           let service_clone = service.clone();
+          let id = docker.service_inspect(&service_clone, None).unwrap().id;
 
           thread::spawn(move || {
-            let output = docker!("service", "inspect", "--format", "{{ .ID }}", &service_clone).output().unwrap();
-            let id = String::from_utf8_lossy(&output.stdout).trim_right().to_owned();
             let output = docker!("service", "update", "--force", &id).output().unwrap();
             (service_clone, id, output.status.to_owned())
           })
