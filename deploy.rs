@@ -27,7 +27,7 @@ extern crate curl;
 use curl::easy::Easy;
 
 extern crate dockworker;
-use dockworker::Docker;
+use dockworker::{Docker, models::UpdateStatus};
 
 extern crate failure;
 use failure::ResultExt;
@@ -136,32 +136,40 @@ fn main() -> Result<(), Box<Error>> {
   let swarm_state = docker.system_info().compat()?.swarm.local_node_state;
 
   if swarm_state != "active" {
-    docker.swarm_init(None, None, None, None).compat()?;
+    docker.swarm().init().finish().compat()?;
   }
 
   if matches.is_present("restart") {
     if let Ok(services) = values_t!(matches, "restart", String) {
-      let threads: Vec<_> = services.iter()
-        .map(|service| {
-          println!("Restarting {} …", service);
+      for service in services {
+        println!("Restarting {} …", service);
 
-          let service_clone = service.clone();
-          let id = docker.service_inspect(&service_clone, None).unwrap().id;
+        let service_clone = service.clone();
 
-          thread::spawn(move || {
-            let output = docker!("service", "update", "--force", &id).output().unwrap();
-            (service_clone, id, output.status.to_owned())
-          })
-        })
-        .collect();
+        let service_info = docker.service_inspect(&service_clone, None).unwrap();
 
-      for t in threads {
-        let (service, id, status) = t.join().unwrap();
+        let version = service_info.version.index;
+        let mut spec = service_info.spec;
 
-        if status.success() {
-          println!("Restarted {} ({}).", service, id);
+        spec.task_template.force_update += 1;
+
+        let res =  docker.service_update(&service_info.id, version, None, None, &spec);
+
+        if res.is_ok() {
+          loop {
+            let service_info = docker.service_inspect(&service_clone, None).unwrap();
+
+            if let Some(status) = service_info.update_status {
+              match status {
+                UpdateStatus::Completed { .. } => break,
+                _ => continue,
+              }
+            }
+          }
+
+          println!("Restarted {}.", service);
         } else {
-          eprintln!("Failed to restart {} ({}).", service, id);
+          eprintln!("Failed to restart {}.", service);
         }
       }
 
