@@ -8,4 +8,4 @@ $pdflatex = 'xelatex -synctex=1 -interaction=nonstopmode';
 
 $bibtex_use = 2;
 
-@default_files = ('presentation.tex');
+@default_files = ('presentation.tex', 'progress.tex');
