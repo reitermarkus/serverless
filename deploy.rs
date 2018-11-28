@@ -16,7 +16,6 @@ use std::{
   fs::{self, File},
   io::prelude::*,
   process::{exit, Command, Stdio},
-  thread,
 };
 
 #[macro_use]
@@ -37,18 +36,6 @@ use rand::{distributions::Alphanumeric, prelude::*};
 
 extern crate which;
 use which::which;
-
-macro_rules! docker {
-  () => {{
-    Command::new("docker")
-  }};
-  ($e:expr) => {{
-    docker!().arg($e)
-  }};
-  ($($es:expr),+) => {{
-    docker!().args(&[$($es),+])
-  }};
-}
 
 macro_rules! curl_download {
   ($url:expr, $target:expr) => {{
@@ -153,7 +140,7 @@ fn main() -> Result<(), Box<Error>> {
 
         spec.task_template.force_update += 1;
 
-        let res =  docker.service_update(&service_info.id, version, None, None, &spec);
+        let res = docker.service_update(&service_info.id, version, None, None, &spec);
 
         if res.is_ok() {
           loop {
@@ -210,10 +197,12 @@ fn main() -> Result<(), Box<Error>> {
   curl_download!("https://raw.githubusercontent.com/openfaas/faas/master/prometheus/alert.rules.yml", "faas/prometheus/alert.rules.yml");
   curl_download!("https://raw.githubusercontent.com/openfaas/faas/master/prometheus/prometheus.yml", "faas/prometheus/prometheus.yml");
 
-  docker!("stack", "deploy", "func", "--compose-file", "deploy.yml")
-    .current_dir("faas")
-    .status()
-    .unwrap();
+  println!("Deploying stack…");
+
+  docker.stack_deploy_with_compose_file("func", "./faas/deploy.yml", None).unwrap()
+    .for_each(|line| {
+      println!("{}", line.unwrap());
+    });
 
   Ok(())
 }
