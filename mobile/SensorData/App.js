@@ -4,11 +4,11 @@
  */
 
 import React, {Component} from 'react'
-import {Text, View } from 'react-native'
-import { setUpdateIntervalForType, accelerometer, SensorTypes , gyroscope, barometer } from 'react-native-sensors'
+import { Text as RnText } from 'react-native'
+import { setUpdateIntervalForType, accelerometer, SensorTypes , gyroscope, magnetometer, barometer } from 'react-native-sensors'
+import { Container, Header, Content, List, ListItem, Text } from 'native-base';
 
 import { styles } from './styles/styles'
-import { grid } from './styles/grid'
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -18,6 +18,7 @@ export default class App extends Component<Props> {
     this.state = {
       accelerometer: {},
       gyroscope: {},
+      magnetometer: {},
       barometer: 0,
     }
 
@@ -26,6 +27,7 @@ export default class App extends Component<Props> {
     setUpdateIntervalForType(SensorTypes.accelerometer, 100)
     setUpdateIntervalForType(SensorTypes.gyroscope, 100)
     setUpdateIntervalForType(SensorTypes.barometer, 100)
+    setUpdateIntervalForType(SensorTypes.magnetometer, 100)
 
     accelerometer.subscribe(({ x, y, z, _ }) =>
       this.setState({
@@ -47,6 +49,16 @@ export default class App extends Component<Props> {
       })
     )
 
+    magnetometer.subscribe(({ x, y, z, _ }) =>
+      this.setState({
+        magnetometer: {
+          x: round(x, 5),
+          y: round(y, 5),
+          z: round(z, 5)
+        }
+      })
+    )
+
     barometer.subscribe(({ pressure }) =>
       this.setState({
         barometer: round(pressure, 5)
@@ -56,68 +68,67 @@ export default class App extends Component<Props> {
 
   render() {
     return (
-      <React.Fragment>
-        <Text style={styles.headLine}>Sensor Data</Text>
-        <View style={styles.container}>
-          <Text style={styles.subHeadline}>Gyroscope</Text>
-          <View style={grid.container}>
-            <View style={grid.list}>
-              <View style={grid.item}>
-                <Text style={{textAlign: 'left'}}>x</Text>
-              </View>
-              <View style={grid.item}>
-                <Text style={{textAlign: 'right'}}>{this.state.gyroscope.x}</Text>
-              </View>
-              <View style={grid.item}>
-                <Text style={{textAlign: 'left'}}>y</Text>
-              </View>
-              <View style={grid.item}>
-                <Text style={{textAlign: 'right'}}>{this.state.gyroscope.y}</Text>
-              </View>
-              <View style={grid.item}>
-                <Text style={{textAlign: 'left'}}>z</Text>
-              </View>
-              <View style={grid.item}>
-                <Text style={{textAlign: 'right'}}>{this.state.gyroscope.z}</Text>
-              </View>
-            </View>
-          </View>
-          <Text style={styles.subHeadline}>Accelerometer</Text>
-          <View style={grid.container}>
-            <View style={grid.list}>
-              <View style={grid.item}>
-                <Text style={{textAlign: 'left'}}>x</Text>
-              </View>
-              <View style={grid.item}>
-                <Text style={{textAlign: 'right'}}>{this.state.accelerometer.x}</Text>
-              </View>
-              <View style={grid.item}>
-                <Text style={{textAlign: 'left'}}>y</Text>
-              </View>
-              <View style={grid.item}>
-                <Text style={{textAlign: 'right'}}>{this.state.accelerometer.y}</Text>
-              </View>
-              <View style={grid.item}>
-                <Text style={{textAlign: 'left'}}>z</Text>
-              </View>
-              <View style={grid.item}>
-                <Text style={{textAlign: 'right'}}>{this.state.accelerometer.z}</Text>
-              </View>
-            </View>
-          </View>
-          <Text style={styles.subHeadline}>Air pressure</Text>
-          <View style={grid.container}>
-            <View style={grid.list}>
-              <View style={grid.item}>
-                <Text style={{textAlign: 'left'}}>pressure</Text>
-              </View>
-              <View style={grid.item}>
-                <Text style={{textAlign: 'right'}}>{this.state.barometer}</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-      </React.Fragment>
+      <Container>
+        <Header style={styles.header}>
+          <RnText style={styles.headerText}>Sensor Data</RnText>
+        </Header>
+        <Content>
+          <List>
+            <ListItem itemDivider>
+              <Text>Gyroscope</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>x</Text>
+              <Text>{this.state.gyroscope.x}</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>y</Text>
+              <Text>{this.state.gyroscope.y}</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>z</Text>
+              <Text>{this.state.gyroscope.z}</Text>
+            </ListItem>
+            <ListItem itemDivider>
+              <Text>Accelerometer</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>x</Text>
+              <Text>{this.state.accelerometer.x}</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>y</Text>
+              <Text>{this.state.accelerometer.y}</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>z</Text>
+              <Text>{this.state.accelerometer.z}</Text>
+            </ListItem>
+            <ListItem itemDivider>
+              <Text>Magnetometer</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>x</Text>
+              <Text>{this.state.magnetometer.x}</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>y</Text>
+              <Text>{this.state.magnetometer.y}</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>z</Text>
+              <Text>{this.state.magnetometer.z}</Text>
+            </ListItem>
+            <ListItem itemDivider>
+              <Text>Air pressure</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>pressure</Text>
+              <Text>{this.state.barometer}</Text>
+            </ListItem>
+          </List>
+        </Content>
+      </Container>
     )
   }
 }

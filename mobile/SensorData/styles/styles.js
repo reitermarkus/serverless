@@ -1,18 +1,14 @@
 import { StyleSheet } from 'react-native'
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
+  header: {
+    alignItems: 'center'
   },
-  headLine: {
-    fontSize: 32,
-    textAlign: 'center',
-    padding: 20
-  },
-  subHeadline: {
+  headerText: {
     fontSize: 20,
-    paddingBottom: 15,
-    paddingLeft: 15
+    color: 'white',
+  },
+  listItem: {
+    justifyContent: 'space-between'
   }
 })
