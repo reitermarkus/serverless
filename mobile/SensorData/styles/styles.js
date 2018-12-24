@@ -2,7 +2,8 @@ import { StyleSheet } from 'react-native'
 
 export const styles = StyleSheet.create({
   header: {
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: '#af2b2b'
   },
   headerText: {
     fontSize: 20,

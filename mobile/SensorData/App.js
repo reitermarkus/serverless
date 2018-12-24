@@ -69,7 +69,7 @@ export default class App extends Component<Props> {
   render() {
     return (
       <Container>
-        <Header style={styles.header}>
+        <Header noShadow androidStatusBarColor={styles.header.backgroundColor} style={styles.header}>
           <RnText style={styles.headerText}>Sensor Data</RnText>
         </Header>
         <Content>
