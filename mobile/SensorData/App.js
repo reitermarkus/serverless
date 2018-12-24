@@ -6,7 +6,8 @@
 import React, {Component} from 'react'
 import { Text as RnText } from 'react-native'
 import { setUpdateIntervalForType, accelerometer, SensorTypes , gyroscope, magnetometer, barometer } from 'react-native-sensors'
-import { Container, Header, Content, List, ListItem, Text } from 'native-base';
+import { Container, Header, Content, List, ListItem, Text } from 'native-base'
+import DeviceInfo from 'react-native-device-info'
 
 import { styles } from './styles/styles'
 
@@ -19,7 +20,7 @@ export default class App extends Component<Props> {
       accelerometer: {},
       gyroscope: {},
       magnetometer: {},
-      barometer: 0,
+      barometer: 0
     }
 
     const round = (x, n) => Math.round(x * Math.pow(10, n)) / Math.pow(10, n)
@@ -74,6 +75,25 @@ export default class App extends Component<Props> {
         </Header>
         <Content>
           <List>
+            <ListItem itemDivider>
+              <Text>Device Info</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>Manufacturer</Text>
+              <Text>{DeviceInfo.getBrand()}</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>Model</Text>
+              <Text>{DeviceInfo.getModel()}</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>OS</Text>
+              <Text>{DeviceInfo.getSystemName()}</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>OS version</Text>
+              <Text>{DeviceInfo.getSystemVersion()}</Text>
+            </ListItem>
             <ListItem itemDivider>
               <Text>Gyroscope</Text>
             </ListItem>
