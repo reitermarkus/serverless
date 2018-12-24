@@ -11,6 +11,8 @@ import DeviceInfo from 'react-native-device-info'
 
 import { styles } from './styles/styles'
 
+import CpuInfo from './native'
+
 type Props = {};
 export default class App extends Component<Props> {
   constructor(props) {
@@ -20,7 +22,8 @@ export default class App extends Component<Props> {
       accelerometer: {},
       gyroscope: {},
       magnetometer: {},
-      barometer: 0
+      barometer: 0,
+      cores: 0
     }
 
     const round = (x, n) => Math.round(x * Math.pow(10, n)) / Math.pow(10, n)
@@ -65,6 +68,13 @@ export default class App extends Component<Props> {
         barometer: round(pressure, 5)
       })
     )
+
+    CpuInfo.getCpuCores(cores =>
+      this.setState({
+        cores: cores
+      })
+    )
+
   }
 
   render() {
@@ -77,6 +87,10 @@ export default class App extends Component<Props> {
           <List>
             <ListItem itemDivider>
               <Text>Device Info</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>CPU-cores</Text>
+              <Text>{this.state.cores}</Text>
             </ListItem>
             <ListItem style={styles.listItem}>
               <Text>Manufacturer</Text>
