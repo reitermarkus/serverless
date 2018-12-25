@@ -23,7 +23,8 @@ export default class App extends Component<Props> {
       gyroscope: {},
       magnetometer: {},
       barometer: 0,
-      cores: 0
+      cores: 0,
+      coresInfo: {}
     }
 
     const round = (x, n) => Math.round(x * Math.pow(10, n)) / Math.pow(10, n)
@@ -75,6 +76,11 @@ export default class App extends Component<Props> {
       })
     )
 
+    CpuInfo.getCoresInfo(info =>
+      this.setState({
+        coresInfo: Object.entries(info).sort((a, b) => a[0] === b[0] ? 0 : a[0] > b[0] ? 1 : -1)
+      })
+    )
   }
 
   render() {
@@ -87,10 +93,6 @@ export default class App extends Component<Props> {
           <List>
             <ListItem itemDivider>
               <Text>Device Info</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>CPU-cores</Text>
-              <Text>{this.state.cores}</Text>
             </ListItem>
             <ListItem style={styles.listItem}>
               <Text>Manufacturer</Text>
@@ -108,6 +110,19 @@ export default class App extends Component<Props> {
               <Text>OS version</Text>
               <Text>{DeviceInfo.getSystemVersion()}</Text>
             </ListItem>
+            <ListItem itemDivider>
+              <Text>CPU</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>cores</Text>
+              <Text>{this.state.cores}</Text>
+            </ListItem>
+            {Object.entries(this.state.coresInfo).map(([key, value]) =>
+              <ListItem key={key} style={styles.listItem}>
+                <Text>{value[0]}</Text>
+                <Text style={{textAlign: 'right'}}>{value[1]}</Text>
+              </ListItem>
+            )}
             <ListItem itemDivider>
               <Text>Gyroscope</Text>
             </ListItem>
