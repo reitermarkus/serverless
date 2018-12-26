@@ -1,3 +1,6 @@
 import { NativeModules } from 'react-native'
 
-module.exports = NativeModules.CpuInfo
+module.exports = {
+  CpuInfo: NativeModules.CpuInfo,
+  ForegroundService: NativeModules.ForegroundService
+}
