@@ -15,9 +15,7 @@ import android.graphics.BitmapFactory
 import com.sensordata.SensorService
 
 class SensorServiceModule(context: ReactApplicationContext): ReactContextBaseJavaModule(context) {
-  override fun getName(): String {
-    return "SensorService"
-  }
+  override fun getName() = "SensorService"
 
   @ReactMethod
   fun startService(promise: Promise) {
@@ -30,7 +28,7 @@ class SensorServiceModule(context: ReactApplicationContext): ReactContextBaseJav
       Log.d(REACT_CLASS, "startService, success")
       promise.resolve(true)
     }
-    catch (e:Exception) {
+    catch (e: Exception) {
       Log.d(REACT_CLASS, "startService failed!")
       promise.reject(e)
     }
@@ -56,5 +54,8 @@ class SensorServiceModule(context: ReactApplicationContext): ReactContextBaseJav
   companion object {
     private val REACT_CLASS = "SensorService"
     private val FOREGROUND = "com.sensordata.SensorService"
+
+    private fun emitDeviceEvent(reactContext: ReactApplicationContext, eventName: String, eventData: WritableMap?) =
+      reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java).emit(eventName, eventData)
   }
 }

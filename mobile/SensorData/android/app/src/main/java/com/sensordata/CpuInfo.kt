@@ -12,10 +12,7 @@ import java.io.*
 import java.util.*
 
 class StreamManager(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
-  override fun getName(): String {
-    return "CpuInfo"
-  }
-
+  override fun getName() = "CpuInfo"
 
   private fun getCurrentFrequency(coreNumber: Int): String {
     var frequency = "Stopped"
@@ -32,14 +29,10 @@ class StreamManager(reactContext: ReactApplicationContext) : ReactContextBaseJav
     return frequency
   }
 
-  private fun getCores(): Int {
-    return Runtime.getRuntime().availableProcessors()
-  }
+  private fun getCores() = Runtime.getRuntime().availableProcessors()
 
   @ReactMethod
-  fun getCpuCores(callback: Callback) {
-    callback.invoke(getCores())
-  }
+  fun getCpuCores(callback: Callback) = callback.invoke(getCores())
 
   @ReactMethod
   fun getCoresInfo(callback: Callback) {

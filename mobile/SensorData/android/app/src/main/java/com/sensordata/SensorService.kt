@@ -18,7 +18,6 @@ import android.support.v4.app.NotificationManagerCompat
 import android.graphics.BitmapFactory
 
 class SensorService:Service() {
-
   @TargetApi(Build.VERSION_CODES.M)
   override fun onCreate() {
     Log.d(REACT_CLASS, "onCreate")
@@ -30,17 +29,15 @@ class SensorService:Service() {
     super.onDestroy()
   }
 
-  override fun onStartCommand(intent: Intent?, flags:Int, startId:Int):Int {
+  override fun onStartCommand(intent: Intent?, flags:Int, startId:Int): Int {
     Log.d(REACT_CLASS, "onStartCommand, calling startForeground")
     createAndShowForegroundNotification(3313)
     return START_STICKY
   }
 
-  override fun onBind(intent: Intent?): IBinder? {
-    return null
-  }
+  override fun onBind(intent: Intent?): IBinder? = null
 
-  fun getNotificationBuilder(channelId:String, importance:Int):NotificationCompat.Builder {
+  fun getNotificationBuilder(channelId:String, importance:Int): NotificationCompat.Builder {
     val builder: NotificationCompat.Builder
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -55,36 +52,34 @@ class SensorService:Service() {
   }
 
   @TargetApi(26)
-  private fun prepareChannel(id:String, importance:Int) {
+  private fun prepareChannel(id: String, importance: Int) {
     val appName = "Sensor Data"
     val description = "getting sensor data..."
-    var nm = getSystemService(Activity.NOTIFICATION_SERVICE) as NotificationManager
-    if (nm != null) {
-      var nChannel = nm.getNotificationChannel(id)
+    var nm = getSystemService(Activity.NOTIFICATION_SERVICE) as NotificationManager?
+    var nChannel = nm?.getNotificationChannel(id)
 
-      if (nChannel == null) {
-        nChannel = NotificationChannel(id, appName, importance)
-        nChannel.setDescription(description)
-        nm.createNotificationChannel(nChannel)
-      }
+    if (nChannel == null) {
+      nChannel = NotificationChannel(id, appName, importance)
+      nChannel.setDescription(description)
+      nm?.createNotificationChannel(nChannel)
     }
   }
 
   private fun createAndShowForegroundNotification(notificationId:Int) {
     val builder = getNotificationBuilder(
-      "com.sensorData.notification.CHANNEL_ID_FOREGROUND",
-      NotificationManagerCompat.IMPORTANCE_LOW)
+                  "com.sensorData.notification.CHANNEL_ID_FOREGROUND",
+                  NotificationManagerCompat.IMPORTANCE_LOW)
 
     val desc = "getting sensor data..."
 
     builder
-    .setOngoing(true)
-    .setSmallIcon(R.mipmap.ic_launcher_round)
-    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-    .setContentTitle("Sensor Data")
-    .setContentText(desc)
-    .setTicker(desc)
-    .setWhen(System.currentTimeMillis())
+      .setOngoing(true)
+      .setSmallIcon(R.mipmap.ic_launcher_round)
+      .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+      .setContentTitle("Sensor Data")
+      .setContentText(desc)
+      .setTicker(desc)
+      .setWhen(System.currentTimeMillis())
 
     val notification = builder.build()
     startForeground(notificationId, notification)
