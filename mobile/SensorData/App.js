@@ -11,7 +11,7 @@ import DeviceInfo from 'react-native-device-info'
 
 import { styles } from './styles/styles'
 
-import { CpuInfo, ForegroundService } from './native'
+import { CpuInfo, SensorService } from './native'
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -82,7 +82,7 @@ export default class App extends Component<Props> {
       })
     )
 
-    ForegroundService.startService().then(success => console.log(`service: ${success}`))
+    SensorService.startService().then(success => console.log(`service: ${success}`))
                                    .catch(fail => `service: ${fail}`)
   }
 

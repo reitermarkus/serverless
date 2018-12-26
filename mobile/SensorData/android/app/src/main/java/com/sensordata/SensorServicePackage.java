@@ -6,17 +6,17 @@ import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 
-import com.sensordata.ForegroundServiceModule;
+import com.sensordata.SensorServiceModule;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ForegroundServicePackage implements ReactPackage {
+public class SensorServicePackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
       return Arrays.<NativeModule>asList(
-        new ForegroundServiceModule(reactContext)
+        new SensorServiceModule(reactContext)
       );
     }
 

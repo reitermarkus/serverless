@@ -16,13 +16,14 @@ import android.content.Intent;
 import android.app.PendingIntent;
 import android.graphics.BitmapFactory;
 
-import com.sensordata.ForegroundService;
+import com.sensordata.SensorService;
 
-public class ForegroundServiceModule extends ReactContextBaseJavaModule {
-    public static final String REACT_CLASS = "ForegroundService";
+public class SensorServiceModule extends ReactContextBaseJavaModule {
+    private static final String REACT_CLASS = "SensorService";
     private static ReactApplicationContext reactContext = null;
+    private static final String FOREGROUND = "com.sensordata.SensorService";
 
-    public ForegroundServiceModule(ReactApplicationContext context) {
+    public SensorServiceModule(ReactApplicationContext context) {
       super(context);
       reactContext = context;
     }
@@ -36,8 +37,8 @@ public class ForegroundServiceModule extends ReactContextBaseJavaModule {
     public void startService(Promise promise) {
       Log.d(REACT_CLASS, "startService");
       try {
-        Intent intent = new Intent(ForegroundService.FOREGROUND);
-        intent.setClass(this.getReactApplicationContext(), ForegroundService.class);
+        Intent intent = new Intent(FOREGROUND);
+        intent.setClass(this.getReactApplicationContext(), SensorService.class);
         getReactApplicationContext().startService(intent);
         Log.d(REACT_CLASS, "startService, success");
         promise.resolve(true);
@@ -51,8 +52,8 @@ public class ForegroundServiceModule extends ReactContextBaseJavaModule {
     public void stopService(Promise promise) {
       Log.d(REACT_CLASS, "stopService");
       try {
-        Intent intent = new Intent(ForegroundService.FOREGROUND);
-        intent.setClass(this.getReactApplicationContext(), ForegroundService.class);
+        Intent intent = new Intent(FOREGROUND);
+        intent.setClass(this.getReactApplicationContext(), SensorService.class);
         this.getReactApplicationContext().stopService(intent);
       } catch (Exception e) {
         Log.d(REACT_CLASS, "stopService failed!");

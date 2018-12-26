@@ -11,7 +11,7 @@ import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 
 import com.sensordata.CpuInfoPackage;
-import com.sensordata.ForegroundServicePackage;
+import com.sensordata.SensorServicePackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNDeviceInfo(),
             new RNSensorsPackage(),
             new CpuInfoPackage(),
-            new ForegroundServicePackage()
+            new SensorServicePackage()
       );
     }
 

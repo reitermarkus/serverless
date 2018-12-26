@@ -18,12 +18,8 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.graphics.BitmapFactory;
 
-public class ForegroundService extends Service {
-  private NotificationManager mNotificationManager;
-  public static final String REACT_CLASS = "ForegroundService";
-
-  public static final String FOREGROUND = "com.sensordata.ForegroundService";
-  private static int NOTIFICATION_ID = 3313;
+public class SensorService extends Service {
+  private static final String REACT_CLASS = "SensorService";
 
   @Override
   @TargetApi(Build.VERSION_CODES.M)
@@ -41,7 +37,7 @@ public class ForegroundService extends Service {
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
     Log.d(REACT_CLASS, "onStartCommand, calling startForeground");
-    createAndShowForegroundNotification(NOTIFICATION_ID);
+    createAndShowForegroundNotification(3313);
     return START_STICKY;
   }
 
