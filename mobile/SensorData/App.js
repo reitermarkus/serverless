@@ -4,7 +4,7 @@
  */
 
 import React, {Component} from 'react'
-import { Text as RnText } from 'react-native'
+import { Text as RnText, Platform } from 'react-native'
 import { setUpdateIntervalForType, accelerometer, SensorTypes , gyroscope, magnetometer, barometer } from 'react-native-sensors'
 import { Container, Header, Content, List, ListItem, Text } from 'native-base'
 import DeviceInfo from 'react-native-device-info'
@@ -70,20 +70,22 @@ export default class App extends Component<Props> {
       })
     )
 
-    CpuInfo.getCpuCores(cores =>
-      this.setState({
-        cores: cores
-      })
-    )
+    if (Platform.OS === 'android') {
+      CpuInfo.getCpuCores(cores =>
+        this.setState({
+          cores: cores
+        })
+      )
 
-    CpuInfo.getCoresInfo(info =>
-      this.setState({
-        coresInfo: Object.entries(info).sort((a, b) => a[0] === b[0] ? 0 : a[0] > b[0] ? 1 : -1)
-      })
-    )
+      CpuInfo.getCoresInfo(info =>
+        this.setState({
+          coresInfo: Object.entries(info).sort((a, b) => a[0] === b[0] ? 0 : a[0] > b[0] ? 1 : -1)
+        })
+      )
 
-    SensorService.startService().then(success => console.log(`service: ${success}`))
-                                   .catch(fail => `service: ${fail}`)
+      SensorService.startService().then(success => console.log(`service: ${success}`))
+                                  .catch(fail => `service: ${fail}`)
+    }
   }
 
   render() {
@@ -116,16 +118,18 @@ export default class App extends Component<Props> {
             <ListItem itemDivider>
               <Text>CPU</Text>
             </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>cores</Text>
-              <Text>{this.state.cores}</Text>
-            </ListItem>
-            {Object.entries(this.state.coresInfo).map(([key, value]) =>
+            {Platform.OS === 'android' ?
+              <ListItem style={styles.listItem}>
+                <Text>cores</Text>
+                <Text>{this.state.cores}</Text>
+              </ListItem>
+            : null}
+            {Platform.OS === 'android' ? Object.entries(this.state.coresInfo).map(([key, value]) =>
               <ListItem key={key} style={styles.listItem}>
                 <Text>{value[0]}</Text>
                 <Text style={{textAlign: 'right'}}>{value[1]}</Text>
               </ListItem>
-            )}
+            ): null}
             <ListItem itemDivider>
               <Text>Gyroscope</Text>
             </ListItem>
