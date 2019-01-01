@@ -22,7 +22,7 @@ export default class App extends Component<Props> {
       accelerometer: {},
       gyroscope: {},
       magnetometer: {},
-      barometer: 0,
+      barometer: {},
       cores: 0,
       coresInfo: {}
     }
@@ -69,7 +69,10 @@ export default class App extends Component<Props> {
 
     barometer.subscribe(({ pressure }) =>
       this.setState({
-        barometer: round(pressure, 5)
+        barometer: {
+          pressure: round(pressure, 5) || 0,
+          timestamp: Date.now()
+        }
       })
     )
 
@@ -103,7 +106,8 @@ export default class App extends Component<Props> {
           body: JSON.stringify({
             accelerometer: this.state.accelerometer,
             gyroscope: this.state.gyroscope,
-            magnetometer: this.state.magnetometer
+            magnetometer: this.state.magnetometer,
+            barometer: this.state.barometer
           }),
         })
 
@@ -211,7 +215,7 @@ export default class App extends Component<Props> {
             </ListItem>
             <ListItem style={styles.listItem}>
               <Text>pressure</Text>
-              <Text>{this.state.barometer}</Text>
+              <Text>{this.state.barometer.pressure}</Text>
             </ListItem>
           </List>
         </Content>
