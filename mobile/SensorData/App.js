@@ -34,32 +34,35 @@ export default class App extends Component<Props> {
     setUpdateIntervalForType(SensorTypes.barometer, 100)
     setUpdateIntervalForType(SensorTypes.magnetometer, 100)
 
-    accelerometer.subscribe(({ x, y, z, _ }) =>
+    accelerometer.subscribe(({ x, y, z, timestamp }) =>
       this.setState({
         accelerometer: {
           x: round(x, 5),
           y: round(y, 5),
-          z: round(z, 5)
+          z: round(z, 5),
+          timestamp: timestamp
         }
       })
     )
 
-    gyroscope.subscribe(({ x, y, z, _ }) =>
+    gyroscope.subscribe(({ x, y, z, timestamp }) =>
       this.setState({
         gyroscope: {
           x: round(x, 5),
           y: round(y, 5),
-          z: round(z, 5)
+          z: round(z, 5),
+          timestamp: timestamp
         }
       })
     )
 
-    magnetometer.subscribe(({ x, y, z, _ }) =>
+    magnetometer.subscribe(({ x, y, z, timestamp }) =>
       this.setState({
         magnetometer: {
           x: round(x, 5),
           y: round(y, 5),
-          z: round(z, 5)
+          z: round(z, 5),
+          timestamp: timestamp
         }
       })
     )
@@ -86,6 +89,34 @@ export default class App extends Component<Props> {
       SensorService.startService().then(success => console.log(`service: ${success}`))
                                   .catch(fail => `service: ${fail}`)
     }
+  }
+
+  async componentDidMount() {
+    this.timer = setInterval(async () => {
+      try {
+        const response = await fetch('http://10.0.0.5:4000/sensor', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            accelerometer: this.state.accelerometer,
+            gyroscope: this.state.gyroscope,
+            magnetometer: this.state.magnetometer
+          }),
+        })
+
+        const responseJson = await response.json()
+        console.log(responseJson)
+      } catch (err) {
+        console.error(err)
+      }
+    }, 5000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer)
   }
 
   render() {
