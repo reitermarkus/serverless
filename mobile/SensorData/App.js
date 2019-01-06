@@ -11,7 +11,7 @@ import DeviceInfo from 'react-native-device-info'
 
 import { styles } from './styles/styles'
 
-import { CpuInfo, SensorService } from './native'
+import { CpuInfo, SensorService, NetworkTask } from './native'
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -95,28 +95,32 @@ export default class App extends Component<Props> {
   }
 
   async componentDidMount() {
-    this.timer = setInterval(async () => {
-      try {
-        const response = await fetch('http://10.0.0.5:4000/sensor', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            accelerometer: this.state.accelerometer,
-            gyroscope: this.state.gyroscope,
-            magnetometer: this.state.magnetometer,
-            barometer: this.state.barometer
-          }),
-        })
+    if (Platform.OS !== 'android') {
+      this.timer = setInterval(async () => {
+        try {
+          const response = await fetch('http://10.0.0.5:4000/sensor', {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              accelerometer: this.state.accelerometer,
+              gyroscope: this.state.gyroscope,
+              magnetometer: this.state.magnetometer,
+              barometer: this.state.barometer
+            }),
+          })
 
-        const responseJson = await response.json()
-        console.log(responseJson)
-      } catch (err) {
-        console.error(err)
-      }
-    }, 5000)
+          const responseJson = await response.json()
+          console.log(responseJson)
+        } catch (err) {
+          console.error(err)
+        }
+      }, 5000)
+    }
+
+    NetworkTask.sendRequest(res => console.log(res))
   }
 
   componentWillUnmount() {
