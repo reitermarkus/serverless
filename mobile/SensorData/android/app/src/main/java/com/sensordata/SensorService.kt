@@ -10,6 +10,7 @@ import android.annotation.TargetApi
 import android.util.Log
 import android.os.IBinder
 import android.os.Build
+import android.os.Handler
 import android.content.Intent
 import android.app.PendingIntent
 import android.support.annotation.Nullable
@@ -33,17 +34,27 @@ class SensorService:Service() {
 
   override fun onStartCommand(intent: Intent?, flags:Int, startId:Int): Int {
     Log.d(REACT_CLASS, "onStartCommand, calling startForeground")
-
-    val jsonBody = JSONObject()
-    jsonBody.put("username", "service");
-    jsonBody.put("password", "op_service")
-    NetworkTask.getInstance(getApplicationContext()).sendRequest(jsonBody)
-
+    networkLoop()
     createAndShowForegroundNotification(3313)
     return START_STICKY
   }
 
   override fun onBind(intent: Intent?): IBinder? = null
+
+  private fun networkLoop() {
+    val handler = Handler()
+
+    handler.postDelayed(object : Runnable {
+      override fun run() {
+        val jsonBody = JSONObject()
+        jsonBody.put("username", "service");
+        jsonBody.put("password", "op_service")
+        NetworkTask.getInstance(getApplicationContext()).sendRequest(jsonBody)
+
+        handler.postDelayed(this, 5000)
+      }
+    }, 1000)
+  }
 
   fun getNotificationBuilder(channelId:String, importance:Int): NotificationCompat.Builder {
     val builder: NotificationCompat.Builder
