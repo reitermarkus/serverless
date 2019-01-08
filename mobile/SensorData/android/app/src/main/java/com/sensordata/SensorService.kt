@@ -47,11 +47,22 @@ class SensorService:Service() {
     handler.postDelayed(object : Runnable {
       override fun run() {
         val jsonBody = JSONObject()
-        jsonBody.put("username", "service");
-        jsonBody.put("password", "op_service")
+
+        val cpu = JSONObject()
+        val frequency = JSONObject()
+        val numbersOfCores = StreamManager.getCores()
+
+        for (i in 0 until numbersOfCores) {
+          frequency.put("Core $i", StreamManager.getCurrentFrequency(i))
+        }
+
+        cpu.put("cores", numbersOfCores)
+        cpu.put("frequency", frequency)
+
+        jsonBody.put("cpu", cpu)
         NetworkTask.getInstance(getApplicationContext()).sendRequest(jsonBody)
 
-        handler.postDelayed(this, 5000)
+        handler.postDelayed(this, 15000)
       }
     }, 1000)
   }

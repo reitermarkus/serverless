@@ -12,24 +12,26 @@ import java.io.*
 import java.util.*
 
 class StreamManager(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
-  override fun getName() = "CpuInfo"
+  companion object {
+    public fun getCores() = Runtime.getRuntime().availableProcessors()
 
-  private fun getCurrentFrequency(coreNumber: Int): String {
-    var frequency = "Stopped"
-    val filePath = "/sys/devices/system/cpu/cpu$coreNumber/cpufreq/scaling_cur_freq"
+    public fun getCurrentFrequency(coreNumber: Int): String {
+      var frequency = "Stopped"
+      val filePath = "/sys/devices/system/cpu/cpu$coreNumber/cpufreq/scaling_cur_freq"
 
-    try {
-      val reader = RandomAccessFile(filePath, "r")
-      val value = reader.readLine().toLong() / 1000
-      reader.close()
-      frequency = "${value}MHz"
-    } catch (ignored: Exception) {
+      try {
+        val reader = RandomAccessFile(filePath, "r")
+        val value = reader.readLine().toLong() / 1000
+        reader.close()
+        frequency = "${value}MHz"
+      } catch (ignored: Exception) {
+      }
+
+      return frequency
     }
-
-    return frequency
   }
 
-  private fun getCores() = Runtime.getRuntime().availableProcessors()
+  override fun getName() = "CpuInfo"
 
   @ReactMethod
   fun getCpuCores(callback: Callback) = callback.invoke(getCores())
