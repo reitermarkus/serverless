@@ -11,7 +11,7 @@ import com.facebook.react.bridge.WritableNativeMap;
 import java.io.*
 import java.util.*
 
-class StreamManager(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+class CpuInfo(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
   companion object {
     public fun getCores() = Runtime.getRuntime().availableProcessors()
 

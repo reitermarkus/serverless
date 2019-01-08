@@ -50,10 +50,10 @@ class SensorService:Service() {
 
         val cpu = JSONObject()
         val frequency = JSONObject()
-        val numbersOfCores = StreamManager.getCores()
+        val numbersOfCores = CpuInfo.getCores()
 
         for (i in 0 until numbersOfCores) {
-          frequency.put("Core $i", StreamManager.getCurrentFrequency(i))
+          frequency.put("Core $i", CpuInfo.getCurrentFrequency(i))
         }
 
         cpu.put("cores", numbersOfCores)

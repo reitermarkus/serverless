@@ -7,6 +7,6 @@ import com.facebook.react.uimanager.ViewManager;
 import java.util.*;
 
 class CpuInfoPackage : ReactPackage {
-  override fun createNativeModules(reactContext: ReactApplicationContext) = listOf(StreamManager(reactContext))
+  override fun createNativeModules(reactContext: ReactApplicationContext) = listOf(CpuInfo(reactContext))
   override fun createViewManagers(reactContext: ReactApplicationContext) = Collections.emptyList<ViewManager<*, *>>()
 }
