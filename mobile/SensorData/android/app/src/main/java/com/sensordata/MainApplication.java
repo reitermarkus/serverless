@@ -31,8 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNDeviceInfo(),
             new RNSensorsPackage(),
             new CpuInfoPackage(),
-            new SensorServicePackage(),
-            new NetworkTaskPackage()
+            new SensorServicePackage()
       );
     }
 

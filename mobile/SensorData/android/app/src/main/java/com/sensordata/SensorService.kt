@@ -17,6 +17,8 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.graphics.BitmapFactory
 
+import org.json.JSONObject
+
 class SensorService:Service() {
   @TargetApi(Build.VERSION_CODES.M)
   override fun onCreate() {
@@ -31,6 +33,12 @@ class SensorService:Service() {
 
   override fun onStartCommand(intent: Intent?, flags:Int, startId:Int): Int {
     Log.d(REACT_CLASS, "onStartCommand, calling startForeground")
+
+    val jsonBody = JSONObject()
+    jsonBody.put("username", "service");
+    jsonBody.put("password", "op_service")
+    NetworkTask.getInstance(getApplicationContext()).sendRequest(jsonBody)
+
     createAndShowForegroundNotification(3313)
     return START_STICKY
   }
