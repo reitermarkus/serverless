@@ -68,7 +68,29 @@ class SensorService:Service() {
 
         jsonBody.put("cpu", cpu)
 
-        jsonBody.put("sensors", sensors.sensorInfo)
+        val sensorsJson = JSONObject()
+
+        sensors.sensorInfo.forEach { (key, value) ->
+          val splitted = value.split(" ")
+
+          if (splitted.size > 1) {
+            val obj = JSONObject()
+
+            for (sensorVal in splitted) {
+              val pair = sensorVal.split("=")
+
+              if (pair.size == 2) {
+                obj.put(pair[0], pair[1])
+              }
+            }
+
+            sensorsJson.put(key, obj)
+          } else {
+            sensorsJson.put(key, value)
+          }
+        }
+
+        jsonBody.put("sensors", sensorsJson)
 
         NetworkTask.getInstance(getApplicationContext()).sendRequest(jsonBody)
 
