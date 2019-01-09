@@ -17,8 +17,12 @@ import android.support.annotation.Nullable
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.graphics.BitmapFactory
+import android.content.Context;
+import android.hardware.SensorManager
 
 import org.json.JSONObject
+
+import com.sensorData.Sensors
 
 class SensorService:Service() {
   @TargetApi(Build.VERSION_CODES.M)
@@ -44,6 +48,9 @@ class SensorService:Service() {
   private fun networkLoop() {
     val handler = Handler()
 
+    val manager = getApplicationContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    val sensors = Sensors(manager)
+
     handler.postDelayed(object : Runnable {
       override fun run() {
         val jsonBody = JSONObject()
@@ -60,6 +67,9 @@ class SensorService:Service() {
         cpu.put("frequency", frequency)
 
         jsonBody.put("cpu", cpu)
+
+        jsonBody.put("sensors", sensors.sensorInfo)
+
         NetworkTask.getInstance(getApplicationContext()).sendRequest(jsonBody)
 
         handler.postDelayed(this, 15000)
