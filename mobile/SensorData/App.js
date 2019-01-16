@@ -152,20 +152,23 @@ export default class App extends Component {
               <Text>OS version</Text>
               <Text>{DeviceInfo.getSystemVersion()}</Text>
             </ListItem>
-            {Platform.OS === 'android' ? [
-              <ListItem key={0} itemDivider>
-                <Text>CPU</Text>
-              </ListItem>,
-              <ListItem key={1}  style={styles.listItem}>
-                <Text>cores</Text>
-                <Text>{this.state.cores}</Text>
-              </ListItem>,
-            ] + Object.entries(this.state.coresInfo).map(([key, value]) =>
-              <ListItem key={key} style={styles.listItem}>
-                <Text>{value[0]}</Text>
-                <Text style={{textAlign: 'right'}}>{value[1]}</Text>
-              </ListItem>
-            ) : null}
+            {Platform.OS === 'android' ? (
+              <React.Fragment>
+                <ListItem itemDivider>
+                  <Text>CPU</Text>
+                </ListItem>
+                <ListItem style={styles.listItem}>
+                  <Text>cores</Text>
+                  <Text>{this.state.cores}</Text>
+                </ListItem>
+                {Object.entries(this.state.coresInfo).map(([key, value]) =>
+                  <ListItem key={key} style={styles.listItem}>
+                    <Text>{value[0]}</Text>
+                    <Text style={{textAlign: 'right'}}>{value[1]}</Text>
+                  </ListItem>
+                )}
+              </React.Fragment>
+            ): null}
             <ListItem itemDivider>
               <Text>Gyroscope</Text>
             </ListItem>
