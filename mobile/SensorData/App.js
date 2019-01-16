@@ -90,8 +90,9 @@ export default class App extends Component {
         })
       )
 
-      SensorService.startService().then(success => console.log(`service: ${success}`))
-                                  .catch(fail => `service: ${fail}`)
+      SensorService.startService()
+        .then(success => console.log(`service: ${success}`))
+        .catch(fail => `service: ${fail}`)
     }
   }
 
@@ -156,12 +157,12 @@ export default class App extends Component {
             <ListItem itemDivider>
               <Text>CPU</Text>
             </ListItem>
-            {Platform.OS === 'android' ?
+            {Platform.OS === 'android' ? (
               <ListItem style={styles.listItem}>
                 <Text>cores</Text>
                 <Text>{this.state.cores}</Text>
               </ListItem>
-            : null}
+            ) : null}
             {Platform.OS === 'android' ? Object.entries(this.state.coresInfo).map(([key, value]) =>
               <ListItem key={key} style={styles.listItem}>
                 <Text>{value[0]}</Text>
@@ -214,10 +215,10 @@ export default class App extends Component {
               <Text>{this.state.magnetometer.z}</Text>
             </ListItem>
             {Platform.OS === 'android' ? [
-              <ListItem itemDivider>
+              <ListItem key={0} itemDivider>
                 <Text>Air pressure</Text>
               </ListItem>,
-              <ListItem style={styles.listItem}>
+              <ListItem key={1} style={styles.listItem}>
                 <Text>pressure</Text>
                 <Text>{this.state.barometer.pressure}</Text>
               </ListItem>

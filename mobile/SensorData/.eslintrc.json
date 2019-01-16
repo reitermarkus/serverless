@@ -1,0 +1,32 @@
+{
+  "env": {
+    "react-native/react-native": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react",
+    "react-native"
+  ],
+  "rules": {
+    "no-console": "off",
+    "indent": ["error", 2],
+    "linebreak-style": ["error", "unix"],
+    "quotes": ["error", "single"],
+    "semi": ["error", "never"]
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
+}
