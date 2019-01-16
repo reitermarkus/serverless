@@ -11,7 +11,7 @@
     "react": "16.6.3",
     "react-native": "0.57.8",
     "react-native-device-info": "^0.24.3",
-    "react-native-sensors": "^5.1.5"
+    "react-native-sensors": "reitermarkus/react-native-sensors#patch-1"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",

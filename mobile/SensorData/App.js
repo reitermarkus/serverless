@@ -66,16 +66,14 @@ export default class App extends Component {
       })
     )
 
-    if (Platform.OS === 'android') {
-      barometer.subscribe(({ pressure }) =>
-        this.setState({
-          barometer: {
-            pressure: round(pressure, 5) || 0,
-            timestamp: Date.now()
-          }
-        })
-      )
-    }
+    barometer.subscribe(({ pressure }) =>
+      this.setState({
+        barometer: {
+          pressure: round(pressure, 5) || 0,
+          timestamp: Date.now()
+        }
+      })
+    )
 
     if (Platform.OS === 'android') {
       CpuInfo.getCpuCores(cores =>
@@ -213,15 +211,13 @@ export default class App extends Component {
               <Text>z</Text>
               <Text>{this.state.magnetometer.z}</Text>
             </ListItem>
-            {Platform.OS === 'android' ? [
-              <ListItem key={0} itemDivider>
-                <Text>Air pressure</Text>
-              </ListItem>,
-              <ListItem key={1} style={styles.listItem}>
-                <Text>pressure</Text>
-                <Text>{this.state.barometer.pressure}</Text>
-              </ListItem>
-            ] : null}
+            <ListItem itemDivider>
+              <Text>Air pressure</Text>
+            </ListItem>
+            <ListItem style={styles.listItem}>
+              <Text>pressure</Text>
+              <Text>{this.state.barometer.pressure}</Text>
+            </ListItem>
           </List>
         </Content>
       </Container>
