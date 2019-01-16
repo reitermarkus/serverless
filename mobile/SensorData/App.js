@@ -130,7 +130,7 @@ export default class App extends Component {
   render() {
     return (
       <Container>
-        <Header noShadow androidStatusBarColor={styles.header.backgroundColor} style={styles.header}>
+        <Header noShadow androidStatusBarColor={styles.header.backgroundColor} iosBarStyle='light-content' style={styles.header}>
           <RnText style={styles.headerText}>Sensor Data</RnText>
         </Header>
         <Content>
