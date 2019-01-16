@@ -13,8 +13,7 @@ import { styles } from './styles/styles'
 
 import { CpuInfo, SensorService } from './native'
 
-type Props = {};
-export default class App extends Component<Props> {
+export default class App extends Component {
   constructor(props) {
     super(props)
 
@@ -67,14 +66,16 @@ export default class App extends Component<Props> {
       })
     )
 
-    barometer.subscribe(({ pressure }) =>
-      this.setState({
-        barometer: {
-          pressure: round(pressure, 5) || 0,
-          timestamp: Date.now()
-        }
-      })
-    )
+    if (Platform.OS === 'android') {
+      barometer.subscribe(({ pressure }) =>
+        this.setState({
+          barometer: {
+            pressure: round(pressure, 5) || 0,
+            timestamp: Date.now()
+          }
+        })
+      )
+    }
 
     if (Platform.OS === 'android') {
       CpuInfo.getCpuCores(cores =>
@@ -212,13 +213,15 @@ export default class App extends Component<Props> {
               <Text>z</Text>
               <Text>{this.state.magnetometer.z}</Text>
             </ListItem>
-            <ListItem itemDivider>
-              <Text>Air pressure</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>pressure</Text>
-              <Text>{this.state.barometer.pressure}</Text>
-            </ListItem>
+            {Platform.OS === 'android' ? [
+              <ListItem itemDivider>
+                <Text>Air pressure</Text>
+              </ListItem>,
+              <ListItem style={styles.listItem}>
+                <Text>pressure</Text>
+                <Text>{this.state.barometer.pressure}</Text>
+              </ListItem>
+            ] : null}
           </List>
         </Content>
       </Container>
