@@ -153,7 +153,7 @@ export default class App extends Component {
               <Text>{DeviceInfo.getSystemVersion()}</Text>
             </ListItem>
             {Platform.OS === 'android' ? (
-              <React.Fragment>
+              <>
                 <ListItem itemDivider>
                   <Text>CPU</Text>
                 </ListItem>
@@ -167,7 +167,7 @@ export default class App extends Component {
                     <Text style={{textAlign: 'right'}}>{value[1]}</Text>
                   </ListItem>
                 )}
-              </React.Fragment>
+              </>
             ): null}
             <ListItem itemDivider>
               <Text>Gyroscope</Text>
