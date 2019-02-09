@@ -101,7 +101,7 @@ export default class App extends Component {
           const response = await fetch('http://10.0.0.5:4000/sensor', {
             method: 'POST',
             headers: {
-              Accept: 'application/json',
+              'Accept': 'application/json',
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
