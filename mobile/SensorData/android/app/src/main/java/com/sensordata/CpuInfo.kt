@@ -11,6 +11,8 @@ import com.facebook.react.bridge.WritableNativeMap;
 import java.io.*
 import java.util.*
 
+import org.json.JSONObject
+
 class CpuInfo(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
   companion object {
     public fun getCores() = Runtime.getRuntime().availableProcessors()
@@ -28,6 +30,21 @@ class CpuInfo(reactContext: ReactApplicationContext) : ReactContextBaseJavaModul
       }
 
       return frequency
+    }
+
+    public fun asJson(): JSONObject {
+      val cpu = JSONObject()
+      val frequency = JSONObject()
+      val numbersOfCores = CpuInfo.getCores()
+
+      for (i in 0 until numbersOfCores) {
+        frequency.put("Core $i", CpuInfo.getCurrentFrequency(i))
+      }
+
+      cpu.put("cores", numbersOfCores)
+      cpu.put("frequency", frequency)
+
+      return cpu
     }
   }
 

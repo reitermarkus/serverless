@@ -55,42 +55,8 @@ class SensorService:Service() {
       override fun run() {
         val jsonBody = JSONObject()
 
-        val cpu = JSONObject()
-        val frequency = JSONObject()
-        val numbersOfCores = CpuInfo.getCores()
-
-        for (i in 0 until numbersOfCores) {
-          frequency.put("Core $i", CpuInfo.getCurrentFrequency(i))
-        }
-
-        cpu.put("cores", numbersOfCores)
-        cpu.put("frequency", frequency)
-
-        jsonBody.put("cpu", cpu)
-
-        val sensorsJson = JSONObject()
-
-        sensors.sensorInfo.forEach { (key, value) ->
-          val splitted = value.split(" ")
-
-          if (splitted.size > 1) {
-            val obj = JSONObject()
-
-            for (sensorVal in splitted) {
-              val pair = sensorVal.split("=")
-
-              if (pair.size == 2) {
-                obj.put(pair[0], pair[1])
-              }
-            }
-
-            sensorsJson.put(key, obj)
-          } else {
-            sensorsJson.put(key, value)
-          }
-        }
-
-        jsonBody.put("sensors", sensorsJson)
+        jsonBody.put("cpu", CpuInfo.asJson())
+        jsonBody.put("sensors", sensors.asJson())
 
         NetworkTask.getInstance(getApplicationContext()).sendRequest(jsonBody)
 

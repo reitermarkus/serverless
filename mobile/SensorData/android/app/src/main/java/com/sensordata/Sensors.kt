@@ -5,6 +5,8 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 
+import org.json.JSONObject
+
 class Sensors(private val manager: SensorManager) : SensorEventListener {
   companion object {
     private var _sensorData: HashMap<String, String> = HashMap()
@@ -23,6 +25,32 @@ class Sensors(private val manager: SensorManager) : SensorEventListener {
     get() = _sensorData
 
   public fun getSensors() : List<Sensor> = manager.getSensorList(Sensor.TYPE_ALL)
+
+  public fun asJson(): JSONObject {
+    val sensorsJson = JSONObject()
+
+    _sensorData.forEach { (key, value) ->
+      val splitted = value.split(" ")
+
+      if (splitted.size > 1) {
+        val obj = JSONObject()
+
+        for (sensorVal in splitted) {
+          val pair = sensorVal.split("=")
+
+          if (pair.size == 2) {
+            obj.put(pair[0], pair[1])
+          }
+        }
+
+        sensorsJson.put(key, obj)
+      } else {
+        sensorsJson.put(key, value)
+      }
+    }
+
+    return sensorsJson
+  }
 
   public fun parseSensorInfo(event: SensorEvent) {
     val type = event.sensor.type
