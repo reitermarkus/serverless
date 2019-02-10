@@ -222,7 +222,7 @@ services:
       - functions
 
   kafka-topics-ui:
-    image: landoop/kafka-topics-ui:0.9.3
+    image: landoop/kafka-topics-ui:0.9.4
     environment:
       - KAFKA_REST_PROXY_URL=http://kafka-rest:8082
       - KAFKA_REST_BOOTSTRAP_SERVERS=PLAINTEXT://kafka:9092
