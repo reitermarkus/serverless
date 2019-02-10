@@ -199,10 +199,7 @@ fn main() -> Result<(), Box<Error>> {
 
   println!("Deploying stack…");
 
-  docker.stack_deploy_with_compose_file("func", "./faas/deploy.yml", None).unwrap()
-    .for_each(|line| {
-      println!("{}", line.unwrap());
-    });
+  docker.stack_deploy_with_compose_file("func", "./faas/deploy.yml", None).compat()?;
 
   Ok(())
 }
