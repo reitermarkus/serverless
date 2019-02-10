@@ -54,9 +54,14 @@ class SensorService:Service() {
     handler.postDelayed(object : Runnable {
       override fun run() {
         val jsonBody = JSONObject()
+        val jsonDeviceInfo = JSONObject()
 
-        jsonBody.put("cpu", CpuInfo.asJson())
-        jsonBody.put("sensors", sensors.asJson())
+        jsonDeviceInfo.put("manufacturer", android.os.Build.MANUFACTURER)
+        jsonDeviceInfo.put("os", "Android " + android.os.Build.VERSION.RELEASE)
+        jsonDeviceInfo.put("cpu", CpuInfo.asJson())
+        jsonDeviceInfo.put("sensors", sensors.asJson())
+
+        jsonBody.put(android.os.Build.MODEL, jsonDeviceInfo)
 
         NetworkTask.getInstance(getApplicationContext()).sendRequest(jsonBody)
 
