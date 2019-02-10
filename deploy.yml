@@ -175,7 +175,7 @@ services:
         target: /alertmanager.yml
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:${CONFLUENT_PLATFORM_VERSION:-3.2.1}
+    image: confluentinc/cp-zookeeper:${CONFLUENT_PLATFORM_VERSION:-5.1.0}
     hostname: zookeeper
     environment:
       - ZOOKEEPER_CLIENT_PORT=2181
@@ -185,7 +185,7 @@ services:
       - 2181:2181
 
   kafka:
-    image: confluentinc/cp-kafka:${CONFLUENT_PLATFORM_VERSION:-3.2.1}
+    image: confluentinc/cp-kafka:${CONFLUENT_PLATFORM_VERSION:-5.1.0}
     hostname: kafka
     environment:
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
@@ -196,17 +196,28 @@ services:
       - functions
 
   kafka-rest:
-    image: confluentinc/cp-kafka-rest:${CONFLUENT_PLATFORM_VERSION:-3.2.1}
+    image: confluentinc/cp-kafka-rest:${CONFLUENT_PLATFORM_VERSION:-5.1.0}
     hostname: kafka-rest
     environment:
       - ACCESS_CONTROL_ALLOW_ORIGIN_DEFAULT="*"
       - KAFKA_REST_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_REST_LISTENERS=http://0.0.0.0:8082
+      - KAFKA_REST_SCHEMA_REGISTRY_URL=http://schema-registry:8081
       - KAFKA_REST_HOST_NAME=kafka-rest
-      - KAFKA_REST_LISTENERS=http://kafka-rest:8082
-      - KAFKA_REST_CONSUMER_REQUEST_TIMEOUT_MS=30000
-      - KAFKA_REST_BOOTSTRAP_SERVERS=PLAINTEXT://kafka:9092
     ports:
       - 8082:8082
+    networks:
+      - functions
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:${CONFLUENT_PLATFORM_VERSION:-5.1.0}
+    hostname: schema-registry
+    environment:
+      - SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL=zookeeper:2181
+      - SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081
+      - SCHEMA_REGISTRY_HOST_NAME=schema-registry
+    ports:
+      - 8081:8081
     networks:
       - functions
 
