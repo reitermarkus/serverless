@@ -71,7 +71,6 @@ class SensorService:Service() {
 
         jsonBody.put("records", recordsArray)
 
-        Log.e("body", jsonBody.toString())
         NetworkTask.getInstance(getApplicationContext()).sendRequest(jsonBody)
 
         handler.postDelayed(this, 15000)

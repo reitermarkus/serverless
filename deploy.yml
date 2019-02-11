@@ -1,9 +1,9 @@
 version: "3.3"
 services:
   gateway:
+    image: openfaas/gateway:0.11.0
     ports:
       - 8080:8080
-    image: openfaas/gateway:0.9.7
     networks:
       - functions
     environment:
@@ -39,9 +39,9 @@ services:
 
   # Docker Swarm provider
   faas-swarm:
+    image:  openfaas/faas-swarm:0.6.1
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-    image:  openfaas/faas-swarm:0.4.4
     networks:
       - functions
     environment:
@@ -90,7 +90,7 @@ services:
           - 'node.platform.os == linux'
 
   queue-worker:
-    image: openfaas/queue-worker:0.5.4
+    image: openfaas/queue-worker:0.6.0
     networks:
       - functions
     environment:
@@ -156,10 +156,6 @@ services:
       - '--storage.path=/alertmanager'
     networks:
       - functions
-      # Uncomment the following port mapping if you wish to expose the Prometheus
-      # Alertmanager UI.
-      # ports:
-      #     - 9093:9093
     deploy:
       resources:
         limits:
