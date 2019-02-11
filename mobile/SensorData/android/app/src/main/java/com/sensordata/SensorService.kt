@@ -21,6 +21,7 @@ import android.content.Context;
 import android.hardware.SensorManager
 
 import org.json.JSONObject
+import org.json.JSONArray
 
 import com.sensorData.Sensors
 
@@ -54,6 +55,8 @@ class SensorService:Service() {
     handler.postDelayed(object : Runnable {
       override fun run() {
         val jsonBody = JSONObject()
+        val records = JSONObject()
+        val recordsArray = JSONArray();
         val jsonDeviceInfo = JSONObject()
 
         jsonDeviceInfo.put("manufacturer", android.os.Build.MANUFACTURER)
@@ -61,8 +64,14 @@ class SensorService:Service() {
         jsonDeviceInfo.put("cpu", CpuInfo.asJson())
         jsonDeviceInfo.put("sensors", sensors.asJson())
 
-        jsonBody.put(android.os.Build.MODEL, jsonDeviceInfo)
+        records.put("key", android.os.Build.MODEL)
+        records.put("value", jsonDeviceInfo)
 
+        recordsArray.put(records)
+
+        jsonBody.put("records", recordsArray)
+
+        Log.e("body", jsonBody.toString())
         NetworkTask.getInstance(getApplicationContext()).sendRequest(jsonBody)
 
         handler.postDelayed(this, 15000)

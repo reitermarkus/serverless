@@ -31,7 +31,7 @@ class NetworkTask()  {
   }
 
   fun sendRequest(jsonBody: JSONObject) {
-    val url = "http://10.0.0.5:4000/sensor"
+    val url = "http://10.0.0.198:8082/topics/mobile"
 
     val stringRequest = object : StringRequest(Request.Method.POST, url,
       Response.Listener<String> { response ->
@@ -44,7 +44,7 @@ class NetworkTask()  {
         }
       }
     ) {
-      override fun getBodyContentType() = "application/json"
+      override fun getBodyContentType() = "application/vnd.kafka.json.v2+json"
       override fun getBody(): ByteArray = jsonBody.toString().toByteArray()
     }
 
