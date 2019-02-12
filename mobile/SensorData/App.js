@@ -6,10 +6,10 @@
 import React, {Component} from 'react'
 import { Text as RnText, Platform, ScrollView, TextInput } from 'react-native'
 import { setUpdateIntervalForType, accelerometer, SensorTypes , gyroscope, magnetometer, barometer } from 'react-native-sensors'
-import { Container, Header, Content, List, ListItem, Text, Icon, View, Footer, FooterTab, Button } from 'native-base'
+import { StyleProvider, Container, Header, Content, Form, Item, Input, List, ListItem, Text, Title, Left, Right, Body, Icon, View, Footer, FooterTab, Button, getTheme } from 'native-base'
 import DeviceInfo from 'react-native-device-info'
 
-import { styles } from './styles/styles'
+import theme from './styles/variables';
 
 import { CpuInfo, SensorService } from './native'
 
@@ -25,15 +25,15 @@ export default class App extends Component {
       cores: 0,
       coresInfo: {},
       footerTab: 0,
-      ip: 'ip'
+      ip: null,
     }
 
     const round = (x, n) => Math.round(x * Math.pow(10, n)) / Math.pow(10, n)
 
-    setUpdateIntervalForType(SensorTypes.accelerometer, 100)
-    setUpdateIntervalForType(SensorTypes.gyroscope, 100)
-    setUpdateIntervalForType(SensorTypes.barometer, 100)
-    setUpdateIntervalForType(SensorTypes.magnetometer, 100)
+    setUpdateIntervalForType(SensorTypes.accelerometer, 1000)
+    setUpdateIntervalForType(SensorTypes.gyroscope, 1000)
+    setUpdateIntervalForType(SensorTypes.barometer, 1000)
+    setUpdateIntervalForType(SensorTypes.magnetometer, 1000)
 
     accelerometer.subscribe(({ x, y, z, timestamp }) =>
       this.setState({
@@ -97,15 +97,10 @@ export default class App extends Component {
   }
 
   async componentDidMount() {
-    setTimeout(() => {
-      this.setState({ page: 1, scrollWithoutAnimation: false })
-      this.setState({ page: 0, scrollWithoutAnimation: false })
-    }, 1)
-
     if (Platform.OS !== 'android') {
       this.timer = setInterval(async () => {
         try {
-          const response = await fetch('http://10.0.0.5:4000/sensor', {
+          const response = await fetch('http://httpbin.org/anything', {
             method: 'POST',
             headers: {
               'Accept': 'application/json',
@@ -139,35 +134,59 @@ export default class App extends Component {
           <ListItem itemDivider>
             <Text>Device Info</Text>
           </ListItem>
-          <ListItem style={styles.listItem}>
-            <Text>Manufacturer</Text>
-            <Text>{DeviceInfo.getBrand()}</Text>
+          <ListItem>
+            <Left>
+              <Text>Manufacturer</Text>
+            </Left>
+            <Right>
+              <Text>{DeviceInfo.getBrand()}</Text>
+            </Right>
           </ListItem>
-          <ListItem style={styles.listItem}>
-            <Text>Model</Text>
-            <Text>{DeviceInfo.getModel()}</Text>
+          <ListItem>
+            <Left>
+              <Text>Model</Text>
+            </Left>
+            <Right>
+              <Text>{DeviceInfo.getModel()}</Text>
+            </Right>
           </ListItem>
-          <ListItem style={styles.listItem}>
-            <Text>OS</Text>
-            <Text>{DeviceInfo.getSystemName()}</Text>
+          <ListItem>
+            <Left>
+              <Text>OS</Text>
+            </Left>
+            <Right>
+              <Text>{DeviceInfo.getSystemName()}</Text>
+            </Right>
           </ListItem>
-          <ListItem style={styles.listItem}>
-            <Text>OS version</Text>
-            <Text>{DeviceInfo.getSystemVersion()}</Text>
+          <ListItem>
+            <Left>
+              <Text>OS version</Text>
+            </Left>
+            <Right>
+              <Text>{DeviceInfo.getSystemVersion()}</Text>
+            </Right>
           </ListItem>
           {Platform.OS === 'android' ? (
             <>
               <ListItem itemDivider>
                 <Text>CPU</Text>
               </ListItem>
-              <ListItem style={styles.listItem}>
-                <Text>cores</Text>
-                <Text>{this.state.cores}</Text>
+              <ListItem>
+                <Left>
+                  <Text>cores</Text>
+                </Left>
+                <Right>
+                  <Text>{this.state.cores}</Text>
+                </Right>
               </ListItem>
               {Object.entries(this.state.coresInfo).map(([key, value]) =>
-                <ListItem key={key} style={styles.listItem}>
-                  <Text>{value[0]}</Text>
-                  <Text style={{textAlign: 'right'}}>{value[1]}</Text>
+                <ListItem key={key}>
+                  <Left>
+                    <Text>{value[0]}</Text>
+                  </Left>
+                  <Right>
+                    <Text style={{textAlign: 'right'}}>{value[1]}</Text>
+                  </Right>
                 </ListItem>
               )}
             </>
@@ -175,54 +194,94 @@ export default class App extends Component {
           <ListItem itemDivider>
             <Text>Gyroscope</Text>
           </ListItem>
-          <ListItem style={styles.listItem}>
-            <Text>x</Text>
-            <Text>{this.state.gyroscope.x}</Text>
+          <ListItem>
+            <Left>
+              <Text>X</Text>
+            </Left>
+            <Right>
+              <Text>{this.state.gyroscope.x}</Text>
+            </Right>
           </ListItem>
-          <ListItem style={styles.listItem}>
-            <Text>y</Text>
-            <Text>{this.state.gyroscope.y}</Text>
+          <ListItem>
+            <Left>
+              <Text>Y</Text>
+            </Left>
+            <Right>
+              <Text>{this.state.gyroscope.y}</Text>
+            </Right>
           </ListItem>
-          <ListItem style={styles.listItem}>
-            <Text>z</Text>
-            <Text>{this.state.gyroscope.z}</Text>
+          <ListItem>
+            <Left>
+              <Text>Z</Text>
+            </Left>
+            <Right>
+              <Text>{this.state.gyroscope.z}</Text>
+            </Right>
           </ListItem>
           <ListItem itemDivider>
             <Text>Accelerometer</Text>
           </ListItem>
-          <ListItem style={styles.listItem}>
-            <Text>x</Text>
-            <Text>{this.state.accelerometer.x}</Text>
+          <ListItem>
+            <Left>
+              <Text>X</Text>
+            </Left>
+            <Right>
+              <Text>{this.state.accelerometer.x}</Text>
+            </Right>
           </ListItem>
-          <ListItem style={styles.listItem}>
-            <Text>y</Text>
-            <Text>{this.state.accelerometer.y}</Text>
+          <ListItem>
+            <Left>
+              <Text>Y</Text>
+            </Left>
+            <Right>
+              <Text>{this.state.accelerometer.y}</Text>
+            </Right>
           </ListItem>
-          <ListItem style={styles.listItem}>
-            <Text>z</Text>
-            <Text>{this.state.accelerometer.z}</Text>
+          <ListItem>
+            <Left>
+              <Text>Z</Text>
+            </Left>
+            <Right>
+              <Text>{this.state.accelerometer.z}</Text>
+            </Right>
           </ListItem>
           <ListItem itemDivider>
             <Text>Magnetometer</Text>
           </ListItem>
-          <ListItem style={styles.listItem}>
-            <Text>x</Text>
-            <Text>{this.state.magnetometer.x}</Text>
+          <ListItem>
+            <Left>
+              <Text>X</Text>
+            </Left>
+            <Right>
+              <Text>{this.state.magnetometer.x}</Text>
+            </Right>
           </ListItem>
-          <ListItem style={styles.listItem}>
-            <Text>y</Text>
-            <Text>{this.state.magnetometer.y}</Text>
+          <ListItem>
+            <Left>
+              <Text>Y</Text>
+            </Left>
+            <Right>
+              <Text>{this.state.magnetometer.y}</Text>
+            </Right>
           </ListItem>
-          <ListItem style={styles.listItem}>
-            <Text>z</Text>
-            <Text>{this.state.magnetometer.z}</Text>
+          <ListItem>
+            <Left>
+              <Text>Z</Text>
+            </Left>
+            <Right>
+              <Text>{this.state.magnetometer.z}</Text>
+            </Right>
           </ListItem>
           <ListItem itemDivider>
             <Text>Air pressure</Text>
           </ListItem>
-          <ListItem style={styles.listItem}>
-            <Text>pressure</Text>
-            <Text>{this.state.barometer.pressure}</Text>
+          <ListItem>
+            <Left>
+              <Text>pressure</Text>
+            </Left>
+            <Right>
+              <Text>{this.state.barometer.pressure}</Text>
+            </Right>
           </ListItem>
         </List>
       </ScrollView>
@@ -230,12 +289,17 @@ export default class App extends Component {
 
     const settingsPage = () => (
       <View>
-        <TextInput
-          style={styles.textInput}
-          onChangeText={(text) => this.setState({ip: text})}
-          value={this.state.ip}
-          placeholder="Set Kafka endpoint."
-        />
+        <Form>
+          <Item>
+            <Icon type='FontAwesome' name='server'/>
+            <Input
+              placeholder="Kafka REST URL"
+              value={this.state.ip}
+              onChangeText={(text) => this.setState({ip: text})}
+              keyboardType={Platform.OS == 'ios' ? 'url' : 'default'}
+            />
+          </Item>
+        </Form>
       </View>
     )
 
@@ -257,26 +321,30 @@ export default class App extends Component {
     }
 
     return (
-      <Container>
-        <Header hasTabs noShadow androidStatusBarColor={styles.header.backgroundColor} iosBarStyle='light-content' style={styles.header}>
-          <RnText style={styles.headerText}>Sensor Data</RnText>
-        </Header>
-        <Content>
-          {renderTab(this.state.footerTab)}
-        </Content>
-        <Footer>
-          <FooterTab style={{backgroundColor: styles.header.backgroundColor}}>
-            <Button vertical active={this.state.footerTab === 0} onPress={() => { changeTab(0) }} style={{backgroundColor: styles.header.backgroundColor}}>
-              <Text>Sensors</Text>
-              <Icon type="FontAwesome5" name="microchip" style={{fontSize: 20}} />
-            </Button>
-            <Button vertical active={this.state.footerTab === 1} onPress={() => { changeTab(1) }} style={{backgroundColor: styles.header.backgroundColor}}>
-              <Text>Settings</Text>
-              <Icon name="settings" style={{fontSize: 20}} />
-            </Button>
-          </FooterTab>
-        </Footer>
-      </Container>
+      <StyleProvider style={getTheme(theme)}>
+        <Container>
+          <Header>
+            <Body>
+              <Title>Sensor Data</Title>
+            </Body>
+          </Header>
+          <Content>
+            {renderTab(this.state.footerTab)}
+          </Content>
+          <Footer>
+            <FooterTab>
+              <Button vertical active={this.state.footerTab === 0} onPress={() => { changeTab(0) }}>
+                <Icon type="FontAwesome" name="microchip" />
+                <Text>Sensors</Text>
+              </Button>
+              <Button vertical active={this.state.footerTab === 1} onPress={() => { changeTab(1) }}>
+                <Icon name="settings" />
+                <Text>Settings</Text>
+              </Button>
+            </FooterTab>
+          </Footer>
+        </Container>
+      </StyleProvider>
     )
   }
 }
