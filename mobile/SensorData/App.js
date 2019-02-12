@@ -6,7 +6,7 @@
 import React, {Component} from 'react'
 import { Text as RnText, Platform, ScrollView, TextInput } from 'react-native'
 import { setUpdateIntervalForType, accelerometer, SensorTypes , gyroscope, magnetometer, barometer } from 'react-native-sensors'
-import { Container, Header, Content, List, ListItem, Text, Tab, Tabs, TabHeading, Item, Input, Icon, View } from 'native-base'
+import { Container, Header, Content, List, ListItem, Text, Tab, Tabs, TabHeading, Item, Input, Icon, View, ScrollableTab } from 'native-base'
 import DeviceInfo from 'react-native-device-info'
 
 import { styles } from './styles/styles'
@@ -139,7 +139,11 @@ export default class App extends Component {
         <Header hasTabs noShadow androidStatusBarColor={styles.header.backgroundColor} iosBarStyle='light-content' style={styles.header}>
           <RnText style={styles.headerText}>Sensor Data</RnText>
         </Header>
-        <Tabs page={this.state.page} scrollWithoutAnimation={this.state.scrollWithoutAnimation} tabContainerStyle={{elevation: 0}}>
+        <Tabs
+          page={this.state.page}
+          scrollWithoutAnimation={this.state.scrollWithoutAnimation}
+          tabContainerStyle={{elevation: 0}
+        }>
           <Tab heading={
             <TabHeading style={{backgroundColor: styles.header.backgroundColor}}>
               <Icon type="FontAwesome5" name="microchip" style={{fontSize: 20}} />
@@ -247,9 +251,10 @@ export default class App extends Component {
           }>
             <View>
               <TextInput
-                style={{height: 40, borderColor: 'gray', borderWidth: 1, margin: 5}}
+                style={styles.textInput}
                 onChangeText={(text) => this.setState({ip: text})}
                 value={this.state.ip}
+                placeholder="Set Kafka endpoint."
               />
             </View>
           </Tab>

@@ -11,5 +11,13 @@ export const styles = StyleSheet.create({
   },
   listItem: {
     justifyContent: 'space-between'
+  },
+  textInput: {
+    height: 50,
+    borderColor: '#DCDCDC',
+    borderWidth: 2,
+    fontSize: 20,
+    borderRadius: 8,
+    margin: 9
   }
 })
