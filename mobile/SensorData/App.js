@@ -6,7 +6,7 @@
 import React, {Component} from 'react'
 import { Text as RnText, Platform, ScrollView, TextInput } from 'react-native'
 import { setUpdateIntervalForType, accelerometer, SensorTypes , gyroscope, magnetometer, barometer } from 'react-native-sensors'
-import { Container, Header, Content, List, ListItem, Text, Tab, Tabs, TabHeading, Item, Input, Icon, View, ScrollableTab } from 'native-base'
+import { Container, Header, Content, List, ListItem, Text, Icon, View, Footer, FooterTab, Button } from 'native-base'
 import DeviceInfo from 'react-native-device-info'
 
 import { styles } from './styles/styles'
@@ -24,8 +24,7 @@ export default class App extends Component {
       barometer: {},
       cores: 0,
       coresInfo: {},
-      pageNumber: 0,
-      scrollWithoutAnimation: true,
+      footerTab: 0,
       ip: 'ip'
     }
 
@@ -134,131 +133,148 @@ export default class App extends Component {
   }
 
   render() {
+    const sensorPage = () => (
+      <ScrollView>
+        <List>
+          <ListItem itemDivider>
+            <Text>Device Info</Text>
+          </ListItem>
+          <ListItem style={styles.listItem}>
+            <Text>Manufacturer</Text>
+            <Text>{DeviceInfo.getBrand()}</Text>
+          </ListItem>
+          <ListItem style={styles.listItem}>
+            <Text>Model</Text>
+            <Text>{DeviceInfo.getModel()}</Text>
+          </ListItem>
+          <ListItem style={styles.listItem}>
+            <Text>OS</Text>
+            <Text>{DeviceInfo.getSystemName()}</Text>
+          </ListItem>
+          <ListItem style={styles.listItem}>
+            <Text>OS version</Text>
+            <Text>{DeviceInfo.getSystemVersion()}</Text>
+          </ListItem>
+          {Platform.OS === 'android' ? (
+            <>
+              <ListItem itemDivider>
+                <Text>CPU</Text>
+              </ListItem>
+              <ListItem style={styles.listItem}>
+                <Text>cores</Text>
+                <Text>{this.state.cores}</Text>
+              </ListItem>
+              {Object.entries(this.state.coresInfo).map(([key, value]) =>
+                <ListItem key={key} style={styles.listItem}>
+                  <Text>{value[0]}</Text>
+                  <Text style={{textAlign: 'right'}}>{value[1]}</Text>
+                </ListItem>
+              )}
+            </>
+          ): null}
+          <ListItem itemDivider>
+            <Text>Gyroscope</Text>
+          </ListItem>
+          <ListItem style={styles.listItem}>
+            <Text>x</Text>
+            <Text>{this.state.gyroscope.x}</Text>
+          </ListItem>
+          <ListItem style={styles.listItem}>
+            <Text>y</Text>
+            <Text>{this.state.gyroscope.y}</Text>
+          </ListItem>
+          <ListItem style={styles.listItem}>
+            <Text>z</Text>
+            <Text>{this.state.gyroscope.z}</Text>
+          </ListItem>
+          <ListItem itemDivider>
+            <Text>Accelerometer</Text>
+          </ListItem>
+          <ListItem style={styles.listItem}>
+            <Text>x</Text>
+            <Text>{this.state.accelerometer.x}</Text>
+          </ListItem>
+          <ListItem style={styles.listItem}>
+            <Text>y</Text>
+            <Text>{this.state.accelerometer.y}</Text>
+          </ListItem>
+          <ListItem style={styles.listItem}>
+            <Text>z</Text>
+            <Text>{this.state.accelerometer.z}</Text>
+          </ListItem>
+          <ListItem itemDivider>
+            <Text>Magnetometer</Text>
+          </ListItem>
+          <ListItem style={styles.listItem}>
+            <Text>x</Text>
+            <Text>{this.state.magnetometer.x}</Text>
+          </ListItem>
+          <ListItem style={styles.listItem}>
+            <Text>y</Text>
+            <Text>{this.state.magnetometer.y}</Text>
+          </ListItem>
+          <ListItem style={styles.listItem}>
+            <Text>z</Text>
+            <Text>{this.state.magnetometer.z}</Text>
+          </ListItem>
+          <ListItem itemDivider>
+            <Text>Air pressure</Text>
+          </ListItem>
+          <ListItem style={styles.listItem}>
+            <Text>pressure</Text>
+            <Text>{this.state.barometer.pressure}</Text>
+          </ListItem>
+        </List>
+      </ScrollView>
+    )
+
+    const settingsPage = () => (
+      <View>
+        <TextInput
+          style={{height: 40, borderColor: 'gray', borderWidth: 1, margin: 5}}
+          onChangeText={(text) => this.setState({ip: text})}
+          value={this.state.ip}
+        />
+      </View>
+    )
+
+    const renderTab = (number) => {
+      switch (number) {
+        case 0:
+          return sensorPage()
+        case 1:
+          return settingsPage()
+        default:
+          return sensorPage()
+      }
+    }
+
+    const changeTab = (number) => {
+      if (this.state.footerTab !== number) {
+        this.setState({ footerTab: number });
+      }
+    }
+
     return (
       <Container>
         <Header hasTabs noShadow androidStatusBarColor={styles.header.backgroundColor} iosBarStyle='light-content' style={styles.header}>
           <RnText style={styles.headerText}>Sensor Data</RnText>
         </Header>
-        <Tabs
-          page={this.state.page}
-          scrollWithoutAnimation={this.state.scrollWithoutAnimation}
-          tabContainerStyle={{elevation: 0}
-        }>
-          <Tab heading={
-            <TabHeading style={{backgroundColor: styles.header.backgroundColor}}>
-              <Icon type="FontAwesome5" name="microchip" style={{fontSize: 20}} />
+        <Content>
+          {renderTab(this.state.footerTab)}
+        </Content>
+        <Footer>
+          <FooterTab>
+            <Button vertical active={this.state.footerTab === 0} onPress={() => { changeTab(0) }}>
               <Text>Sensors</Text>
-            </TabHeading>
-           }>
-            <ScrollView>
-              <List>
-                <ListItem itemDivider>
-                  <Text>Device Info</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Text>Manufacturer</Text>
-                  <Text>{DeviceInfo.getBrand()}</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Text>Model</Text>
-                  <Text>{DeviceInfo.getModel()}</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Text>OS</Text>
-                  <Text>{DeviceInfo.getSystemName()}</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Text>OS version</Text>
-                  <Text>{DeviceInfo.getSystemVersion()}</Text>
-                </ListItem>
-                {Platform.OS === 'android' ? (
-                  <>
-                    <ListItem itemDivider>
-                      <Text>CPU</Text>
-                    </ListItem>
-                    <ListItem style={styles.listItem}>
-                      <Text>cores</Text>
-                      <Text>{this.state.cores}</Text>
-                    </ListItem>
-                    {Object.entries(this.state.coresInfo).map(([key, value]) =>
-                      <ListItem key={key} style={styles.listItem}>
-                        <Text>{value[0]}</Text>
-                        <Text style={{textAlign: 'right'}}>{value[1]}</Text>
-                      </ListItem>
-                    )}
-                  </>
-                ): null}
-                <ListItem itemDivider>
-                  <Text>Gyroscope</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Text>x</Text>
-                  <Text>{this.state.gyroscope.x}</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Text>y</Text>
-                  <Text>{this.state.gyroscope.y}</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Text>z</Text>
-                  <Text>{this.state.gyroscope.z}</Text>
-                </ListItem>
-                <ListItem itemDivider>
-                  <Text>Accelerometer</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Text>x</Text>
-                  <Text>{this.state.accelerometer.x}</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Text>y</Text>
-                  <Text>{this.state.accelerometer.y}</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Text>z</Text>
-                  <Text>{this.state.accelerometer.z}</Text>
-                </ListItem>
-                <ListItem itemDivider>
-                  <Text>Magnetometer</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Text>x</Text>
-                  <Text>{this.state.magnetometer.x}</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Text>y</Text>
-                  <Text>{this.state.magnetometer.y}</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Text>z</Text>
-                  <Text>{this.state.magnetometer.z}</Text>
-                </ListItem>
-                <ListItem itemDivider>
-                  <Text>Air pressure</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Text>pressure</Text>
-                  <Text>{this.state.barometer.pressure}</Text>
-                </ListItem>
-              </List>
-            </ScrollView>
-          </Tab>
-          <Tab heading={
-            <TabHeading style={{backgroundColor: styles.header.backgroundColor}}>
-              <Icon name="settings" style={{fontSize: 20}} />
+              <Icon type="FontAwesome5" name="microchip" style={{fontSize: 20}} />
+            </Button>
+            <Button vertical active={this.state.footerTab === 1} onPress={() => { changeTab(1) }}>
               <Text>Settings</Text>
-            </TabHeading>
-          }>
-            <View>
-              <TextInput
-                style={styles.textInput}
-                onChangeText={(text) => this.setState({ip: text})}
-                value={this.state.ip}
-                placeholder="Set Kafka endpoint."
-              />
-            </View>
-          </Tab>
-        </Tabs>
+              <Icon name="settings" style={{fontSize: 20}} />
+            </Button>
+          </FooterTab>
+        </Footer>
       </Container>
     )
   }
