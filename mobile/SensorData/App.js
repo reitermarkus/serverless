@@ -231,9 +231,10 @@ export default class App extends Component {
     const settingsPage = () => (
       <View>
         <TextInput
-          style={{height: 40, borderColor: 'gray', borderWidth: 1, margin: 5}}
+          style={styles.textInput}
           onChangeText={(text) => this.setState({ip: text})}
           value={this.state.ip}
+          placeholder="Set Kafka endpoint."
         />
       </View>
     )
@@ -264,12 +265,12 @@ export default class App extends Component {
           {renderTab(this.state.footerTab)}
         </Content>
         <Footer>
-          <FooterTab>
-            <Button vertical active={this.state.footerTab === 0} onPress={() => { changeTab(0) }}>
+          <FooterTab style={{backgroundColor: styles.header.backgroundColor}}>
+            <Button vertical active={this.state.footerTab === 0} onPress={() => { changeTab(0) }} style={{backgroundColor: styles.header.backgroundColor}}>
               <Text>Sensors</Text>
               <Icon type="FontAwesome5" name="microchip" style={{fontSize: 20}} />
             </Button>
-            <Button vertical active={this.state.footerTab === 1} onPress={() => { changeTab(1) }}>
+            <Button vertical active={this.state.footerTab === 1} onPress={() => { changeTab(1) }} style={{backgroundColor: styles.header.backgroundColor}}>
               <Text>Settings</Text>
               <Icon name="settings" style={{fontSize: 20}} />
             </Button>
