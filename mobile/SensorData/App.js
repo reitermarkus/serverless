@@ -4,9 +4,9 @@
  */
 
 import React, {Component} from 'react'
-import { Text as RnText, Platform } from 'react-native'
+import { Text as RnText, Platform, ScrollView, TextInput } from 'react-native'
 import { setUpdateIntervalForType, accelerometer, SensorTypes , gyroscope, magnetometer, barometer } from 'react-native-sensors'
-import { Container, Header, Content, List, ListItem, Text } from 'native-base'
+import { Container, Header, Content, List, ListItem, Text, Tab, Tabs, TabHeading, Item, Input, Icon, View } from 'native-base'
 import DeviceInfo from 'react-native-device-info'
 
 import { styles } from './styles/styles'
@@ -23,7 +23,10 @@ export default class App extends Component {
       magnetometer: {},
       barometer: {},
       cores: 0,
-      coresInfo: {}
+      coresInfo: {},
+      pageNumber: 0,
+      scrollWithoutAnimation: true,
+      ip: 'ip'
     }
 
     const round = (x, n) => Math.round(x * Math.pow(10, n)) / Math.pow(10, n)
@@ -95,6 +98,11 @@ export default class App extends Component {
   }
 
   async componentDidMount() {
+    setTimeout(() => {
+      this.setState({ page: 1, scrollWithoutAnimation: false })
+      this.setState({ page: 0, scrollWithoutAnimation: false })
+    }, 1)
+
     if (Platform.OS !== 'android') {
       this.timer = setInterval(async () => {
         try {
@@ -128,101 +136,124 @@ export default class App extends Component {
   render() {
     return (
       <Container>
-        <Header noShadow androidStatusBarColor={styles.header.backgroundColor} iosBarStyle='light-content' style={styles.header}>
+        <Header hasTabs noShadow androidStatusBarColor={styles.header.backgroundColor} iosBarStyle='light-content' style={styles.header}>
           <RnText style={styles.headerText}>Sensor Data</RnText>
         </Header>
-        <Content>
-          <List>
-            <ListItem itemDivider>
-              <Text>Device Info</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>Manufacturer</Text>
-              <Text>{DeviceInfo.getBrand()}</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>Model</Text>
-              <Text>{DeviceInfo.getModel()}</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>OS</Text>
-              <Text>{DeviceInfo.getSystemName()}</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>OS version</Text>
-              <Text>{DeviceInfo.getSystemVersion()}</Text>
-            </ListItem>
-            {Platform.OS === 'android' ? (
-              <>
+        <Tabs page={this.state.page} scrollWithoutAnimation={this.state.scrollWithoutAnimation} tabContainerStyle={{elevation: 0}}>
+          <Tab heading={
+            <TabHeading style={{backgroundColor: styles.header.backgroundColor}}>
+              <Icon type="FontAwesome5" name="microchip" style={{fontSize: 20}} />
+              <Text>Sensors</Text>
+            </TabHeading>
+           }>
+            <ScrollView>
+              <List>
                 <ListItem itemDivider>
-                  <Text>CPU</Text>
+                  <Text>Device Info</Text>
                 </ListItem>
                 <ListItem style={styles.listItem}>
-                  <Text>cores</Text>
-                  <Text>{this.state.cores}</Text>
+                  <Text>Manufacturer</Text>
+                  <Text>{DeviceInfo.getBrand()}</Text>
                 </ListItem>
-                {Object.entries(this.state.coresInfo).map(([key, value]) =>
-                  <ListItem key={key} style={styles.listItem}>
-                    <Text>{value[0]}</Text>
-                    <Text style={{textAlign: 'right'}}>{value[1]}</Text>
-                  </ListItem>
-                )}
-              </>
-            ): null}
-            <ListItem itemDivider>
-              <Text>Gyroscope</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>x</Text>
-              <Text>{this.state.gyroscope.x}</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>y</Text>
-              <Text>{this.state.gyroscope.y}</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>z</Text>
-              <Text>{this.state.gyroscope.z}</Text>
-            </ListItem>
-            <ListItem itemDivider>
-              <Text>Accelerometer</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>x</Text>
-              <Text>{this.state.accelerometer.x}</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>y</Text>
-              <Text>{this.state.accelerometer.y}</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>z</Text>
-              <Text>{this.state.accelerometer.z}</Text>
-            </ListItem>
-            <ListItem itemDivider>
-              <Text>Magnetometer</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>x</Text>
-              <Text>{this.state.magnetometer.x}</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>y</Text>
-              <Text>{this.state.magnetometer.y}</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>z</Text>
-              <Text>{this.state.magnetometer.z}</Text>
-            </ListItem>
-            <ListItem itemDivider>
-              <Text>Air pressure</Text>
-            </ListItem>
-            <ListItem style={styles.listItem}>
-              <Text>pressure</Text>
-              <Text>{this.state.barometer.pressure}</Text>
-            </ListItem>
-          </List>
-        </Content>
+                <ListItem style={styles.listItem}>
+                  <Text>Model</Text>
+                  <Text>{DeviceInfo.getModel()}</Text>
+                </ListItem>
+                <ListItem style={styles.listItem}>
+                  <Text>OS</Text>
+                  <Text>{DeviceInfo.getSystemName()}</Text>
+                </ListItem>
+                <ListItem style={styles.listItem}>
+                  <Text>OS version</Text>
+                  <Text>{DeviceInfo.getSystemVersion()}</Text>
+                </ListItem>
+                {Platform.OS === 'android' ? (
+                  <>
+                    <ListItem itemDivider>
+                      <Text>CPU</Text>
+                    </ListItem>
+                    <ListItem style={styles.listItem}>
+                      <Text>cores</Text>
+                      <Text>{this.state.cores}</Text>
+                    </ListItem>
+                    {Object.entries(this.state.coresInfo).map(([key, value]) =>
+                      <ListItem key={key} style={styles.listItem}>
+                        <Text>{value[0]}</Text>
+                        <Text style={{textAlign: 'right'}}>{value[1]}</Text>
+                      </ListItem>
+                    )}
+                  </>
+                ): null}
+                <ListItem itemDivider>
+                  <Text>Gyroscope</Text>
+                </ListItem>
+                <ListItem style={styles.listItem}>
+                  <Text>x</Text>
+                  <Text>{this.state.gyroscope.x}</Text>
+                </ListItem>
+                <ListItem style={styles.listItem}>
+                  <Text>y</Text>
+                  <Text>{this.state.gyroscope.y}</Text>
+                </ListItem>
+                <ListItem style={styles.listItem}>
+                  <Text>z</Text>
+                  <Text>{this.state.gyroscope.z}</Text>
+                </ListItem>
+                <ListItem itemDivider>
+                  <Text>Accelerometer</Text>
+                </ListItem>
+                <ListItem style={styles.listItem}>
+                  <Text>x</Text>
+                  <Text>{this.state.accelerometer.x}</Text>
+                </ListItem>
+                <ListItem style={styles.listItem}>
+                  <Text>y</Text>
+                  <Text>{this.state.accelerometer.y}</Text>
+                </ListItem>
+                <ListItem style={styles.listItem}>
+                  <Text>z</Text>
+                  <Text>{this.state.accelerometer.z}</Text>
+                </ListItem>
+                <ListItem itemDivider>
+                  <Text>Magnetometer</Text>
+                </ListItem>
+                <ListItem style={styles.listItem}>
+                  <Text>x</Text>
+                  <Text>{this.state.magnetometer.x}</Text>
+                </ListItem>
+                <ListItem style={styles.listItem}>
+                  <Text>y</Text>
+                  <Text>{this.state.magnetometer.y}</Text>
+                </ListItem>
+                <ListItem style={styles.listItem}>
+                  <Text>z</Text>
+                  <Text>{this.state.magnetometer.z}</Text>
+                </ListItem>
+                <ListItem itemDivider>
+                  <Text>Air pressure</Text>
+                </ListItem>
+                <ListItem style={styles.listItem}>
+                  <Text>pressure</Text>
+                  <Text>{this.state.barometer.pressure}</Text>
+                </ListItem>
+              </List>
+            </ScrollView>
+          </Tab>
+          <Tab heading={
+            <TabHeading style={{backgroundColor: styles.header.backgroundColor}}>
+              <Icon name="settings" style={{fontSize: 20}} />
+              <Text>Settings</Text>
+            </TabHeading>
+          }>
+            <View>
+              <TextInput
+                style={{height: 40, borderColor: 'gray', borderWidth: 1, margin: 5}}
+                onChangeText={(text) => this.setState({ip: text})}
+                value={this.state.ip}
+              />
+            </View>
+          </Tab>
+        </Tabs>
       </Container>
     )
   }
