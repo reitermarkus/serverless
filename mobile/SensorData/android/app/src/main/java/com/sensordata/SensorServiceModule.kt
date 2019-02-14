@@ -93,7 +93,7 @@ class SensorServiceModule(context: ReactApplicationContext): ReactContextBaseJav
 
         handler.postDelayed(this, 15000)
       }
-    }, 100)
+    }, 500)
   }
 
   private fun emitDeviceEvent(reactContext: ReactApplicationContext, eventName: String, eventData: String) =

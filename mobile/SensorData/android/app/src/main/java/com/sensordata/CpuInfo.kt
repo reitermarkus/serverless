@@ -1,19 +1,11 @@
 package com.sensordata;
 
-import com.facebook.react.bridge.NativeModule;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.WritableNativeMap;
-
 import java.io.*
 import java.util.*
 
 import org.json.JSONObject
 
-class CpuInfo(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+class CpuInfo() {
   companion object {
     public fun getCores() = Runtime.getRuntime().availableProcessors()
 
@@ -46,22 +38,5 @@ class CpuInfo(reactContext: ReactApplicationContext) : ReactContextBaseJavaModul
 
       return cpu
     }
-  }
-
-  override fun getName() = "CpuInfo"
-
-  @ReactMethod
-  fun getCpuCores(callback: Callback) = callback.invoke(getCores())
-
-  @ReactMethod
-  fun getCoresInfo(callback: Callback) {
-    var coresMap = WritableNativeMap()
-    val numbersOfCores = getCores()
-
-    for (i in 0 until numbersOfCores) {
-      coresMap.putString("Core $i", getCurrentFrequency(i))
-    }
-
-    callback.invoke(coresMap)
   }
 }
