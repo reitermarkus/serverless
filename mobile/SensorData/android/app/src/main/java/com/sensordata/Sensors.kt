@@ -58,72 +58,72 @@ class Sensors(private val manager: SensorManager) : SensorEventListener {
     when (type) {
       Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_LINEAR_ACCELERATION ->
         _sensorData.set(
-          "Acceleration",
+          "acceleration",
           "x=${event.values[0]}m/s² y=${event.values[1]}m/s² z=${event.values[2]}m/s²"
         )
       Sensor.TYPE_GRAVITY ->
         _sensorData.set(
-          "Gravity",
+          "gravity",
           "x=${event.values[0]}m/s² y=${event.values[1]}m/s² z=${event.values[2]}m/s²"
         )
       Sensor.TYPE_GYROSCOPE ->
         _sensorData.set(
-          "Gyroscope",
-          "x=${event.values[0]}rad/s Y=${ event.values[1]}rad/s z=${event.values[2]}rad/s"
+          "gyroscope",
+          "x=${event.values[0]}rad/s y=${ event.values[1]}rad/s z=${event.values[2]}rad/s"
         )
       Sensor.TYPE_ROTATION_VECTOR ->
         _sensorData.set(
-          "Rotation",
+          "rotation",
           "x=${event.values[0]} y=${event.values[1]} z=${event.values[2]}"
         )
       Sensor.TYPE_MAGNETIC_FIELD ->
         _sensorData.set(
-          "Rotation",
+          "magnetic",
           "x=${event.values[0]}μT y=${event.values[1]}μT z=${event.values[2]}μT"
         )
       Sensor.TYPE_ORIENTATION ->
         _sensorData.set(
-          "Rotation",
-          "Azimuth=${event.values[0]}° Pitch=${event.values[1]}° Roll=${event.values[2]}°"
+          "orientation",
+          "azimuth=${event.values[0]}° pitch=${event.values[1]}° roll=${event.values[2]}°"
         )
       Sensor.TYPE_PROXIMITY ->
         _sensorData.set(
-          "Proximity",
+          "proximity",
           "${event.values[0]}cm"
         )
       Sensor.TYPE_AMBIENT_TEMPERATURE ->
         _sensorData.set(
-          "Air temperature",
+          "air_temperature",
           "${event.values[0]}°C"
         )
       Sensor.TYPE_LIGHT ->
         _sensorData.set(
-          "Illuminance",
+          "illuminance",
           "${event.values[0]}lx"
         )
       Sensor.TYPE_PRESSURE ->
         _sensorData.set(
-          "Air pressure",
+          "air_pressure",
           "${event.values[0]}hPa"
         )
       Sensor.TYPE_RELATIVE_HUMIDITY ->
         _sensorData.set(
-          "Relative humidity",
+          "relative_humidity",
           "${event.values[0]}%"
         )
       Sensor.TYPE_GYROSCOPE_UNCALIBRATED ->
         _sensorData.set(
-          "Gyroscope uncalibrated",
+          "gyroscope_uncalibrated",
           "x=${event.values[0]}rad/s y=${event.values[1]}rad/s z=${event.values[2]}rad/s"
         )
       Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED ->
         _sensorData.set(
-          "Magnetics uncalibrated",
+          "magnetics_uncalibrated",
           "x=${event.values[0]}μT y=${event.values[1]}μT z=${event.values[2]}μT"
         )
       Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR ->
         _sensorData.set(
-          "Geomagnetic rotation",
+          "geomagnetic_rotation",
           "x=${event.values[0]} y=${event.values[1]} z=${event.values[2]}"
         )
     }

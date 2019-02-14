@@ -4,14 +4,14 @@
  */
 
 import React, {Component} from 'react'
-import { Text as RnText, Platform, ScrollView, TextInput } from 'react-native'
+import { Text as RnText, Platform, ScrollView, DeviceEventEmitter } from 'react-native'
 import { setUpdateIntervalForType, accelerometer, SensorTypes , gyroscope, magnetometer, barometer } from 'react-native-sensors'
 import { StyleProvider, Container, Header, Content, Form, Item, Input, List, ListItem, Text, Title, Left, Right, Body, Icon, View, Footer, FooterTab, Button, getTheme } from 'native-base'
 import DeviceInfo from 'react-native-device-info'
 
 import theme from './styles/variables';
 
-import { CpuInfo, SensorService } from './native'
+import { SensorService } from './native'
 
 export default class App extends Component {
   constructor(props) {
@@ -30,69 +30,131 @@ export default class App extends Component {
 
     const round = (x, n) => Math.round(x * Math.pow(10, n)) / Math.pow(10, n)
 
-    setUpdateIntervalForType(SensorTypes.accelerometer, 1000)
-    setUpdateIntervalForType(SensorTypes.gyroscope, 1000)
-    setUpdateIntervalForType(SensorTypes.barometer, 1000)
-    setUpdateIntervalForType(SensorTypes.magnetometer, 1000)
-
-    accelerometer.subscribe(({ x, y, z, timestamp }) =>
-      this.setState({
-        accelerometer: {
-          x: round(x, 5),
-          y: round(y, 5),
-          z: round(z, 5),
-          timestamp: timestamp
-        }
-      })
-    )
-
-    gyroscope.subscribe(({ x, y, z, timestamp }) =>
-      this.setState({
-        gyroscope: {
-          x: round(x, 5),
-          y: round(y, 5),
-          z: round(z, 5),
-          timestamp: timestamp
-        }
-      })
-    )
-
-    magnetometer.subscribe(({ x, y, z, timestamp }) =>
-      this.setState({
-        magnetometer: {
-          x: round(x, 5),
-          y: round(y, 5),
-          z: round(z, 5),
-          timestamp: timestamp
-        }
-      })
-    )
-
-    barometer.subscribe(({ pressure }) =>
-      this.setState({
-        barometer: {
-          pressure: round(pressure, 2) || 0,
-          timestamp: Date.now()
-        }
-      })
-    )
-
     if (Platform.OS === 'android') {
-      CpuInfo.getCpuCores(cores =>
-        this.setState({
-          cores: cores
-        })
-      )
+      const formatOutput = (val, unit) => {
+        const rounded = round(+val.substring(0, val.indexOf(unit)), 4)
+        return `${rounded} ${unit}`
+      }
 
-      CpuInfo.getCoresInfo(info =>
-        this.setState({
-          coresInfo: Object.entries(info).sort((a, b) => a[0] === b[0] ? 0 : a[0] > b[0] ? 1 : -1)
-        })
-      )
+      DeviceEventEmitter.addListener('sensors', data => {
+        const parsedSensors = JSON.parse(data)
+        const values = parsedSensors.records[0].value
+
+        if (values.cpu) {
+          const cpu = values.cpu
+
+          if (cpu.cores) {
+            this.setState({
+              cores: cpu.cores
+            })
+          }
+
+          if (cpu.frequency) {
+            this.setState({
+              coresInfo: Object.entries(cpu.frequency).sort((a, b) => a[0] === b[0] ? 0 : a[0] > b[0] ? 1 : -1)
+            })
+          }
+        }
+
+        if (values.sensors) {
+          const sensors = values.sensors
+
+          if (sensors.gyroscope) {
+            const gyro = sensors.gyroscope
+
+            this.setState({
+              gyroscope: {
+                x: formatOutput(gyro.x, 'rad/s'),
+                y: formatOutput(gyro.y, 'rad/s'),
+                z: formatOutput(gyro.z, 'rad/s')
+              }
+            })
+          }
+
+          if (sensors.acceleration) {
+            const acc = sensors.acceleration
+
+            this.setState({
+              accelerometer: {
+                x: formatOutput(acc.x, 'm/s²'),
+                y: formatOutput(acc.y, 'm/s²'),
+                z: formatOutput(acc.z, 'm/s²')
+              }
+            })
+          }
+
+          if (sensors.magnetic) {
+            const mag = sensors.magnetic
+
+            this.setState({
+              magnetometer: {
+                x: formatOutput(mag.x, 'μT'),
+                y: formatOutput(mag.y, 'μT'),
+                z: formatOutput(mag.z, 'μT')
+              }
+            })
+          }
+
+          if (sensors.air_pressure) {
+            this.setState({
+              barometer: {
+                pressure: formatOutput(sensors.air_pressure, 'hPa'),
+              }
+            })
+          }
+        }
+      })
 
       SensorService.startService()
         .then(success => console.log(`service: ${success}`))
         .catch(fail => `service: ${fail}`)
+    } else {
+      setUpdateIntervalForType(SensorTypes.accelerometer, 1000)
+      setUpdateIntervalForType(SensorTypes.gyroscope, 1000)
+      setUpdateIntervalForType(SensorTypes.barometer, 1000)
+      setUpdateIntervalForType(SensorTypes.magnetometer, 1000)
+
+      barometer.subscribe(({ pressure }) =>
+        this.setState({
+          barometer: {
+            pressure: round(pressure, 2) || 0,
+            timestamp: Date.now()
+          }
+        })
+      )
+
+      gyroscope.subscribe(({ x, y, z, timestamp }) =>
+        this.setState({
+          gyroscope: {
+            x: round(x, 5),
+            y: round(y, 5),
+            z: round(z, 5),
+            timestamp: timestamp
+          }
+        })
+      )
+
+      accelerometer.subscribe(({ x, y, z, timestamp }) =>
+        this.setState({
+          accelerometer: {
+            x: round(x, 5),
+            y: round(y, 5),
+            z: round(z, 5),
+            timestamp: timestamp
+          }
+        })
+      )
+
+      magnetometer.subscribe(({ x, y, z, timestamp }) =>
+        this.setState({
+          magnetometer: {
+            x: round(x, 5),
+            y: round(y, 5),
+            z: round(z, 5),
+            timestamp: timestamp
+          }
+        })
+      )
     }
   }
 

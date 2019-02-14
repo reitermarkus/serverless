@@ -13,6 +13,14 @@ import android.content.Intent
 import android.app.PendingIntent
 import android.graphics.BitmapFactory
 import com.sensordata.SensorService
+import android.content.Context;
+import android.hardware.SensorManager
+import android.os.Handler
+
+import org.json.JSONObject
+import org.json.JSONArray
+
+import com.sensorData.Sensors
 
 class SensorServiceModule(context: ReactApplicationContext): ReactContextBaseJavaModule(context) {
   override fun getName() = "SensorService"
@@ -26,6 +34,7 @@ class SensorServiceModule(context: ReactApplicationContext): ReactContextBaseJav
       intent.setClass(this.getReactApplicationContext(), SensorService::class.java)
       getReactApplicationContext().startService(intent)
       Log.d(REACT_CLASS, "startService, success")
+      networkLoop()
       promise.resolve(true)
     }
     catch (e: Exception) {
@@ -51,11 +60,47 @@ class SensorServiceModule(context: ReactApplicationContext): ReactContextBaseJav
     promise.resolve(true)
   }
 
+  private fun networkLoop() {
+    val handler = Handler()
+
+    val applicationContext = this.getReactApplicationContext()
+
+    val manager = applicationContext.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    val sensors = Sensors(manager)
+
+    handler.postDelayed(object : Runnable {
+      override fun run() {
+        val jsonBody = JSONObject()
+        val records = JSONObject()
+        val recordsArray = JSONArray();
+        val jsonDeviceInfo = JSONObject()
+
+        jsonDeviceInfo.put("manufacturer", android.os.Build.MANUFACTURER)
+        jsonDeviceInfo.put("os", "Android " + android.os.Build.VERSION.RELEASE)
+        jsonDeviceInfo.put("cpu", CpuInfo.asJson())
+        jsonDeviceInfo.put("sensors", sensors.asJson())
+
+        records.put("key", android.os.Build.MODEL)
+        records.put("value", jsonDeviceInfo)
+
+        recordsArray.put(records)
+
+        jsonBody.put("records", recordsArray)
+
+        NetworkTask.getInstance(applicationContext).sendRequest(jsonBody)
+
+        emitDeviceEvent(applicationContext, "sensors", jsonBody.toString())
+
+        handler.postDelayed(this, 15000)
+      }
+    }, 100)
+  }
+
+  private fun emitDeviceEvent(reactContext: ReactApplicationContext, eventName: String, eventData: String) =
+      reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java).emit(eventName, eventData)
+
   companion object {
     private val REACT_CLASS = "SensorService"
     private val FOREGROUND = "com.sensordata.SensorService"
-
-    private fun emitDeviceEvent(reactContext: ReactApplicationContext, eventName: String, eventData: WritableMap?) =
-      reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java).emit(eventName, eventData)
   }
 }
