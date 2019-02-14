@@ -6,10 +6,11 @@
 import React, {Component} from 'react'
 import { Text as RnText, Platform, ScrollView, DeviceEventEmitter } from 'react-native'
 import { setUpdateIntervalForType, accelerometer, SensorTypes , gyroscope, magnetometer, barometer } from 'react-native-sensors'
-import { StyleProvider, Container, Header, Content, Form, Item, Input, List, ListItem, Text, Title, Left, Right, Body, Icon, View, Footer, FooterTab, Button, getTheme } from 'native-base'
+import { StyleProvider, Container, Header, Content, Form, Item, Input, List, ListItem, Text, Title, Left, Right, Body, Icon, View, Footer, FooterTab, Button } from 'native-base'
 import DeviceInfo from 'react-native-device-info'
 
-import theme from './styles/variables';
+import getTheme from './native-base-theme/components'
+import platform from './native-base-theme/variables/platform'
 
 import { SensorService } from './native'
 
@@ -375,7 +376,7 @@ export default class App extends Component {
     }
 
     return (
-      <StyleProvider style={getTheme(theme)}>
+      <StyleProvider style={getTheme(platform)}>
         <Container>
           <Header>
             <Body>
