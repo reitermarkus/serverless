@@ -71,7 +71,7 @@ export default class App extends Component {
     barometer.subscribe(({ pressure }) =>
       this.setState({
         barometer: {
-          pressure: round(pressure, 5) || 0,
+          pressure: round(pressure, 2) || 0,
           timestamp: Date.now()
         }
       })
