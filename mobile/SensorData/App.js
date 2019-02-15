@@ -217,15 +217,7 @@ export default class App extends Component {
               <Text>OS</Text>
             </Left>
             <Right>
-              <Text>{DeviceInfo.getSystemName()}</Text>
-            </Right>
-          </ListItem>
-          <ListItem>
-            <Left>
-              <Text>OS version</Text>
-            </Left>
-            <Right>
-              <Text>{DeviceInfo.getSystemVersion()}</Text>
+              <Text>{DeviceInfo.getSystemName()} {DeviceInfo.getSystemVersion()}</Text>
             </Right>
           </ListItem>
           {Platform.OS === 'android' ? (
