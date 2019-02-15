@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import { Platform } from 'react-native'
 import { Form, Item, Input, Icon, View } from 'native-base'
 
 export default class SettingsPage extends Component {

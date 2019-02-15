@@ -5,15 +5,10 @@
 
 import React, {Component} from 'react'
 import { ScrollView, DeviceEventEmitter } from 'react-native'
-import { StyleProvider, Container, Header, Content, List, ListItem, Text, Title, Left, Right, Body, Icon, Footer, FooterTab, Button } from 'native-base'
+import { List, ListItem, Text, Left, Right } from 'native-base'
 import DeviceInfo from 'react-native-device-info'
 
-import getTheme from './native-base-theme/components'
-import platform from './native-base-theme/variables/platform'
-
 import { SensorService } from './native'
-
-import SettingsPage from './settingsPage'
 
 export default class AndroidView extends Component {
   constructor(props) {
@@ -25,8 +20,7 @@ export default class AndroidView extends Component {
       magnetometer: {},
       barometer: {},
       cores: 0,
-      coresInfo: {},
-      footerTab: 0
+      coresInfo: {}
     }
 
     const round = (x, n) => Math.round(x * Math.pow(10, n)) / Math.pow(10, n)
@@ -36,7 +30,7 @@ export default class AndroidView extends Component {
       return `${rounded} ${unit}`
     }
 
-    DeviceEventEmitter.addListener('sensors', data => {
+    this.deviceSubscription = DeviceEventEmitter.addListener('sensors', data => {
       const parsedSensors = JSON.parse(data)
       const values = parsedSensors.records[0].value
 
@@ -110,8 +104,12 @@ export default class AndroidView extends Component {
       .catch(fail => `service: ${fail}`)
   }
 
+  componentWillUnmount() {
+    this.deviceSubscription.remove()
+  }
+
   render() {
-    const sensorPage = () => (
+    return (
       <ScrollView>
         <List>
           <ListItem itemDivider>
@@ -256,50 +254,6 @@ export default class AndroidView extends Component {
           </ListItem>
         </List>
       </ScrollView>
-    )
-
-    const renderTab = (number) => {
-      switch (number) {
-        case 0:
-          return sensorPage()
-        case 1:
-          return <SettingsPage />
-        default:
-          return sensorPage()
-      }
-    }
-
-    const changeTab = (number) => {
-      if (this.state.footerTab !== number) {
-        this.setState({ footerTab: number });
-      }
-    }
-
-    return (
-      <StyleProvider style={getTheme(platform)}>
-        <Container>
-          <Header>
-            <Body>
-              <Title>Sensor Data</Title>
-            </Body>
-          </Header>
-          <Content>
-            {renderTab(this.state.footerTab)}
-          </Content>
-          <Footer>
-            <FooterTab>
-              <Button vertical active={this.state.footerTab === 0} onPress={() => changeTab(0) }>
-                <Icon type="FontAwesome" name="microchip" />
-                <Text>Sensors</Text>
-              </Button>
-              <Button vertical active={this.state.footerTab === 1} onPress={() => changeTab(1) }>
-                <Icon name="settings" />
-                <Text>Settings</Text>
-              </Button>
-            </FooterTab>
-          </Footer>
-        </Container>
-      </StyleProvider>
     )
   }
 }
