@@ -4,14 +4,16 @@
  */
 
 import React, {Component} from 'react'
-import { Text as RnText, Platform, ScrollView, DeviceEventEmitter } from 'react-native'
-import { StyleProvider, Container, Header, Content, Form, Item, Input, List, ListItem, Text, Title, Left, Right, Body, Icon, View, Footer, FooterTab, Button } from 'native-base'
+import { ScrollView, DeviceEventEmitter } from 'react-native'
+import { StyleProvider, Container, Header, Content, List, ListItem, Text, Title, Left, Right, Body, Icon, Footer, FooterTab, Button } from 'native-base'
 import DeviceInfo from 'react-native-device-info'
 
 import getTheme from './native-base-theme/components'
 import platform from './native-base-theme/variables/platform'
 
 import { SensorService } from './native'
+
+import SettingsPage from './settingsPage'
 
 export default class AndroidView extends Component {
   constructor(props) {
@@ -24,8 +26,7 @@ export default class AndroidView extends Component {
       barometer: {},
       cores: 0,
       coresInfo: {},
-      footerTab: 0,
-      ip: null,
+      footerTab: 0
     }
 
     const round = (x, n) => Math.round(x * Math.pow(10, n)) / Math.pow(10, n)
@@ -257,28 +258,12 @@ export default class AndroidView extends Component {
       </ScrollView>
     )
 
-    const settingsPage = () => (
-      <View>
-        <Form>
-          <Item>
-            <Icon type='FontAwesome' name='server'/>
-            <Input
-              placeholder="Kafka REST URL"
-              value={this.state.ip}
-              onChangeText={(text) => this.setState({ip: text})}
-              keyboardType={Platform.OS == 'ios' ? 'url' : 'default'}
-            />
-          </Item>
-        </Form>
-      </View>
-    )
-
     const renderTab = (number) => {
       switch (number) {
         case 0:
           return sensorPage()
         case 1:
-          return settingsPage()
+          return <SettingsPage />
         default:
           return sensorPage()
       }
@@ -303,11 +288,11 @@ export default class AndroidView extends Component {
           </Content>
           <Footer>
             <FooterTab>
-              <Button vertical active={this.state.footerTab === 0} onPress={() => { changeTab(0) }}>
+              <Button vertical active={this.state.footerTab === 0} onPress={() => changeTab(0) }>
                 <Icon type="FontAwesome" name="microchip" />
                 <Text>Sensors</Text>
               </Button>
-              <Button vertical active={this.state.footerTab === 1} onPress={() => { changeTab(1) }}>
+              <Button vertical active={this.state.footerTab === 1} onPress={() => changeTab(1) }>
                 <Icon name="settings" />
                 <Text>Settings</Text>
               </Button>
