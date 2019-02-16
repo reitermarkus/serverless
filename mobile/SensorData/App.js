@@ -8,10 +8,9 @@ import { Platform } from 'react-native'
 import { StyleProvider, Container, Header, Content, Text, Title, Body, Icon, Footer, FooterTab, Button } from 'native-base'
 
 import getTheme from './native-base-theme/components'
-import platform from './native-base-theme/variables/platform'
+import theme from './native-base-theme/variables/platform'
 
-import AndroidView from './androidView'
-import IosView from './iosView'
+const SensorPage = Platform.OS == 'ios' ? require('./iosView').default : require('./androidView').default
 import SettingsPage from './settingsPage'
 
 export default class App extends Component {
@@ -24,22 +23,14 @@ export default class App extends Component {
   }
 
   render() {
-    const sensorPage = () =>
-      <>
-        {Platform.OS === 'android' ?
-          <AndroidView /> :
-          <IosView />
-        }
-      </>
-
     const renderTab = (number) => {
       switch (number) {
         case 0:
-          return sensorPage()
+          return <SensorPage/>
         case 1:
-          return <SettingsPage />
+          return <SettingsPage/>
         default:
-          return sensorPage()
+          return <SensorPage/>
       }
     }
 
@@ -50,7 +41,7 @@ export default class App extends Component {
     }
 
     return (
-      <StyleProvider style={getTheme(platform)}>
+      <StyleProvider style={getTheme(theme)}>
         <Container>
           <Header>
             <Body>
