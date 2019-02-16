@@ -5,7 +5,7 @@
 
 import React, {Component} from 'react'
 import { ScrollView, DeviceEventEmitter } from 'react-native'
-import { List, ListItem, Text, Left, Right } from 'native-base'
+import { List, ListItem, Text, Left, Right, Spinner } from 'native-base'
 import DeviceInfo from 'react-native-device-info'
 
 import { SensorService } from './native'
@@ -20,7 +20,8 @@ export default class AndroidView extends Component {
       magnetometer: {},
       barometer: {},
       cores: 0,
-      coresInfo: {}
+      coresInfo: {},
+      isLoading: true
     }
 
     const round = (x, n) => Math.round(x * Math.pow(10, n)) / Math.pow(10, n)
@@ -31,6 +32,8 @@ export default class AndroidView extends Component {
     }
 
     this.deviceSubscription = DeviceEventEmitter.addListener('sensors', data => {
+      this.setState({isLoading: false})
+
       const parsedSensors = JSON.parse(data)
       const values = parsedSensors.records[0].value
 
@@ -142,116 +145,142 @@ export default class AndroidView extends Component {
           <ListItem itemDivider>
             <Text>CPU</Text>
           </ListItem>
-          <ListItem>
-            <Left>
-              <Text>cores</Text>
-            </Left>
-            <Right>
-              <Text>{this.state.cores}</Text>
-            </Right>
-          </ListItem>
-          {Object.entries(this.state.coresInfo).map(([key, value]) =>
-            <ListItem key={key}>
-              <Left>
-                <Text>{value[0]}</Text>
-              </Left>
-              <Right>
-                <Text style={{textAlign: 'right'}}>{value[1]}</Text>
-              </Right>
-            </ListItem>
-          )}
+            {this.state.isLoading ?
+              <Spinner /> : (
+                <>
+                  <ListItem>
+                    <Left>
+                      <Text>cores</Text>
+                    </Left>
+                    <Right>
+                      <Text>{this.state.cores}</Text>
+                    </Right>
+                  </ListItem>
+                  {Object.entries(this.state.coresInfo).map(([key, value]) =>
+                    <ListItem key={key}>
+                      <Left>
+                        <Text>{value[0]}</Text>
+                      </Left>
+                      <Right>
+                        <Text style={{textAlign: 'right'}}>{value[1]}</Text>
+                      </Right>
+                    </ListItem>
+                  )}
+                </>
+              )
+            }
           <ListItem itemDivider>
             <Text>Gyroscope</Text>
           </ListItem>
-          <ListItem>
-            <Left>
-              <Text>X</Text>
-            </Left>
-            <Right>
-              <Text>{this.state.gyroscope.x}</Text>
-            </Right>
-          </ListItem>
-          <ListItem>
-            <Left>
-              <Text>Y</Text>
-            </Left>
-            <Right>
-              <Text>{this.state.gyroscope.y}</Text>
-            </Right>
-          </ListItem>
-          <ListItem>
-            <Left>
-              <Text>Z</Text>
-            </Left>
-            <Right>
-              <Text>{this.state.gyroscope.z}</Text>
-            </Right>
-          </ListItem>
+          {this.state.isLoading ?
+            <Spinner /> : (
+              <>
+                <ListItem>
+                  <Left>
+                  <Text>X</Text>
+                  </Left>
+                  <Right>
+                    <Text>{this.state.gyroscope.x}</Text>
+                  </Right>
+                </ListItem>
+                <ListItem>
+                  <Left>
+                    <Text>Y</Text>
+                  </Left>
+                  <Right>
+                    <Text>{this.state.gyroscope.y}</Text>
+                  </Right>
+                </ListItem>
+                <ListItem>
+                  <Left>
+                    <Text>Z</Text>
+                  </Left>
+                  <Right>
+                    <Text>{this.state.gyroscope.z}</Text>
+                  </Right>
+                </ListItem>
+              </>
+            )}
           <ListItem itemDivider>
             <Text>Accelerometer</Text>
           </ListItem>
-          <ListItem>
-            <Left>
-              <Text>X</Text>
-            </Left>
-            <Right>
-              <Text>{this.state.accelerometer.x}</Text>
-            </Right>
-          </ListItem>
-          <ListItem>
-            <Left>
-              <Text>Y</Text>
-            </Left>
-            <Right>
-              <Text>{this.state.accelerometer.y}</Text>
-            </Right>
-          </ListItem>
-          <ListItem>
-            <Left>
-              <Text>Z</Text>
-            </Left>
-            <Right>
-              <Text>{this.state.accelerometer.z}</Text>
-            </Right>
-          </ListItem>
+          {this.state.isLoading ?
+            <Spinner /> : (
+              <>
+                <ListItem>
+                  <Left>
+                    <Text>X</Text>
+                  </Left>
+                  <Right>
+                    <Text>{this.state.accelerometer.x}</Text>
+                  </Right>
+                </ListItem>
+                <ListItem>
+                  <Left>
+                    <Text>Y</Text>
+                  </Left>
+                  <Right>
+                    <Text>{this.state.accelerometer.y}</Text>
+                  </Right>
+                </ListItem>
+                <ListItem>
+                  <Left>
+                    <Text>Z</Text>
+                  </Left>
+                  <Right>
+                    <Text>{this.state.accelerometer.z}</Text>
+                  </Right>
+                </ListItem>
+              </>
+            )}
           <ListItem itemDivider>
             <Text>Magnetometer</Text>
           </ListItem>
-          <ListItem>
-            <Left>
-              <Text>X</Text>
-            </Left>
-            <Right>
-              <Text>{this.state.magnetometer.x}</Text>
-            </Right>
-          </ListItem>
-          <ListItem>
-            <Left>
-              <Text>Y</Text>
-            </Left>
-            <Right>
-              <Text>{this.state.magnetometer.y}</Text>
-            </Right>
-          </ListItem>
-          <ListItem>
-            <Left>
-              <Text>Z</Text>
-            </Left>
-            <Right>
-              <Text>{this.state.magnetometer.z}</Text>
-            </Right>
-          </ListItem>
+          {this.state.isLoading ?
+            <Spinner /> : (
+              <>
+                <ListItem>
+                  <Left>
+                    <Text>X</Text>
+                  </Left>
+                  <Right>
+                    <Text>{this.state.magnetometer.x}</Text>
+                  </Right>
+                </ListItem>
+                <ListItem>
+                  <Left>
+                    <Text>Y</Text>
+                  </Left>
+                  <Right>
+                    <Text>{this.state.magnetometer.y}</Text>
+                  </Right>
+                </ListItem>
+                <ListItem>
+                  <Left>
+                    <Text>Z</Text>
+                  </Left>
+                  <Right>
+                    <Text>{this.state.magnetometer.z}</Text>
+                  </Right>
+                </ListItem>
+              </>
+            )}
           <ListItem itemDivider>
             <Text>Air pressure</Text>
           </ListItem>
-          <ListItem>
-            <Left>
-              <Text>pressure</Text>
-            </Left>
-            <Right>
-              <Text>{this.state.barometer.pressure}</Text>
-            </Right>
-          </ListItem>
+          {this.state.isLoading ?
+            <Spinner /> : (
+              <>
+                <ListItem>
+                  <Left>
+                    <Text>pressure</Text>
+                  </Left>
+                  <Right>
+                    <Text>{this.state.barometer.pressure}</Text>
+                  </Right>
+                </ListItem>
+              </>
+            )}
         </List>
       </ScrollView>
     )
