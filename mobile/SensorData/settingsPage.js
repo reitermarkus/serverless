@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import { Platform } from 'react-native'
-import { Form, Item, Input, Icon, View } from 'native-base'
+import { Platform, AsyncStorage } from 'react-native'
+import { Form, Item, Input, Icon, View, Button, Text } from 'native-base'
 
 export default class SettingsPage extends Component {
   constructor(props) {
@@ -9,12 +9,31 @@ export default class SettingsPage extends Component {
     this.state = {
       ip: null
     }
+
+    this.storeData = async (ip) => {
+      try {
+        await AsyncStorage.setItem('ip', ip)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  }
+
+  async componentDidMount() {
+    try {
+      const ip = await AsyncStorage.getItem('ip')
+      if (ip) {
+        this.setState({ip: ip})
+      }
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   render() {
     return (
       <View>
-        <Form>
+        <Form style={{width: '96%'}}>
           <Item>
             <Icon type='FontAwesome' name='server'/>
             <Input
@@ -25,6 +44,11 @@ export default class SettingsPage extends Component {
             />
           </Item>
         </Form>
+        <Button
+          onPress={() => this.storeData(this.state.ip)}
+          style={{margin: 10, width: '94%', backgroundColor: '#27ae60', justifyContent: 'center'}} iconRight>
+          <Text>Save</Text>
+        </Button>
       </View>
     )
   }
