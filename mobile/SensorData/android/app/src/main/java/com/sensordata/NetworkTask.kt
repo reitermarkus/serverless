@@ -30,8 +30,8 @@ class NetworkTask()  {
     }
   }
 
-  fun sendRequest(jsonBody: JSONObject) {
-    val url = "http://10.0.0.198:8082/topics/mobile"
+  fun sendRequest(jsonBody: JSONObject, ip: String) {
+    val url = "$ip:8082/topics/mobile"
 
     val stringRequest = object : StringRequest(Request.Method.POST, url,
       Response.Listener<String> { response ->

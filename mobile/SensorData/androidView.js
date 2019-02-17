@@ -4,7 +4,7 @@
  */
 
 import React, {Component} from 'react'
-import { ScrollView, DeviceEventEmitter } from 'react-native'
+import { ScrollView, DeviceEventEmitter, AsyncStorage } from 'react-native'
 import { List, ListItem, Text, Left, Right, Spinner } from 'native-base'
 import DeviceInfo from 'react-native-device-info'
 
@@ -102,9 +102,11 @@ export default class AndroidView extends Component {
       }
     })
 
-    SensorService.startService()
-      .then(success => console.log(`service: ${success}`))
-      .catch(fail => `service: ${fail}`)
+    AsyncStorage.getItem('ip').then(ip => {
+      SensorService.startService(ip)
+        .then(success => console.log(`service: ${success}`))
+        .catch(fail => `service: ${fail}`)
+    }).catch(e => console.log(e))
   }
 
   componentWillUnmount() {

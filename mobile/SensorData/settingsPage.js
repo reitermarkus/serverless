@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import { Platform, AsyncStorage } from 'react-native'
 import { Form, Item, Input, Icon, View, Button, Text } from 'native-base'
+import { SensorService } from './native'
 
 export default class SettingsPage extends Component {
   constructor(props) {
@@ -13,6 +14,10 @@ export default class SettingsPage extends Component {
     this.storeData = async (ip) => {
       try {
         await AsyncStorage.setItem('ip', ip)
+
+        if (Platform.OS === 'android') {
+          SensorService.setKafkaUrl(ip)
+        }
       } catch (err) {
         console.log(err)
       }

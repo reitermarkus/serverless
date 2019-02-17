@@ -25,9 +25,22 @@ import com.sensorData.Sensors
 class SensorServiceModule(context: ReactApplicationContext): ReactContextBaseJavaModule(context) {
   override fun getName() = "SensorService"
 
+  var url: String = "http://10.0.0.198"
+    get() = field
+    private set(value) {
+      field = value
+    }
+
   @ReactMethod
-  fun startService(promise: Promise) {
+  fun setKafkaUrl(ip: String) {
+    url = ip
+  }
+
+  @ReactMethod
+  fun startService(ip: String, promise: Promise) {
     Log.d(REACT_CLASS, "startService")
+
+    url = ip
 
     try {
       val intent = Intent(FOREGROUND)
@@ -87,7 +100,7 @@ class SensorServiceModule(context: ReactApplicationContext): ReactContextBaseJav
 
         jsonBody.put("records", recordsArray)
 
-        NetworkTask.getInstance(applicationContext).sendRequest(jsonBody)
+        NetworkTask.getInstance(applicationContext).sendRequest(jsonBody, url)
 
         emitDeviceEvent(applicationContext, "sensors", jsonBody.toString())
 
