@@ -8,15 +8,16 @@ export default class SettingsPage extends Component {
     super(props)
 
     this.state = {
-      ip: null
+      ip: null,
+      interval: 15000
     }
 
-    this.storeData = async (ip) => {
+    this.storeData = async (key, value) => {
       try {
-        await AsyncStorage.setItem('ip', ip)
+        await AsyncStorage.setItem(key, value)
 
-        if (Platform.OS === 'android') {
-          SensorService.setKafkaUrl(ip)
+        if (Platform.OS === 'android' && key === 'ip') {
+          SensorService.setKafkaUrl(value)
         }
       } catch (err) {
         console.log(err)
@@ -29,6 +30,12 @@ export default class SettingsPage extends Component {
       const ip = await AsyncStorage.getItem('ip')
       if (ip) {
         this.setState({ip: ip})
+      }
+
+      const interval = await AsyncStorage.getItem('interval')
+
+      if (interval) {
+        this.setState({interval: interval})
       }
     } catch (err) {
       console.log(err)
@@ -50,7 +57,23 @@ export default class SettingsPage extends Component {
           </Item>
         </Form>
         <Button
-          onPress={() => this.storeData(this.state.ip)}
+          onPress={() => this.storeData('ip', this.state.ip)}
+          style={{margin: 10, width: '94%', backgroundColor: '#27ae60', justifyContent: 'center'}} iconRight>
+          <Text>Save</Text>
+        </Button>
+        <Form style={{width: '96%'}}>
+          <Item>
+            <Icon name='clock'/>
+            <Input
+              placeholder="Update interval"
+              value={`${this.state.interval / 1000}`}
+              onChangeText={(text) => this.setState({interval: text})}
+              keyboardType='number-pad'
+            />
+          </Item>
+        </Form>
+        <Button
+          onPress={() => this.storeData('interval', this.state.interval)}
           style={{margin: 10, width: '94%', backgroundColor: '#27ae60', justifyContent: 'center'}} iconRight>
           <Text>Save</Text>
         </Button>
