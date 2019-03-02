@@ -4,7 +4,7 @@
  */
 
 import React, {Component} from 'react'
-import { ScrollView } from 'react-native'
+import { ScrollView, AsyncStorage } from 'react-native'
 import { setUpdateIntervalForType, accelerometer, SensorTypes , gyroscope, magnetometer, barometer } from 'react-native-sensors'
 import { List, ListItem, Text, Left, Right } from 'native-base'
 import DeviceInfo from 'react-native-device-info'
@@ -42,26 +42,28 @@ export default class IosView extends Component {
 
   async componentDidMount() {
     this.timer = setInterval(async () => {
-      try {
-        const response = await fetch('http://httpbin.org/anything', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            accelerometer: this.state.accelerometer,
-            gyroscope: this.state.gyroscope,
-            magnetometer: this.state.magnetometer,
-            barometer: this.state.barometer
-          }),
-        })
+      AsyncStorage.getItem('ip').then(async ip => {
+        try {
+          const response = await fetch(ip, {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              accelerometer: this.state.accelerometer,
+              gyroscope: this.state.gyroscope,
+              magnetometer: this.state.magnetometer,
+              barometer: this.state.barometer
+            }),
+          })
 
-        const responseJson = await response.json()
-        console.log(responseJson)
-      } catch (err) {
-        console.error(err)
-      }
+          const responseJson = await response.json()
+          console.log(responseJson)
+        } catch (err) {
+          console.error(err)
+        }
+      }).catch(e => console.log(e))
     }, 5000)
   }
 
