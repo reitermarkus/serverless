@@ -31,9 +31,19 @@ class SensorServiceModule(context: ReactApplicationContext): ReactContextBaseJav
       field = value
     }
 
+  var updateInterval: Long = 15000
+    private set(value) {
+      field = value
+    }
+
   @ReactMethod
   fun setKafkaUrl(ip: String) {
     url = ip
+  }
+
+  @ReactMethod
+  fun setKafkaPostInterval(interval: Long) {
+    updateInterval = interval
   }
 
   @ReactMethod
@@ -109,9 +119,9 @@ class SensorServiceModule(context: ReactApplicationContext): ReactContextBaseJav
           Log.e(REACT_CLASS, "failed to emit event.")
         }
 
-        handler.postDelayed(this, 15000)
+        handler.postDelayed(this, updateInterval)
       }
-    }, 500)
+    }, 750)
   }
 
   private fun emitDeviceEvent(reactContext: ReactApplicationContext, eventName: String, eventData: String) =

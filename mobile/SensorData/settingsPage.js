@@ -19,6 +19,10 @@ export default class SettingsPage extends Component {
         if (Platform.OS === 'android' && key === 'ip') {
           SensorService.setKafkaUrl(value)
         }
+
+        if (Platform.OS === 'android' && key === 'interval') {
+          SensorService.setKafkaUpdateInterval(value)
+        }
       } catch (err) {
         console.log(err)
       }
@@ -73,7 +77,7 @@ export default class SettingsPage extends Component {
             <Icon name='clock'/>
             <Input
               placeholder="Update interval"
-              value={`${this.state.interval / 1000}`}
+              value={this.state.interval}
               onChangeText={(text) => this.setState({interval: text})}
               keyboardType='number-pad'
             />
