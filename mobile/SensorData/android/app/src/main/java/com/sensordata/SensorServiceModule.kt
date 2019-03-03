@@ -51,7 +51,7 @@ class SensorServiceModule(context: ReactApplicationContext): ReactContextBaseJav
       promise.resolve(true)
     }
     catch (e: Exception) {
-      Log.d(REACT_CLASS, "startService failed!")
+      Log.e(REACT_CLASS, "startService failed!")
       promise.reject(e)
     }
   }
@@ -66,7 +66,7 @@ class SensorServiceModule(context: ReactApplicationContext): ReactContextBaseJav
       this.getReactApplicationContext().stopService(intent)
     }
     catch (e:Exception) {
-      Log.d(REACT_CLASS, "stopService failed!")
+      Log.e(REACT_CLASS, "stopService failed!")
       promise.reject(e)
     }
 
@@ -102,7 +102,12 @@ class SensorServiceModule(context: ReactApplicationContext): ReactContextBaseJav
 
         NetworkTask.getInstance(applicationContext).sendRequest(jsonBody, url)
 
-        emitDeviceEvent(applicationContext, "sensors", jsonBody.toString())
+        try {
+          emitDeviceEvent(applicationContext, "sensors", jsonBody.toString())
+        }
+        catch(e: Exception) {
+          Log.e(REACT_CLASS, "failed to emit event.")
+        }
 
         handler.postDelayed(this, 15000)
       }

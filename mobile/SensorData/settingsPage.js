@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import { Platform, AsyncStorage } from 'react-native'
-import { Form, Item, Input, Icon, View, Button, Text } from 'native-base'
+import { Platform, AsyncStorage, ToastAndroid } from 'react-native'
+import { Form, Item, Input, Icon, View, Button, Text, } from 'native-base'
 import { SensorService } from './native'
 
 export default class SettingsPage extends Component {
@@ -57,7 +57,14 @@ export default class SettingsPage extends Component {
           </Item>
         </Form>
         <Button
-          onPress={() => this.storeData('ip', this.state.ip)}
+          onPress={() => {
+            if (this.state.ip.match(/^http:\/\/[a-zA-Z0-9.\-\/\_]+$/g)) {
+              this.storeData('ip', this.state.ip)
+              ToastAndroid.show('IP has been updated.', ToastAndroid.SHORT)
+            } else {
+              ToastAndroid.show('IP is invalid. Format needs to be: http://\"ip\"', ToastAndroid.SHORT)
+            }
+          }}
           style={{margin: 10, width: '94%', backgroundColor: '#27ae60', justifyContent: 'center'}} iconRight>
           <Text>Save</Text>
         </Button>
@@ -73,7 +80,10 @@ export default class SettingsPage extends Component {
           </Item>
         </Form>
         <Button
-          onPress={() => this.storeData('interval', this.state.interval)}
+          onPress={() => {
+            this.storeData('interval', this.state.interval)
+            ToastAndroid.show('Send interval has been updated.', ToastAndroid.SHORT)
+          }}
           style={{margin: 10, width: '94%', backgroundColor: '#27ae60', justifyContent: 'center'}} iconRight>
           <Text>Save</Text>
         </Button>
