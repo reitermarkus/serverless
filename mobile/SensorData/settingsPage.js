@@ -14,7 +14,7 @@ export default class SettingsPage extends Component {
 
     this.storeData = async (key, value) => {
       try {
-        await AsyncStorage.setItem(key, value)
+        await AsyncStorage.setItem(key, JSON.stringify(value))
 
         if (Platform.OS === 'android' && key === 'ip') {
           SensorService.setKafkaUrl(value)
@@ -27,7 +27,7 @@ export default class SettingsPage extends Component {
 
   async componentDidMount() {
     try {
-      const ip = await AsyncStorage.getItem('ip')
+      const ip = JSON.parse(await AsyncStorage.getItem('ip'))
       if (ip) {
         this.setState({ip: ip})
       }
