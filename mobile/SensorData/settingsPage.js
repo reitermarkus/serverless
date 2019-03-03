@@ -94,7 +94,10 @@ export default class SettingsPage extends Component {
             <Input
               placeholder="Update interval"
               value={this.state.interval.toString()}
-              onChangeText={(text) => this.setState({interval: parseInt(text, 10)})}
+              onChangeText={(text) => {
+                const interval = parseInt(text, 10)
+                this.setState({interval: isNaN(interval) ? 0 : interval})
+              }}
               keyboardType='number-pad'
             />
           </Item>
