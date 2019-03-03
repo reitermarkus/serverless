@@ -42,28 +42,28 @@ export default class IosView extends Component {
 
   async componentDidMount() {
     this.timer = setInterval(async () => {
-      AsyncStorage.getItem('ip').then(async ip => {
-        try {
-          const response = await fetch(ip, {
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              accelerometer: this.state.accelerometer,
-              gyroscope: this.state.gyroscope,
-              magnetometer: this.state.magnetometer,
-              barometer: this.state.barometer
-            }),
-          })
+      try {
+        const ip = JSON.parse(await AsyncStorage.getItem('ip'))
 
-          const responseJson = await response.json()
-          console.log(responseJson)
-        } catch (err) {
-          console.error(err)
-        }
-      }).catch(e => console.log(e))
+        const response = await fetch(ip, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            accelerometer: this.state.accelerometer,
+            gyroscope: this.state.gyroscope,
+            magnetometer: this.state.magnetometer,
+            barometer: this.state.barometer
+          }),
+        })
+
+        const responseJson = await response.json()
+        console.log(responseJson)
+      } catch (err) {
+        console.error(err)
+      }
     }, 5000)
   }
 
