@@ -92,8 +92,8 @@ export default class SettingsPage extends Component {
             <Icon name='clock'/>
             <Input
               placeholder="Update interval"
-              value={this.state.interval}
-              onChangeText={(text) => this.setState({interval: text})}
+              value={this.state.interval.toString()}
+              onChangeText={(text) => this.setState({interval: parseInt(text, 10)})}
               keyboardType='number-pad'
             />
           </Item>
