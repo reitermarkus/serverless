@@ -36,7 +36,7 @@ export default class SettingsPage extends Component {
         this.setState({ip: ip})
       }
 
-      const interval = await AsyncStorage.getItem('interval')
+      const interval = JSON.parse(await AsyncStorage.getItem('interval'))
 
       if (interval) {
         this.setState({interval: interval})
