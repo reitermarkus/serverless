@@ -64,7 +64,7 @@ export default class SettingsPage extends Component {
         </Form>
         <Button
           onPress={() => {
-            if (this.state.ip.match(/^http:\/\/[a-zA-Z0-9.\-\/\_]+$/g)) {
+            if (this.state.ip.match(/^https?:\/\/[a-zA-Z0-9.\-\/\_]+$/g)) {
               this.storeData('ip', this.state.ip)
               Keyboard.dismiss()
 
@@ -76,7 +76,7 @@ export default class SettingsPage extends Component {
                 ToastAndroid.show(message, ToastAndroid.SHORT)
               }
             } else {
-              const message = 'IP is invalid. Format needs to be: http://\"ip\"'
+              const message = 'IP is invalid. Format needs to be: http(s)://\"ip\"'
 
               if (Platform.OS == 'ios') {
                 ToastIOS.show(message, 0.75)
