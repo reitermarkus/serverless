@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
-import { Platform, AsyncStorage, ToastAndroid } from 'react-native'
+import { Platform, AsyncStorage, ToastAndroid, NativeModules } from 'react-native'
 import { Form, Item, Input, Icon, View, Button, Text, } from 'native-base'
 import { SensorService } from './native'
+
+const ToastIOS = NativeModules.ToastIOS
 
 export default class SettingsPage extends Component {
   constructor(props) {
@@ -64,9 +66,22 @@ export default class SettingsPage extends Component {
           onPress={() => {
             if (this.state.ip.match(/^http:\/\/[a-zA-Z0-9.\-\/\_]+$/g)) {
               this.storeData('ip', this.state.ip)
-              ToastAndroid.show('IP has been updated.', ToastAndroid.SHORT)
+
+              const message = 'IP has been updated.'
+
+              if (Platform.OS == 'ios') {
+                ToastIOS.show(message, 0.75)
+              } else {
+                ToastAndroid.show(message, ToastAndroid.SHORT)
+              }
             } else {
-              ToastAndroid.show('IP is invalid. Format needs to be: http://\"ip\"', ToastAndroid.SHORT)
+              const message = 'IP is invalid. Format needs to be: http://\"ip\"'
+
+              if (Platform.OS == 'ios') {
+                ToastIOS.show(message, 0.75)
+              } else {
+                ToastAndroid.show(message, ToastAndroid.SHORT)
+              }
             }
           }}
           style={{margin: 10, width: '94%', backgroundColor: '#27ae60', justifyContent: 'center'}} iconRight>
@@ -86,7 +101,14 @@ export default class SettingsPage extends Component {
         <Button
           onPress={() => {
             this.storeData('interval', this.state.interval)
-            ToastAndroid.show('Send interval has been updated.', ToastAndroid.SHORT)
+
+            const message = 'Send interval has been updated.'
+
+            if (Platform.OS == 'ios') {
+              ToastIOS.show(message, 0.75)
+            } else {
+              ToastAndroid.show(message, ToastAndroid.SHORT)
+            }
           }}
           style={{margin: 10, width: '94%', backgroundColor: '#27ae60', justifyContent: 'center'}} iconRight>
           <Text>Save</Text>

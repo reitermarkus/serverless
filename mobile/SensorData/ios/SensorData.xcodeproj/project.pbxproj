@@ -24,6 +24,8 @@
 		17D246C07BA64B4AAEECB0FE /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 945E6F0993AC4F2B8F28F5C8 /* Feather.ttf */; };
 		286F67E52212610F00138CD4 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 286F67B42212610F00138CD4 /* JavaScriptCore.framework */; };
 		2875136921EEE2640065DDB9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2875136821EEE2640065DDB9 /* AppDelegate.swift */; };
+		28CC0D7B222B5DF200E99471 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CC0D7A222B5DF200E99471 /* Toast.swift */; };
+		28CC0DA5222B5E9100E99471 /* Toast.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CC0DA4222B5E9100E99471 /* Toast.m */; };
 		34C0862D141B4075B4691479 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D37F4022F68942D793FBDA80 /* FontAwesome5_Brands.ttf */; };
 		3632ED2DC3F3441EA531B3EB /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6A803BC440ED45679D87076E /* FontAwesome5_Solid.ttf */; };
 		39DA956B3ED5408CA6FE87BB /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CD53E79C6809499DB4894F4D /* Entypo.ttf */; };
@@ -360,6 +362,8 @@
 		286F67B42212610F00138CD4 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		2875136721EEE2630065DDB9 /* SensorData-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SensorData-Bridging-Header.h"; sourceTree = "<group>"; };
 		2875136821EEE2640065DDB9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		28CC0D7A222B5DF200E99471 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
+		28CC0DA4222B5E9100E99471 /* Toast.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Toast.m; sourceTree = "<group>"; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F8876E9C92E4F58AF16A0F0 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		541C4ED4F45E4791AD3D3019 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/native-base/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
@@ -509,6 +513,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				2875136721EEE2630065DDB9 /* SensorData-Bridging-Header.h */,
+				28CC0D7A222B5DF200E99471 /* Toast.swift */,
+				28CC0DA4222B5E9100E99471 /* Toast.m */,
 			);
 			name = SensorData;
 			sourceTree = "<group>";
@@ -1205,6 +1211,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				2875136921EEE2640065DDB9 /* AppDelegate.swift in Sources */,
+				28CC0DA5222B5E9100E99471 /* Toast.m in Sources */,
+				28CC0D7B222B5DF200E99471 /* Toast.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
