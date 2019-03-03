@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { Platform, AsyncStorage, ToastAndroid, NativeModules } from 'react-native'
+import { Platform, AsyncStorage, Keyboard, ToastAndroid, NativeModules } from 'react-native'
 import { Form, Item, Input, Icon, View, Button, Text, } from 'native-base'
 import { SensorService } from './native'
 
@@ -66,6 +66,7 @@ export default class SettingsPage extends Component {
           onPress={() => {
             if (this.state.ip.match(/^http:\/\/[a-zA-Z0-9.\-\/\_]+$/g)) {
               this.storeData('ip', this.state.ip)
+              Keyboard.dismiss()
 
               const message = 'IP has been updated.'
 
@@ -101,6 +102,7 @@ export default class SettingsPage extends Component {
         <Button
           onPress={() => {
             this.storeData('interval', this.state.interval)
+            Keyboard.dismiss()
 
             const message = 'Send interval has been updated.'
 
