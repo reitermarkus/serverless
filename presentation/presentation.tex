@@ -27,6 +27,7 @@
     \begin{itemize}
       \item Introduction
       \item Devices
+      \item Serverless Stack
       \item Mobile Application
       \item Web Application
       \item Schedule
@@ -54,6 +55,7 @@
       \item gravity
       \item temperature
       \item humidity
+      \item possibly gpu location
     \end{itemize}
   \end{frame}
 
@@ -66,5 +68,53 @@
       \item magnetic hall sensor
       \item light intensity sensor
     \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Serverless Stack - Deployment}
+    \begin{itemize}
+      \item Docker Swarm
+      \item Kubernetes
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Serverless Stack - OpenFaaS}
+    \begin{itemize}
+      \item Open Source
+      \item convenient deployment of functions via containers
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Serverless Stack - Kafka / Zookeeper}
+    \begin{itemize}
+      \item devices post data to broker
+      \item combines data streams
+      \item triggers serverless functions
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Serverless Stack - MongoDB}
+    \begin{itemize}
+      \item versatile due to its Javascript origin
+      \item persistence layer for sensor data
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Mobile Application}
+    \begin{itemize}
+      \item cross plattform using React Native
+      \item possible complications on iOS
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Web Application}
+    \begin{itemize}
+      \item implemented in marko
+      \item fetching data from MongoDB
+      \item reactive interface for all devices
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Schedule}
+
   \end{frame}
 \end{document}
