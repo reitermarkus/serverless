@@ -10,6 +10,10 @@
 \usefonttheme{professionalfonts}
 \usepackage[familydefault,light]{Chivo}
 
+\usepackage{graphicx}
+\usepackage{graphbox}
+\graphicspath{ {../assets/} }
+
 \hypersetup
 {
   pdftitle  = {IoT Data Analytics using Serverless Computing},
@@ -45,32 +49,46 @@
   \end{frame}
 
   \begin{frame}{Devices: Smartphone}
-    Sensors
-
     \begin{itemize}
       \item gyroscope
+            \hspace*{2em}
+            \includegraphics[align=c,height=5em]{gyroscope}
       \item accelerometer
       \item magnetometer
       \item barometer
+            \hspace*{2em}
+            \includegraphics[align=c,height=5em]{barometer}
       \item gravity
       \item temperature
       \item humidity
+            \hspace*{2em}
+            \includegraphics[align=c,height=5em]{hygrometer}
       \item possibly GPS location
     \end{itemize}
   \end{frame}
 
   \begin{frame}{Devices: Raspberry Pi}
-    Sensors
-
     \begin{itemize}
       \item temperature sensor
+            \hspace*{2em}
+            \includegraphics[align=c,height=5em]{dht11-sensor}
       \item humidity sensor
       \item magnetic hall sensor
+            \hspace*{2em}
+            \includegraphics[align=c,height=4em]{hall-sensor}
       \item light intensity sensor
+            \hspace*{2em}
+            \includegraphics[align=c,height=2em]{light-sensor}
     \end{itemize}
   \end{frame}
 
   \begin{frame}{Serverless Stack - Deployment}
+    \includegraphics[align=c,height=6em]{docker-swarm-logo}
+    \hspace*{2em}
+    \includegraphics[align=c,height=6em]{kubernetes-logo}
+
+    \vspace*{2em}
+
     \begin{itemize}
       \item Docker Swarm
       \item Kubernetes
@@ -78,13 +96,25 @@
   \end{frame}
 
   \begin{frame}{Serverless Stack - OpenFaaS}
+    \includegraphics[height=4em]{openfaas-logo}
+
+    \vspace*{2em}
+
     \begin{itemize}
       \item Open Source
       \item convenient deployment of functions via containers
     \end{itemize}
   \end{frame}
 
+  \begin{frame}{Serverless Stack - OpenFaaS}
+    \includegraphics[width=\textwidth]{openfaas-stack}
+  \end{frame}
+
   \begin{frame}{Serverless Stack - Kafka / Zookeeper}
+    \includegraphics[height=5em]{kafka-logo}
+
+    \vspace*{1.5em}
+
     \begin{itemize}
       \item devices post data to broker
       \item combines data streams
@@ -93,6 +123,10 @@
   \end{frame}
 
   \begin{frame}{Serverless Stack - MongoDB}
+    \includegraphics[height=5em]{mongodb-logo}
+
+    \vspace*{1.5em}
+
     \begin{itemize}
       \item versatile due to its JavaScript origin
       \item persistence layer for sensor data
@@ -100,6 +134,12 @@
   \end{frame}
 
   \begin{frame}{Mobile Application}
+    \includegraphics[align=c,height=6em]{android-logo}
+    \hspace*{2em}
+    \includegraphics[align=c,height=4em]{ios-logo}
+
+    \vspace*{2em}
+
     \begin{itemize}
       \item cross plattform using React Native
       \item possible complications on iOS
@@ -107,6 +147,10 @@
   \end{frame}
 
   \begin{frame}{Web Application}
+    \includegraphics[height=6em]{marko-logo}
+
+    \vspace*{2em}
+
     \begin{itemize}
       \item implemented in Marko
       \item fetching data from MongoDB
