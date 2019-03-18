@@ -232,7 +232,7 @@ services:
     hostname: kafka-connector
     environment:
       gateway_url: http://gateway:8080
-      topics: "faas-request,"
+      topics: "mobile"
       print_response: "true"
     networks:
       - functions
