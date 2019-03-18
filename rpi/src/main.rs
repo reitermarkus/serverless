@@ -2,8 +2,11 @@ use std::env;
 use std::thread;
 use std::time::Duration;
 use std::str;
+use std::error::Error;
+use std::fmt;
 
 use reqwest::{Client, header::{CONTENT_TYPE, HeaderMap, HeaderValue}};
+use serde::Deserialize;
 use serde_json::{json, to_string_pretty, Value};
 use systemstat::{System, Platform};
 
@@ -47,33 +50,83 @@ fn sys_stats() -> Result<Value, std::io::Error> {
   }))
 }
 
-fn post_topic(kafka_url: &str, topic: &str, value: &Value) -> Result<Value, reqwest::Error> {
-  let mut headers = HeaderMap::new();
-  headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/vnd.kafka.json.v2+json"));
+#[derive(Deserialize, Debug)]
+struct KafkaRestError {
+  error_code: Option<usize>,
+  message: String,
+}
 
-  let mut res = Client::new()
-    .post(&format!("{}/topics/{}", kafka_url, topic))
-    .headers(headers)
-    .body(json!({"records": [{"value": value}]}).to_string())
-    .send()?;
+impl fmt::Display for KafkaRestError {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    write!(f, "{}", self.description())
+  }
+}
 
-  res.json()
+impl Error for KafkaRestError {
+  fn description(&self) -> &str {
+    &self.message
+  }
+
+  fn cause(&self) -> Option<&Error> {
+    None
+  }
+}
+
+struct KafkaRestClient {
+  host: String,
+  port: usize,
+}
+
+impl KafkaRestClient {
+  pub fn new(host: impl AsRef<str>, port: usize) -> Self {
+    Self { host: host.as_ref().to_string(), port }
+  }
+
+  pub fn url(&self) -> String {
+    format!("http://{}:{}", self.host, self.port)
+  }
+
+  pub fn post(&self, topic: &str, value: &Value) -> Result<Value, KafkaRestError> {
+    let mut headers = HeaderMap::new();
+    headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/vnd.kafka.json.v2+json"));
+
+    let map_err = |err: reqwest::Error| KafkaRestError { error_code: err.status().map(|s| s.as_u16() as usize), message: err.to_string() };
+
+    Client::new()
+      .post(&format!("{}/topics/{}", self.url(), topic))
+      .headers(headers)
+      .body(json!({"records": [{"value": value}]}).to_string())
+      .send()
+      .map_err(map_err)
+      .and_then(|mut res| {
+        let json = res.json::<Value>().map_err(map_err)?;
+
+        if let Ok(error) = serde_json::from_value::<KafkaRestError>(json) {
+          Err(error)
+        } else {
+          Ok(json)
+        }
+      })
+  }
 }
 
 fn main() {
   let kafka_host = env::var("KAFKA_HOST").expect("KAFKA_HOST is not set");
   let kafka_port = env::var("KAFKA_PORT").expect("KAFKA_PORT is not set");
 
-  let kafka_url = format!("http://{}:{}", kafka_host, kafka_port);
+  let kafka_client = KafkaRestClient::new(kafka_host, kafka_port.parse().unwrap());
 
   loop {
-    println!("KAFKA: {}", kafka_url);
+    println!("KAFKA: {}", kafka_client.url());
 
     match sys_stats() {
       Ok(stats) => {
         println!("INFO: {}", to_string_pretty(&stats).unwrap());
-        let json_response = post_topic(&kafka_url, "sensor", &stats).unwrap();
-        println!("RESPONSE: {}", to_string_pretty(&json_response).unwrap());
+
+        match kafka_client.post("sensor", &stats) {
+          Ok(json_response) => println!("RESPONSE: {}", to_string_pretty(&json_response).unwrap()),
+          Err(err) => eprintln!("ERROR: {}", err.to_string()),
+        }
       },
       Err(err) => eprintln!("ERROR: {}", err.to_string()),
     }
