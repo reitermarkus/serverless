@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -e
+set -o pipefail
+set -o nounset
+
+ip="${1}"
+
+TARGET='arm-unknown-linux-gnueabihf'
+
+cross build --release --target "${TARGET}"
+
+rsync -avz --include sensors --exclude '*' "target/${TARGET}/release/" pi@"${ip}:/tmp/sensors/"
+
+ssh pi@"${ip}" sudo timedatectl set-timezone Europe/Vienna
+echo 'sensors' | ssh pi@"${ip}" sudo tee /etc/hostname
+
+local_ip="$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')"
+
+cat <<CONFIG | ssh pi@"${ip}" sudo tee /etc/systemd/system/sensors.service
+[Unit]
+Description=sensors
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Environment=KAFKA_HOST=${local_ip}
+Environment=KAFKA_PORT=8082
+ExecStart=/usr/local/bin/sensors
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target
+CONFIG
+
+ssh pi@"${ip}" sudo cp -f /tmp/sensors/sensors /usr/local/bin/sensors
+ssh pi@"${ip}" sudo mkdir -p /etc/sensors
+ssh pi@"${ip}" sudo systemctl enable sensors
+ssh pi@"${ip}" sudo systemctl restart sensors
+
+ssh pi@"${ip}" < setup_watchdog.sh

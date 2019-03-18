@@ -1,0 +1,11 @@
+[package]
+name = "sensors"
+version = "0.1.0"
+authors = ["Michael Kaltschmid <kaltschmidmichael@gmail.com>", "Markus Reiter <me@reitermark.us>"]
+edition = "2018"
+
+[dependencies]
+reqwest = "0.9.11"
+systemstat = "0.1.4"
+serde_json = "1.0.39"
+chrono = { version = "0.4", features = ["serde"] }
