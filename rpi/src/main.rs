@@ -111,10 +111,19 @@ impl KafkaRestClient {
 }
 
 fn main() {
-  let kafka_host = env::var("KAFKA_HOST").expect("KAFKA_HOST is not set");
-  let kafka_port = env::var("KAFKA_PORT").expect("KAFKA_PORT is not set");
+  let kafka_host = if cfg!(debug_assertions) {
+    env::var("KAFKA_HOST").unwrap_or("localhost".to_string())
+  } else {
+    env::var("KAFKA_HOST").expect("KAFKA_HOST is not set")
+  };
+  let kafka_port = if cfg!(debug_assertions) {
+    env::var("KAFKA_PORT").map(|s| s.parse::<usize>().expect("cannot parse KAFKA_PORT")).unwrap_or(8082)
+  } else {
+    env::var("KAFKA_PORT").expect("KAFKA_PORT is not set")
+      .parse::<usize>().expect("cannot parse KAFKA_PORT")
+  };
 
-  let kafka_client = KafkaRestClient::new(kafka_host, kafka_port.parse().unwrap());
+  let kafka_client = KafkaRestClient::new(kafka_host, kafka_port);
 
   loop {
     println!("KAFKA: {}", kafka_client.url());
