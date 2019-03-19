@@ -1,5 +1,10 @@
 # serverless
 
+## Dependencies
+
+- Docker: https://docs.docker.com/install/
+- Rust: https://rustup.rs
+  - `cargo-script`: `cargo install cargo-script`
 
 ## Kafka
 
