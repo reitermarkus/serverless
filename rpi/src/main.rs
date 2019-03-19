@@ -101,7 +101,7 @@ impl KafkaRestClient {
       .and_then(|mut res| {
         let json = res.json::<Value>().map_err(map_err)?;
 
-        if let Ok(error) = serde_json::from_value::<KafkaRestError>(json) {
+        if let Ok(error) = serde_json::from_value::<KafkaRestError>(json.clone()) {
           Err(error)
         } else {
           Ok(json)
