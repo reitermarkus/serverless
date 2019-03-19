@@ -4,6 +4,7 @@ use std::time::Duration;
 use std::str;
 use std::error::Error;
 use std::fmt;
+use std::collections::HashMap;
 
 use reqwest::{Client, header::{CONTENT_TYPE, HeaderMap, HeaderValue}};
 use serde::Deserialize;
@@ -13,41 +14,53 @@ use systemstat::{System, Platform};
 fn sys_stats() -> Result<Value, std::io::Error> {
   let sys = System::new();
 
-  let memory = sys.memory()?;
-  let uptime = sys.uptime()?;
-  let boot_time = sys.boot_time()?;
-  let cpu_temp = sys.cpu_temp()?;
-  let cpu_load_average = sys.load_average()?;
+  let mut stats = HashMap::new();
 
-  let cpu_load_aggregate = sys.cpu_load_aggregate()?;
-  thread::sleep(Duration::from_secs(1));
-  let cpu_load_aggregate = cpu_load_aggregate.done()?;
+  if let Ok(memory) = sys.memory() {
+    stats.insert("memory", json!({
+      "used": (memory.total - memory.free).to_string(true),
+      "free": memory.free.to_string(true)
+    }));
+  }
 
-  Ok(json!({
-    "cpu_temp": cpu_temp,
-    "cpu_load_average": {
+  if let Ok(uptime) = sys.uptime() {
+    stats.insert("uptime", json!({
+      "hours":   uptime.as_secs() / 3600,
+      "minutes": (uptime.as_secs() % 3600) / 60,
+      "seconds": (uptime.as_secs() % 3600) % 60,
+    }));
+  }
+  if let Ok(boot_time) = sys.boot_time() {
+    stats.insert("boot_time", json!(boot_time));
+  }
+  if let Ok(cpu_temp) = sys.cpu_temp() {
+    stats.insert("cpu_temp", json!(cpu_temp));
+  }
+  if let Ok(cpu_load_average) = sys.load_average() {
+    stats.insert("cpu_load_average", json!({
       "one":     cpu_load_average.one,
       "five":    cpu_load_average.five,
       "fifteen": cpu_load_average.fifteen,
-    },
-    "cpu_load_aggregate": {
+    }));
+  }
+
+  let cpu_load_aggregate = sys.cpu_load_aggregate()
+    .and_then(|cpu_load_aggregate| {
+      thread::sleep(Duration::from_secs(1));
+      cpu_load_aggregate.done()
+    });
+
+  if let Ok(cpu_load_aggregate) = cpu_load_aggregate {
+    stats.insert("cpu_load_aggregate", json!({
       "user":      cpu_load_aggregate.user * 100.0,
       "nice":      cpu_load_aggregate.nice * 100.0,
       "system":    cpu_load_aggregate.system * 100.0,
       "interrupt": cpu_load_aggregate.interrupt * 100.0,
       "idle":      cpu_load_aggregate.idle * 100.0,
-    },
-    "memory": json!({
-      "used": (memory.total - memory.free).to_string(true),
-      "free": memory.free.to_string(true)
-    }),
-    "boot_time": boot_time,
-    "uptime": json!({
-      "hours":   uptime.as_secs() / 3600,
-      "minutes": (uptime.as_secs() % 3600) / 60,
-      "seconds": (uptime.as_secs() % 3600) % 60,
-    }),
-  }))
+    }));
+  }
+
+  Ok(json!(stats))
 }
 
 #[derive(Deserialize, Debug)]
