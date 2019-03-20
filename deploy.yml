@@ -228,12 +228,14 @@ services:
       - functions
 
   connector:
-    image: alexellis2/kafka-connector:0.2.1
+    image: openfaas/kafka-connector:0.4.0
     hostname: kafka-connector
     environment:
       gateway_url: http://gateway:8080
       topics: "mobile"
       print_response: "true"
+      print_response_body: "true"
+      basic_auth: "true"
     networks:
       - functions
 
