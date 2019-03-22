@@ -232,7 +232,7 @@ services:
     hostname: kafka-connector
     environment:
       gateway_url: http://gateway:8080
-      topics: "mobile"
+      topics: "mobile, sensor"
       print_response: "true"
       print_response_body: "true"
       basic_auth: "true"

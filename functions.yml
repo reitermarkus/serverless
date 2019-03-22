@@ -21,4 +21,14 @@ functions:
       write_timeout: 10s
       read_timeout: 10s
       MONGO_HOST: mongo
+  sensor-request:
+    lang: node8-express
+    handler: ./sensor-request
+    image: sensor-request:latest
+    annotations:
+     topic: "sensor"
+    environment:
+      write_timeout: 10s
+      read_timeout: 10s
+      MONGO_HOST: mongo
 
