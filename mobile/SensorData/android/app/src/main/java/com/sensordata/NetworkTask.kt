@@ -15,6 +15,8 @@ import android.content.Context;
 
 import org.json.JSONObject
 
+import java.net.InetAddress
+
 class NetworkTask()  {
   companion object {
     private var queue : RequestQueue? = null
@@ -31,24 +33,30 @@ class NetworkTask()  {
   }
 
   fun sendRequest(jsonBody: JSONObject, ip: String) {
+    Log.e("Info", "sending request")
+
     val normalizedIp = ip.replace("\"", "")
     val url = "$normalizedIp:8082/topics/mobile"
 
-    val stringRequest = object : StringRequest(Request.Method.POST, url,
-      Response.Listener<String> { response ->
-        Log.d("NetworkTask", response.toString())
-      },
-      Response.ErrorListener {
-        fun onErrorResponse(error: VolleyError) {
-          val errorRes = error.networkResponse
-          Log.e("Error", String(errorRes.data, Charsets.UTF_8))
+    if (InetAddress.getByName(url).isReachable(1000)) {
+      val stringRequest = object : StringRequest(Request.Method.POST, url,
+        Response.Listener<String> { response ->
+          Log.d("NetworkTask", response.toString())
+        },
+        Response.ErrorListener {
+          fun onErrorResponse(error: VolleyError) {
+            val errorRes = error.networkResponse
+            Log.e("Error", String(errorRes.data, Charsets.UTF_8))
+          }
         }
+      ) {
+        override fun getBodyContentType() = "application/vnd.kafka.json.v2+json"
+        override fun getBody(): ByteArray = jsonBody.toString().toByteArray()
       }
-    ) {
-      override fun getBodyContentType() = "application/vnd.kafka.json.v2+json"
-      override fun getBody(): ByteArray = jsonBody.toString().toByteArray()
-    }
 
-    queue!!.add(stringRequest)
+      queue!!.add(stringRequest)
+    } else {
+      Log.e("Error", "ip not reachable")
+    }
   }
 }
