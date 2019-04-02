@@ -11,6 +11,8 @@ use serde::Deserialize;
 use serde_json::{json, to_string_pretty, Value};
 use systemstat::{System, Platform};
 
+mod bmp180;
+
 fn sys_stats() -> Result<Value, std::io::Error> {
   let sys = System::new();
 
@@ -58,6 +60,14 @@ fn sys_stats() -> Result<Value, std::io::Error> {
       "interrupt": cpu_load_aggregate.interrupt * 100.0,
       "idle":      cpu_load_aggregate.idle * 100.0,
     }));
+  }
+
+  if let Ok(pressure) = bmp180::pressure() {
+    stats.insert("pressure", json!(pressure));
+  }
+
+  if let Ok(temperature) = bmp180::temperature() {
+    stats.insert("temperature", json!(temperature));
   }
 
   Ok(json!(stats))

@@ -15,6 +15,8 @@ scp "target/${TARGET}/release/sensors" pi@"${ip}:/tmp/"
 ssh pi@"${ip}" sudo timedatectl set-timezone Europe/Vienna
 echo 'sensors' | ssh pi@"${ip}" sudo tee /etc/hostname
 
+ssh pi@"${ip}" < setup_i2c.sh
+
 local_ip="$(hostname)"
 
 cat <<CONFIG | ssh pi@"${ip}" sudo tee /etc/systemd/system/sensors.service
