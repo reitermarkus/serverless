@@ -135,7 +135,7 @@ impl KafkaRestClient {
 
 fn main() {
   let kafka_host = if cfg!(debug_assertions) {
-    env::var("KAFKA_HOST").unwrap_or("localhost".to_string())
+    env::var("KAFKA_HOST").unwrap_or_else(|_| "localhost".to_string())
   } else {
     env::var("KAFKA_HOST").expect("KAFKA_HOST is not set")
   };
