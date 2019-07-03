@@ -6,16 +6,17 @@ set -o nounset
 
 ip="${1}"
 
-TARGET='arm-unknown-linux-gnueabihf'
+TARGET='armv7-unknown-linux-gnueabihf'
 
 cross build --release --target "${TARGET}"
 
 scp "target/${TARGET}/release/sensors" pi@"${ip}:/tmp/"
 
-ssh pi@"${ip}" sudo timedatectl set-timezone Europe/Vienna
-echo 'sensors' | ssh pi@"${ip}" sudo tee /etc/hostname
+ssh pi@"${ip}" < setup_timezone.sh
+ssh pi@"${ip}" < setup_hostname.sh
 
 ssh pi@"${ip}" < setup_i2c.sh
+ssh pi@"${ip}" < setup_watchdog.sh
 
 local_ip="$(hostname)"
 
@@ -26,6 +27,7 @@ StartLimitIntervalSec=0
 
 [Service]
 Type=simple
+Environment=I2C_DEVICE=/dev/i2c-1
 Environment=KAFKA_HOST=${local_ip}
 Environment=KAFKA_PORT=8082
 ExecStart=/usr/local/bin/sensors
@@ -41,5 +43,3 @@ ssh pi@"${ip}" sudo chmod +x /usr/local/bin/sensors
 ssh pi@"${ip}" sudo mkdir -p /etc/sensors
 ssh pi@"${ip}" sudo systemctl enable sensors
 ssh pi@"${ip}" sudo systemctl restart sensors
-
-ssh pi@"${ip}" < setup_watchdog.sh
