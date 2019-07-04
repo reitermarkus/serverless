@@ -6,7 +6,9 @@
 git clone http://github.com/rust-embedded/cross /tmp/cross
 cd /tmp/cross
 cargo install --path . --force
-./build-docker-image.sh arm-unknown-linux-gnueabihf
+./build-docker-image.sh armv7-unknown-linux-gnueabihf
+cd -
+rm -r /tmp/cross
 ```
 
 # Deployment
@@ -25,4 +27,4 @@ For testing, run
 ./run-remote <raspberry_pi_hostname_or_ip>
 ```
 
-which will run the deploy script and then continue displaying the log.
+which will display the log.

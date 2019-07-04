@@ -36,7 +36,7 @@ and type a line, then check the logs using
 docker service logs func_connector -f
 ```
 
-to see if Kafka Connectore received the line.
+to see if Kafka Connector received the line.
 
 
 ## Mobile App
