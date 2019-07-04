@@ -1,7 +1,7 @@
 version: "3.3"
 services:
   gateway:
-    image: openfaas/gateway:0.11.0
+    image: openfaas/gateway:0.14.4
     ports:
       - 8080:8080
     networks:
@@ -39,7 +39,7 @@ services:
 
   # Docker Swarm provider
   faas-swarm:
-    image:  openfaas/faas-swarm:0.6.1
+    image:  openfaas/faas-swarm:0.6.2
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     networks:
@@ -90,7 +90,7 @@ services:
           - 'node.platform.os == linux'
 
   queue-worker:
-    image: openfaas/queue-worker:0.6.0
+    image: openfaas/queue-worker:0.7.2
     networks:
       - functions
     environment:
@@ -121,7 +121,7 @@ services:
   # Start monitoring
 
   prometheus:
-    image: prom/prometheus:v2.3.1
+    image: prom/prometheus:v2.10.0
     environment:
       no_proxy: "gateway"
     configs:
@@ -148,7 +148,7 @@ services:
           memory: 200M
 
   alertmanager:
-    image: prom/alertmanager:v0.15.0
+    image: prom/alertmanager:v0.17.0
     environment:
       no_proxy: "gateway"
     command:
@@ -171,56 +171,67 @@ services:
         target: /alertmanager.yml
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:${CONFLUENT_PLATFORM_VERSION:-5.1.0}
+    image: confluentinc/cp-zookeeper:${CONFLUENT_PLATFORM_VERSION:-5.2.2}
     hostname: zookeeper
     environment:
-      - ZOOKEEPER_CLIENT_PORT=2181
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     networks:
       - functions
     ports:
       - 2181:2181
 
   kafka:
-    image: confluentinc/cp-kafka:${CONFLUENT_PLATFORM_VERSION:-5.1.0}
+    image: confluentinc/cp-kafka:${CONFLUENT_PLATFORM_VERSION:-5.2.2}
+    depends_on:
+      - zookeeper
     hostname: kafka
     environment:
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092 # https://github.com/confluentinc/schema-registry/issues/648, https://github.com/openfaas-incubator/kafka-connector/pull/30
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     ports:
-     - 9092:9092
+     - 29092:29092
     networks:
       - functions
 
   kafka-rest:
-    image: confluentinc/cp-kafka-rest:${CONFLUENT_PLATFORM_VERSION:-5.1.0}
+    image: confluentinc/cp-kafka-rest:${CONFLUENT_PLATFORM_VERSION:-5.2.2}
+    depends_on:
+      - kafka
+      - schema-registry
+      - zookeeper
     hostname: kafka-rest
     environment:
-      - ACCESS_CONTROL_ALLOW_ORIGIN_DEFAULT="*"
-      - KAFKA_REST_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_REST_LISTENERS=http://0.0.0.0:8082
-      - KAFKA_REST_SCHEMA_REGISTRY_URL=http://schema-registry:8081
-      - KAFKA_REST_HOST_NAME=kafka-rest
+      ACCESS_CONTROL_ALLOW_ORIGIN_DEFAULT: '*'
+      KAFKA_REST_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_REST_LISTENERS: http://0.0.0.0:8082
+      KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      KAFKA_REST_HOST_NAME: kafka-rest
     ports:
       - 8082:8082
     networks:
       - functions
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:${CONFLUENT_PLATFORM_VERSION:-5.1.0}
+    image: confluentinc/cp-schema-registry:${CONFLUENT_PLATFORM_VERSION:-5.2.2}
     hostname: schema-registry
     environment:
-      - SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL=zookeeper:2181
-      - SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081
-      - SCHEMA_REGISTRY_HOST_NAME=schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
     networks:
       - functions
 
   kafka-topics-ui:
     image: landoop/kafka-topics-ui:0.9.4
+    depends_on:
+      - kafka-rest
     environment:
       - KAFKA_REST_PROXY_URL=http://kafka-rest:8082
-      - KAFKA_REST_BOOTSTRAP_SERVERS=PLAINTEXT://kafka:9092
       - PROXY=true
     ports:
       - 8001:8000
@@ -228,14 +239,18 @@ services:
       - functions
 
   connector:
-    image: openfaas/kafka-connector:0.4.0
+    image: openfaas/kafka-connector:0.3.4
     hostname: kafka-connector
     environment:
       gateway_url: http://gateway:8080
-      topics: "mobile, sensor"
+      topics: "faas-request,mobile,sensor,"
       print_response: "true"
       print_response_body: "true"
       basic_auth: "true"
+      secret_mount_path: "/run/secrets/"
+    secrets:
+      - basic-auth-password
+      - basic-auth-user
     networks:
       - functions
 
