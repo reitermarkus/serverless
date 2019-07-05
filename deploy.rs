@@ -186,6 +186,15 @@ fn main() -> Result<(), Box<Error>> {
 
   println!("secret is: {}", password);
 
+  let mongo_username = "admin";
+  let mongo_password = "password";
+
+  docker.secret_create("mongo-root-username", mongo_username).compat()?;
+  docker.secret_create("mongo-root-password", mongo_password).compat()?;
+
+  env::set_var("ME_CONFIG_MONGODB_ADMINUSERNAME", mongo_username);
+  env::set_var("ME_CONFIG_MONGODB_ADMINPASSWORD", mongo_password);
+
   if matches.is_present("no-auth") {
     println!("Disabling basic authentication…");
     env::set_var("BASIC_AUTH", "false");
