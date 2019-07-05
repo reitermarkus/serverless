@@ -6,6 +6,7 @@
 //! rand = "~0.5.0"
 //! curl = "~0.4.19"
 //! which = "2.0.0"
+//! hostname = "*"
 //! dockworker = { git = "git://github.com/reitermarkus/dockworker.git" }
 //! failure = "0.1"
 //! ```
@@ -36,6 +37,9 @@ use rand::{distributions::Alphanumeric, prelude::*};
 
 extern crate which;
 use which::which;
+
+extern crate hostname;
+use hostname::get_hostname;
 
 macro_rules! curl_download {
   ($url:expr, $target:expr) => {{
@@ -189,6 +193,10 @@ fn main() -> Result<(), Box<Error>> {
     println!("Enabling basic authentication…");
     env::set_var("BASIC_AUTH", "true");
   }
+
+  let hostname = get_hostname().unwrap();
+  println!("Setting Kafka hostname to “{}”…", hostname);
+  env::set_var("KAFKA_PUBLIC_HOSTNAME", hostname);
 
   fs::create_dir_all("faas/prometheus")?;
   fs::copy("deploy.yml", "faas/deploy.yml")?;
