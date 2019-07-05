@@ -177,7 +177,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     networks:
-      - functions
+      - streaming
     ports:
       - 2181:2181
 
@@ -196,7 +196,7 @@ services:
     ports:
      - 29092:29092
     networks:
-      - functions
+      - streaming
 
   kafka-rest:
     image: confluentinc/cp-kafka-rest:${CONFLUENT_PLATFORM_VERSION:-5.2.2}
@@ -214,7 +214,7 @@ services:
     ports:
       - 8082:8082
     networks:
-      - functions
+      - streaming
 
   schema-registry:
     image: confluentinc/cp-schema-registry:${CONFLUENT_PLATFORM_VERSION:-5.2.2}
@@ -224,7 +224,7 @@ services:
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
     networks:
-      - functions
+      - streaming
 
   kafka-topics-ui:
     image: landoop/kafka-topics-ui:0.9.4
@@ -236,7 +236,7 @@ services:
     ports:
       - 8001:8000
     networks:
-      - functions
+      - streaming
 
   connector:
     image: openfaas/kafka-connector:0.3.4
@@ -252,6 +252,7 @@ services:
       - basic-auth-password
       - basic-auth-user
     networks:
+      - streaming
       - functions
 
   mongo:
@@ -267,6 +268,7 @@ services:
       - mongo-root-password
       - mongo-root-username
     networks:
+      - database
       - functions
 
   mongo-express:
@@ -277,7 +279,7 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${ME_CONFIG_MONGODB_ADMINUSERNAME}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${ME_CONFIG_MONGODB_ADMINPASSWORD}
     networks:
-      - functions
+      - database
 
 configs:
   prometheus_config:
@@ -288,6 +290,12 @@ configs:
     file: ./prometheus/alertmanager.yml
 
 networks:
+  streaming:
+    driver: overlay
+    attachable: true
+  database:
+    driver: overlay
+    attachable: true
   functions:
     driver: overlay
     attachable: true
