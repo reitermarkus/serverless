@@ -19,7 +19,9 @@
 
 #FaaS
 faas
-template
+template/*
+!template/rust
+!template/rust-http
 build
 
 node_modules
