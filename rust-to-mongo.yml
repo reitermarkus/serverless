@@ -1,0 +1,17 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+functions:
+  rust-to-mongo:
+    lang: rust-http
+    handler: ./rust-to-mongo
+    image: rust-to-mongo:latest
+    annotations:
+      topic: faas-request
+    environment:
+      MONGO_HOST: mongo
+      MONGO_DB: sensor
+    secrets:
+      - mongo-root-password
+      - mongo-root-username
