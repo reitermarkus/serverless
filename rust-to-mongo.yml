@@ -8,10 +8,10 @@ functions:
     handler: ./rust-to-mongo
     image: rust-to-mongo:latest
     annotations:
-      topic: faas-request
+      topic: sensor
     environment:
       MONGO_HOST: mongo
-      MONGO_DB: sensor
+      MONGO_DB: sensordata
     secrets:
       - mongo-root-password
       - mongo-root-username

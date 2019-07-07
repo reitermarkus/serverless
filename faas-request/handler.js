@@ -4,7 +4,7 @@ const Server      = require('mongodb').Server
 
 const MONGO_HOST = process.env.MONGO_HOST || 'localhost'
 const MONGO_PORT = process.env.MONGO_PORT || 27017
-const MONGO_DB = process.env.MONGO_INITDB_DATABASE || 'sensor'
+const MONGO_DB = process.env.MONGO_INITDB_DATABASE || 'sensordata'
 const MONGO_USER = process.env.MONGO_INITDB_ROOT_USERNAME || 'admin'
 const MONGO_PASSWORD = process.env.MONGO_INITDB_ROOT_PASSWORD || 'root'
 

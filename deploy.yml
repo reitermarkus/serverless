@@ -263,7 +263,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_PASSWORD_FILE: "/run/secrets/mongo-root-password"
       MONGO_INITDB_ROOT_USERNAME_FILE: "/run/secrets/mongo-root-username"
-      MONGO_INITDB_DATABASE: sensor
+      MONGO_INITDB_DATABASE: sensordata
     secrets:
       - mongo-root-password
       - mongo-root-username
