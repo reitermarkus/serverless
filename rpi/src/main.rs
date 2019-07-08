@@ -12,6 +12,7 @@ use serde_json::{json, to_string_pretty, Value};
 use systemstat::{System, Platform};
 
 mod bmp180;
+mod photoresistor;
 
 fn sys_stats() -> Result<Value, std::io::Error> {
   let sys = System::new();
@@ -68,6 +69,10 @@ fn sys_stats() -> Result<Value, std::io::Error> {
 
   if let Ok(temperature) = bmp180::temperature() {
     stats.insert("temperature", json!(temperature));
+  }
+
+  if let Ok(illuminance) = photoresistor::lux() {
+    stats.insert("illuminance", json!(illuminance));
   }
 
   Ok(json!(stats))

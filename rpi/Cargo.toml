@@ -13,3 +13,7 @@ chrono = { version = "0.4.*", features = ["serde"] }
 i2cdev = "0.4.*"
 i2cdev-bmp180 = { version = "0.1.*", git = "https://github.com/martindeegan/i2cdev-sensors" }
 i2csensors = "0.1.*"
+ads1x1x = "*"
+embedded-hal = "*"
+linux-embedded-hal = "*"
+nb = "*"
