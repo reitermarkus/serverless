@@ -4,6 +4,18 @@ FROM rust:1.36-slim-stretch as builder
 
 WORKDIR /home/app
 
+RUN mkdir -p function/src
+RUN echo 'pub fn handle(_: http::Method, _: http::Uri, _: http::HeaderMap, _: String) -> String { "".to_string() }' > function/src/lib.rs
+
+COPY openfaas openfaas
+COPY main main
+
+COPY function/Cargo.toml function/Cargo.toml
+
+# Fetch and precompile dependencies.
+RUN cargo fetch --manifest-path main/Cargo.toml
+RUN cargo build --release --manifest-path main/Cargo.toml
+
 COPY . .
 
 RUN cargo build --release --manifest-path main/Cargo.toml
