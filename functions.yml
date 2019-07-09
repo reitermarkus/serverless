@@ -11,16 +11,6 @@ functions:
       write_timeout: 10s
       read_timeout: 10s
       MONGO_HOST: mongo
-  mobile-request:
-    lang: node8-express
-    handler: ./mobile-request
-    image: mobile-request:latest
-    annotations:
-     topic: "mobile"
-    environment:
-      write_timeout: 10s
-      read_timeout: 10s
-      MONGO_HOST: mongo
   sensor-request:
     lang: node8-express
     handler: ./sensor-request
