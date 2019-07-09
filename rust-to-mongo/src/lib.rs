@@ -1,5 +1,4 @@
 use std::env;
-use std::fs;
 use std::str::FromStr;
 
 use http::{HeaderMap, Method, Uri};
@@ -9,21 +8,11 @@ use serde_derive::Deserialize;
 use serde_json;
 use lazy_static::lazy_static;
 
-fn get_secret(name: &str) -> String {
-  if let Ok(secret) = fs::read_to_string(&format!("/var/openfaas/secrets/{}", name)) {
-    return secret
-  }
-
-  if let Ok(secret) = fs::read_to_string(&format!("/run/secrets/{}", name)) {
-    return secret
-  }
-
-  panic!("Could not find secret '{}'.", name)
-}
+use openfaas;
 
 #[derive(Debug, Deserialize)]
-struct TemperatureData {
-  pub temperature: f64,
+struct IlluminanceData {
+  pub illuminance: f64,
 }
 
 #[derive(Debug, Deserialize)]
@@ -31,12 +20,17 @@ struct PressureData {
   pub pressure: f64,
 }
 
+#[derive(Debug, Deserialize)]
+struct TemperatureData {
+  pub temperature: f64,
+}
+
 lazy_static! {
   static ref MONGO_HOST: String = env::var("MONGO_HOST").expect("MONGO_HOST is not set");
   static ref MONGO_PORT: u16 = env::var("MONGO_PORT").ok().and_then(|p| u16::from_str(&p).ok()).unwrap_or(27017);
   static ref MONGO_DB: String = env::var("MONGO_DB").expect("MONGO_DB is not set");
-  static ref MONGO_USERNAME: String = get_secret("mongo-root-username");
-  static ref MONGO_PASSWORD: String = get_secret("mongo-root-password");
+  static ref MONGO_USERNAME: String = openfaas::secret("mongo-root-username").unwrap();
+  static ref MONGO_PASSWORD: String = openfaas::secret("mongo-root-password").unwrap();
 }
 
 pub fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> String {
@@ -47,9 +41,9 @@ pub fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> 
 
   let database = client.db(&MONGO_DB);
 
-  if let Ok(temperature_data) = serde_json::from_str::<TemperatureData>(&body) {
-    let collection = database.collection("temperatures");
-    let doc = doc!{"temperature": temperature_data.temperature};
+  if let Ok(illuminance_data) = serde_json::from_str::<IlluminanceData>(&body) {
+    let collection = database.collection("illuminances");
+    let doc = doc!{"illuminance": illuminance_data.illuminance};
     println!("Inserted {} into {} database.\n", doc, *MONGO_DB);
     collection.insert_one(doc, None).unwrap();
   }
@@ -61,5 +55,12 @@ pub fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> 
     collection.insert_one(doc, None).unwrap();
   }
 
-  "".to_string()
+  if let Ok(temperature_data) = serde_json::from_str::<TemperatureData>(&body) {
+    let collection = database.collection("temperatures");
+    let doc = doc!{"temperature": temperature_data.temperature};
+    println!("Inserted {} into {} database.\n", doc, *MONGO_DB);
+    collection.insert_one(doc, None).unwrap();
+  }
+
+  "a".to_string()
 }

@@ -1,9 +1,7 @@
 [package]
-name = "handler"
+name = "openfaas"
 version = "0.1.0"
 authors = ["Markus Reiter <me@reitermark.us>"]
 edition = "2018"
 
 [dependencies]
-http = "*"
-openfaas = { path = "../openfaas" }
