@@ -243,7 +243,7 @@ services:
     hostname: kafka-connector
     environment:
       gateway_url: http://gateway:8080
-      topics: "faas-request,mobile,sensor,"
+      topics: "faas-request,sensor,"
       print_response: "true"
       print_response_body: "true"
       basic_auth: "${BASIC_AUTH:-true}"
