@@ -10,6 +10,7 @@ functions:
     annotations:
       topic: sensor
     environment:
+      gateway_url: http://gateway:8080
       MONGO_HOST: mongo
       MONGO_DB: sensordata
     secrets:

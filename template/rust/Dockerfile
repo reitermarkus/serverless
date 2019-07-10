@@ -22,7 +22,7 @@ RUN apt-get update -qy \
 WORKDIR /home/app
 COPY --from=builder /home/app/main/target/release/main /home/app/
 
-ENV fprocess=./main
+ENV function_process=./main
 
 HEALTHCHECK --interval=2s CMD [ -e /tmp/.lock ] || exit 1
 

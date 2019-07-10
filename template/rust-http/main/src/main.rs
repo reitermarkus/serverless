@@ -1,13 +1,32 @@
-use futures::{future, Future, Stream};
-use gotham;
-use gotham::handler::{HandlerFuture, IntoHandlerError};
-use gotham::router::builder::*;
-use gotham::router::Router;
-use gotham::state::{FromState, State};
+use std::fmt::{self, Display};
+use std::error::Error;
+
+use futures::{future::{self, Either}, Future, Stream};
+use gotham::{self, handler::{HandlerFuture, IntoHandlerError}, helpers::http::response::create_response, router::{builder::*, Router}, state::{FromState, State}};
 use hyper::Body;
-use http::{Method, HeaderMap, Uri, StatusCode};
-use gotham::helpers::http::response::create_response;
+use http::{Method, HeaderMap, Uri};
 use mime;
+
+use handler::handle;
+
+#[derive(Debug)]
+struct StatusCodeError;
+
+impl Display for StatusCodeError {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "")
+  }
+}
+
+impl Error for StatusCodeError {
+  fn description(&self) -> &str {
+    ""
+  }
+
+  fn cause(&self) -> Option<&Error> {
+    None
+  }
+}
 
 pub fn handler(mut state: State) -> Box<HandlerFuture> {
   let f = Body::take_from(&mut state)
@@ -20,30 +39,33 @@ pub fn handler(mut state: State) -> Box<HandlerFuture> {
         }
       },
       Err(err) => future::err(err.into_handler_error()),
-  })
-  .then(|res| match res {
-    Ok(body) => {
-      let method = http::Method::borrow_from(&state).to_owned();
-      let headers = HeaderMap::borrow_from(&state).to_owned();
-      let uri = Uri::borrow_from(&state).to_owned();
+    })
+    .then(|res| match res {
+      Ok(body) => {
+        let method = http::Method::borrow_from(&state).to_owned();
+        let headers = HeaderMap::borrow_from(&state).to_owned();
+        let uri = Uri::borrow_from(&state).to_owned();
 
-      let res = create_response(
-          &state,
-          StatusCode::OK,
-          mime::TEXT_PLAIN,
-          handle(method, uri, headers, body),
-      );
+        Either::A(handle(method, uri, headers, body)
+        .then(|result| match result {
+          Ok((status_code, response)) => {
+            let res = create_response(
+                &state,
+                status_code,
+                mime::TEXT_PLAIN,
+                response,
+            );
 
-      future::ok((state, res))
-    },
-    Err(err) => future::err((state, err)),
-  });
+            future::ok((state, res))
+          },
+          Err(err) => future::err((state, StatusCodeError.into_handler_error().with_status(err)))
+          }))
+      },
+      Err(err) => Either::B(future::err((state, err))),
+    });
 
   Box::new(f)
 }
-
-use handler::handle;
-
 
 fn router() -> Router {
   build_simple_router(|route| {

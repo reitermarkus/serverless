@@ -1,2 +1,2 @@
 language: rust
-fprocess: main
+function_process: main

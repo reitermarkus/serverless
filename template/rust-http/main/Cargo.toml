@@ -5,9 +5,9 @@ authors = ["Markus Reiter <me@reitermark.us>"]
 edition = "2018"
 
 [dependencies]
-handler = { path = "../function" }
-gotham = "*"
-hyper = "*"
-http = "*"
 futures = "*"
+gotham = "*"
+handler = { path = "../function" }
+http = "*"
+hyper = "*"
 mime = "*"

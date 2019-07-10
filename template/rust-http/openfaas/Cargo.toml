@@ -5,3 +5,6 @@ authors = ["Markus Reiter <me@reitermark.us>"]
 edition = "2018"
 
 [dependencies]
+futures = "*"
+http = "*"
+reqwest = { version = "0.9.*", default-features = false }

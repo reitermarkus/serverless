@@ -5,7 +5,7 @@ FROM rust:1.36-slim-stretch as builder
 WORKDIR /home/app
 
 RUN mkdir -p function/src
-RUN echo 'pub fn handle(_: http::Method, _: http::Uri, _: http::HeaderMap, _: String) -> String { "".to_string() }' > function/src/lib.rs
+RUN echo 'pub fn handle(_: http::Method, _: http::Uri, _: http::HeaderMap, _: String) -> impl futures::future::Future<Item = (http::StatusCode, String), Error = http::StatusCode> { futures::future::ok((http::StatusCode::OK, "".to_string())) }' > function/src/lib.rs
 
 COPY openfaas openfaas
 COPY main main
@@ -42,7 +42,7 @@ USER app
 WORKDIR /home/app
 COPY --from=builder /home/app/main/target/release/main /home/app/
 
-ENV fprocess=./main
+ENV function_process=./main
 EXPOSE 8080
 
 HEALTHCHECK --interval=2s CMD [ -e /tmp/.lock ] || exit 1
