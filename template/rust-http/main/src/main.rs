@@ -1,4 +1,4 @@
-use std::fmt::{self, Display};
+use std::fmt::{self, Display, Debug};
 use std::error::Error;
 
 use futures::{future::{self, Either}, Future, Stream};
@@ -9,22 +9,29 @@ use mime;
 
 use handler::handle;
 
-#[derive(Debug)]
-struct StatusCodeError;
+struct HandlerErrorWrapper {
+  cause: Box<Error + Send>,
+}
 
-impl Display for StatusCodeError {
-  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "")
+impl Display for HandlerErrorWrapper {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    Display::fmt(&*self.cause, f)
   }
 }
 
-impl Error for StatusCodeError {
+impl Debug for HandlerErrorWrapper {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    Debug::fmt(&*self.cause, f)
+  }
+}
+
+impl Error for HandlerErrorWrapper {
   fn description(&self) -> &str {
     ""
   }
 
   fn cause(&self) -> Option<&Error> {
-    None
+    Some(&*self.cause)
   }
 }
 
@@ -47,18 +54,18 @@ pub fn handler(mut state: State) -> Box<HandlerFuture> {
         let uri = Uri::borrow_from(&state).to_owned();
 
         Either::A(handle(method, uri, headers, body)
-        .then(|result| match result {
-          Ok((status_code, response)) => {
-            let res = create_response(
-                &state,
-                status_code,
-                mime::TEXT_PLAIN,
-                response,
-            );
+          .then(|result| match result {
+            Ok((status_code, response)) => {
+              let res = create_response(
+                  &state,
+                  status_code,
+                  mime::TEXT_PLAIN,
+                  response,
+              );
 
-            future::ok((state, res))
-          },
-          Err(err) => future::err((state, StatusCodeError.into_handler_error().with_status(err)))
+              future::ok((state, res))
+            },
+            Err(err) => future::err((state, HandlerErrorWrapper { cause: err }.into_handler_error()))
           }))
       },
       Err(err) => Either::B(future::err((state, err))),

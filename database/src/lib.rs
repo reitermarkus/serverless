@@ -1,4 +1,5 @@
 use std::env;
+use std::error::Error;
 use std::str::FromStr;
 
 use futures::future::{self, Future};
@@ -25,10 +26,10 @@ struct MongoArgs {
   doc: Value,
 }
 
-pub fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> impl Future<Item = (StatusCode, String), Error = StatusCode> {
+pub fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> impl Future<Item = (StatusCode, String), Error = Box<Error + Send + 'static>> {
   let args = match serde_json::from_str::<MongoArgs>(&body) {
     Ok(json) => json,
-    Err(err) => return future::err(StatusCode::BAD_REQUEST),
+    Err(err) => return future::err(Box::new(err) as Box<Error + Send>),
   };
 
   let client = Client::connect(&MONGO_HOST, *MONGO_PORT).expect("Failed to connect to database");
@@ -50,6 +51,6 @@ pub fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> 
 
       future::ok((StatusCode::BAD_REQUEST, "Invalid document.".to_string()))
     },
-    _ => future::err(StatusCode::METHOD_NOT_ALLOWED)
+    _ => future::ok((StatusCode::METHOD_NOT_ALLOWED, "".to_string()))
   }
 }

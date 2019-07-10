@@ -5,7 +5,7 @@ FROM rust:1.36-slim-stretch as builder
 WORKDIR /home/app
 
 RUN mkdir -p function/src
-RUN echo 'pub fn handle(_: http::Method, _: http::Uri, _: http::HeaderMap, _: String) -> impl futures::future::Future<Item = (http::StatusCode, String), Error = http::StatusCode> { futures::future::ok((http::StatusCode::OK, "".to_string())) }' > function/src/lib.rs
+RUN echo 'pub fn handle(_: http::Method, _: http::Uri, _: http::HeaderMap, _: String) -> impl futures::future::Future<Item = (http::StatusCode, String), Error = Box<std::error::Error + Send + '"'"'static>> { futures::future::ok((http::StatusCode::OK, "".to_string())) }' > function/src/lib.rs
 
 COPY openfaas openfaas
 COPY main main

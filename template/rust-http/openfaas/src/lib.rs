@@ -1,4 +1,5 @@
 use std::env;
+use std::error::Error;
 use std::fs;
 use std::io;
 
@@ -17,22 +18,22 @@ pub fn gateway_url() -> String {
   env::var("gateway_url").unwrap_or_else(|_| "http://gateway:8080".to_string())
 }
 
-pub fn call(function: &str, body: String) -> impl Future<Item = (StatusCode, String), Error = Option<StatusCode>> {
+pub fn call(function: &str, body: String) -> impl Future<Item = (StatusCode, String), Error = Box<Error + Send + 'static>> {
   Client::new()
     .post(&format!("{}/function/{}", gateway_url(), function))
     .body(body)
     .send()
-    .map_err(|err| err.status())
+    .map_err(|err| Box::new(err) as Box<Error + Send>)
     .and_then(|response| {
       let status = response.status();
 
       response.into_body()
               .concat2()
-              .map_err(|err| err.status())
+              .map_err(|err| Box::new(err) as Box<Error + Send>)
               .and_then(move |body| {
                 match String::from_utf8(body.to_vec()) {
                   Ok(content) => Ok((status, content)),
-                  Err(_) => Err(None),
+                  Err(err) => Err(Box::new(err) as Box<Error + Send>),
                 }
               })
     })
