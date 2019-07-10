@@ -3,14 +3,11 @@ provider:
   name: openfaas
   gateway: http://127.0.0.1:8080
 functions:
-  rust-to-mongo:
+  database:
     lang: rust-http
-    handler: ./rust-to-mongo
-    image: rust-to-mongo:latest
-    annotations:
-      topic: sensor
+    handler: ./database
+    image: database:latest
     environment:
-      gateway_url: http://gateway:8080
       MONGO_HOST: mongo
       MONGO_DB: sensordata
     secrets:
