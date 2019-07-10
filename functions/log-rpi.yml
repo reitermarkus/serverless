@@ -10,4 +10,5 @@ functions:
     annotations:
       topic: sensor
     environment:
+      write_debug: 'true'
       gateway_url: http://gateway:8080
