@@ -12,9 +12,8 @@ COPY main main
 
 COPY function/Cargo.toml function/Cargo.toml
 
-# Fetch and precompile dependencies.
+# Fetch dependencies.
 RUN cargo fetch --manifest-path main/Cargo.toml
-RUN cargo build --release --manifest-path main/Cargo.toml
 
 COPY . .
 
