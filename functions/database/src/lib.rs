@@ -4,6 +4,7 @@ use std::env;
 use std::error::Error;
 use std::str::FromStr;
 
+use chrono::{DateTime, offset::Utc};
 use http::{HeaderMap, Method, Uri, StatusCode};
 use lazy_static::lazy_static;
 use mongodb::{doc, Bson, Client, ThreadedClient, db::ThreadedDatabase};
@@ -43,9 +44,17 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
       let database = client.db(&MONGO_DB);
       let collection = database.collection(&args.collection);
 
-      if let Some(doc) = Bson::from(args.doc).as_document().cloned() {
-        return match collection.insert_one(doc, None) {
-          Ok(result) => Ok((StatusCode::CREATED, format!("Inserted {:?} into collection '{}' in database '{}'.", result, args.collection, *MONGO_DB))),
+      if let Some(mut doc) = Bson::from(args.doc).as_document().cloned() {
+        if let Some(time) = doc.get_mut("time") {
+          if let Some(s) = time.as_str() {
+            if let Ok(date) = DateTime::<Utc>::from_str(s) {
+              *time = date.into()
+            }
+          }
+        }
+
+        return match collection.insert_one(doc.clone(), None) {
+          Ok(result) => Ok((StatusCode::CREATED, format!("Inserted {:?} into collection '{}' in database '{}': {:?}.", doc, args.collection, *MONGO_DB, result))),
           Err(err) => Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
         }
       }

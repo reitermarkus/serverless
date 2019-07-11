@@ -5,6 +5,7 @@ authors = ["Markus Reiter <me@reitermark.us>"]
 edition = "2018"
 
 [dependencies]
+chrono = "*"
 http = "*"
 lazy_static = "*"
 mongodb = "*"

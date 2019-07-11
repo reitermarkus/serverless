@@ -1,11 +1,12 @@
 use std::env;
 use std::thread;
-use std::time::Duration;
+use std::time::{Duration, SystemTime};
 use std::str;
 use std::error::Error;
 use std::fmt;
 use std::collections::HashMap;
 
+use chrono::{DateTime, offset::Utc};
 use reqwest::{Client, header::{CONTENT_TYPE, HeaderMap, HeaderValue}};
 use serde::Deserialize;
 use serde_json::{json, to_string_pretty, Value};
@@ -15,9 +16,12 @@ mod bmp180;
 mod photoresistor;
 
 fn sys_stats() -> Result<Value, std::io::Error> {
-  let sys = System::new();
-
   let mut stats = HashMap::new();
+
+  let time: DateTime<Utc> = DateTime::from(SystemTime::now());
+  stats.insert("time", json!(time));
+
+  let sys = System::new();
 
   if let Ok(memory) = sys.memory() {
     stats.insert("memory", json!({
@@ -25,7 +29,6 @@ fn sys_stats() -> Result<Value, std::io::Error> {
       "free": memory.free.to_string(true)
     }));
   }
-
   if let Ok(uptime) = sys.uptime() {
     stats.insert("uptime", json!({
       "hours":   uptime.as_secs() / 3600,

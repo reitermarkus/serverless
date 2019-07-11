@@ -11,16 +11,19 @@ use openfaas;
 #[derive(Debug, Deserialize, Serialize)]
 struct IlluminanceData {
   pub illuminance: f64,
+  pub time: String,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct PressureData {
   pub pressure: f64,
+  pub time: String,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct TemperatureData {
   pub temperature: f64,
+  pub time: String,
 }
 
 pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
