@@ -267,6 +267,8 @@ services:
     secrets:
       - mongo-root-password
       - mongo-root-username
+    volumes:
+      - db-data:/data/db
     networks:
       - database
       - functions
@@ -288,6 +290,14 @@ configs:
     file: ./prometheus/alert.rules.yml
   alertmanager_config:
     file: ./prometheus/alertmanager.yml
+
+volumes:
+  db-data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${DATABASE_DIR}
 
 networks:
   streaming:
