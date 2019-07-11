@@ -1,9 +1,12 @@
+#![feature(async_await)]
+
 use std::env;
 use std::error::Error;
 use std::fs;
 use std::io;
 
-use futures::{future::Future, stream::Stream};
+use futures01::{future::Future, stream::Stream};
+use futures::compat::Future01CompatExt;
 use http::StatusCode;
 use reqwest::r#async::Client;
 
@@ -18,23 +21,25 @@ pub fn gateway_url() -> String {
   env::var("gateway_url").unwrap_or_else(|_| "http://gateway:8080".to_string())
 }
 
-pub fn call(function: &str, body: String) -> impl Future<Item = (StatusCode, String), Error = Box<Error + Send + 'static>> {
-  Client::new()
-    .post(&format!("{}/function/{}", gateway_url(), function))
-    .body(body)
-    .send()
-    .map_err(|err| Box::new(err) as Box<Error + Send>)
-    .and_then(|response| {
-      let status = response.status();
+pub async fn call(function: &str, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
+  let response = Client::new()
+                   .post(&format!("{}/function/{}", gateway_url(), function))
+                   .body(body)
+                   .send()
+                   .map_err(|err| Box::new(err) as _)
+                   .compat()
+                   .await?;
 
-      response.into_body()
-              .concat2()
-              .map_err(|err| Box::new(err) as Box<Error + Send>)
-              .and_then(move |body| {
-                match String::from_utf8(body.to_vec()) {
-                  Ok(content) => Ok((status, content)),
-                  Err(err) => Err(Box::new(err) as Box<Error + Send>),
-                }
-              })
-    })
+  let status = response.status();
+
+  let body = response.into_body()
+               .concat2()
+               .map_err(|err| Box::new(err) as _)
+               .compat()
+               .await?;
+
+  match String::from_utf8(body.to_vec()) {
+    Ok(content) => Ok((status, content)),
+    Err(err) => Err(Box::new(err) as Box<dyn Error + Send>),
+  }
 }

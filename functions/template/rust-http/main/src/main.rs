@@ -1,7 +1,10 @@
+#![feature(async_await)]
+
 use std::fmt::{self, Display, Debug};
 use std::error::Error;
 
-use futures::{future::{self, Either}, Future, Stream};
+use futures01::{future::{self, Future}, stream::Stream};
+use futures::future::{FutureExt, TryFutureExt};
 use gotham::{self, handler::{HandlerFuture, IntoHandlerError}, helpers::http::response::create_response, router::{builder::*, Router}, state::{FromState, State}};
 use hyper::Body;
 use http::{Method, HeaderMap, Uri};
@@ -10,7 +13,7 @@ use mime;
 use handler::handle;
 
 struct HandlerErrorWrapper {
-  cause: Box<Error + Send>,
+  cause: Box<dyn Error + Send>,
 }
 
 impl Display for HandlerErrorWrapper {
@@ -30,7 +33,7 @@ impl Error for HandlerErrorWrapper {
     ""
   }
 
-  fn cause(&self) -> Option<&Error> {
+  fn cause(&self) -> Option<&dyn Error> {
     Some(&*self.cause)
   }
 }
@@ -47,28 +50,33 @@ pub fn handler(mut state: State) -> Box<HandlerFuture> {
       },
       Err(err) => future::err(err.into_handler_error()),
     })
-    .then(|res| match res {
-      Ok(body) => {
-        let method = http::Method::borrow_from(&state).to_owned();
-        let headers = HeaderMap::borrow_from(&state).to_owned();
-        let uri = Uri::borrow_from(&state).to_owned();
+    .then(|res| {
+      let f = async {
+        match res {
+          Ok(body) => {
+            let method = http::Method::borrow_from(&state).to_owned();
+            let headers = HeaderMap::borrow_from(&state).to_owned();
+            let uri = Uri::borrow_from(&state).to_owned();
 
-        Either::A(handle(method, uri, headers, body)
-          .then(|result| match result {
-            Ok((status_code, response)) => {
-              let res = create_response(
-                  &state,
-                  status_code,
-                  mime::TEXT_PLAIN,
-                  response,
-              );
+            match handle(method, uri, headers, body).await {
+              Ok((status_code, response)) => {
+                let res = create_response(
+                    &state,
+                    status_code,
+                    mime::TEXT_PLAIN,
+                    response,
+                );
 
-              future::ok((state, res))
-            },
-            Err(err) => future::err((state, HandlerErrorWrapper { cause: err }.into_handler_error()))
-          }))
-      },
-      Err(err) => Either::B(future::err((state, err))),
+                Ok((state, res))
+              },
+              Err(err) => Err((state, HandlerErrorWrapper { cause: err }.into_handler_error())),
+            }
+          },
+          Err(err) => Err((state, err.into_handler_error())),
+        }
+      };
+
+      f.boxed().compat()
     });
 
   Box::new(f)

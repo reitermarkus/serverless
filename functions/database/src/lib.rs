@@ -1,8 +1,9 @@
+#![feature(async_await)]
+
 use std::env;
 use std::error::Error;
 use std::str::FromStr;
 
-use futures::future::{self, Future};
 use http::{HeaderMap, Method, Uri, StatusCode};
 use lazy_static::lazy_static;
 use mongodb::{doc, Bson, Client, ThreadedClient, db::ThreadedDatabase};
@@ -26,10 +27,10 @@ struct MongoArgs {
   doc: Value,
 }
 
-pub fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> impl Future<Item = (StatusCode, String), Error = Box<Error + Send + 'static>> {
+pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
   let args = match serde_json::from_str::<MongoArgs>(&body) {
     Ok(json) => json,
-    Err(err) => return future::err(Box::new(err) as Box<Error + Send>),
+    Err(err) => return Err(Box::new(err) as Box<dyn Error + Send>),
   };
 
   let client = Client::connect(&MONGO_HOST, *MONGO_PORT).expect("Failed to connect to database");
@@ -44,13 +45,13 @@ pub fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> 
 
       if let Some(doc) = Bson::from(args.doc).as_document().cloned() {
         return match collection.insert_one(doc, None) {
-          Ok(result) => future::ok((StatusCode::CREATED, format!("Inserted {:?} into collection '{}' in database '{}'.", result, args.collection, *MONGO_DB))),
-          Err(err) => future::ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
+          Ok(result) => Ok((StatusCode::CREATED, format!("Inserted {:?} into collection '{}' in database '{}'.", result, args.collection, *MONGO_DB))),
+          Err(err) => Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
         }
       }
 
-      future::ok((StatusCode::BAD_REQUEST, "Invalid document.".to_string()))
+      Ok((StatusCode::BAD_REQUEST, "Invalid document.".to_string()))
     },
-    _ => future::ok((StatusCode::METHOD_NOT_ALLOWED, "".to_string()))
+    _ => Ok((StatusCode::METHOD_NOT_ALLOWED, "".to_string()))
   }
 }

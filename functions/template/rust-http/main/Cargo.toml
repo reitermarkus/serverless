@@ -5,7 +5,8 @@ authors = ["Markus Reiter <me@reitermark.us>"]
 edition = "2018"
 
 [dependencies]
-futures = "*"
+futures01 = { package = "futures", version = "0.1" }
+futures-preview = { version = "0.3.0-alpha.17", features = ["compat"] }
 gotham = "*"
 handler = { path = "../function" }
 http = "*"
