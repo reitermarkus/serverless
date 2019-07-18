@@ -5,10 +5,12 @@
 import 'dart:async';
 
 import 'dart:io';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:device_info/device_info.dart';
+
+import 'device_meta.dart';
+import 'cpu_info.dart';
+import 'acceleration.dart';
 
 void main() {
   runZoned(() {
@@ -25,13 +27,14 @@ class SensorData extends StatefulWidget {
 }
 
 class _SensorDataState extends State<SensorData> {
-  static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-  static const platform = const MethodChannel('sensor_data.flutter.dev/cpu_info');
   static const service = const MethodChannel('sensor_data.flutter.dev/service');
-  static const _messageChannel = BasicMessageChannel<String>('sensor', StringCodec());
-  Map<String, dynamic> _deviceData = <String, dynamic>{};
-  Map<String, dynamic> _cpuInfo = <String, dynamic>{};
-  Map<String, dynamic> _acceleration = <String, dynamic>{};
+  static int _selectedIndex = 0;
+
+  static List<Widget> _widgetOptions = <Widget>[
+    new DeviceMeta(),
+    new CpuInfo(),
+    new Acceleration()
+  ];
 
   @override
   void initState() {
@@ -40,97 +43,19 @@ class _SensorDataState extends State<SensorData> {
   }
 
   Future<void> initPlatformState() async {
-    Map<String, dynamic> deviceData;
-    Map<String, dynamic> acceleration = <String, dynamic>{};
-    Map<String, dynamic> cpuInfo = <String, dynamic>{};
-
-    try {
-      if (Platform.isAndroid) {
-        deviceData = _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
-
-        //start service
-        await service.invokeMethod('startService');
-
-        _messageChannel.setMessageHandler((String sensorData) async {
-          Map<String, dynamic> sensorDecode = jsonDecode(sensorData);
-          sensorDecode = sensorDecode['records'][0]['value'];
-
-          acceleration = sensorDecode['sensors']['acceleration'];
-
-          cpuInfo.clear();
-          Map<String, dynamic> cpuDecode = sensorDecode['cpu'];
-          cpuInfo.putIfAbsent('cores', () => cpuDecode['cores']);
-          cpuDecode['frequency'].forEach((k, v) => cpuInfo.putIfAbsent(k, () => v));
-
-          setState(() {
-            _cpuInfo = cpuInfo;
-            _acceleration = acceleration;
-          });
-
-          return sensorData;
-        });
-
-      } else if (Platform.isIOS) {
-        deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
-      }
-    } on PlatformException {
-      deviceData = <String, dynamic>{
-        'Error:': 'Failed to get platform version.'
-      };
+    if (Platform.isAndroid) {
+      //start service
+      await service.invokeMethod('startService');
     }
 
     if (!mounted) return;
+  }
 
+  void _onItemTapped(int index) {
     setState(() {
-      _deviceData = deviceData;
-      _cpuInfo = cpuInfo;
+      _selectedIndex = index;
     });
   }
-
-  Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
-    return <String, dynamic>{
-      'brand': build.brand,
-      'model': build.model,
-      'device': build.device,
-      'version.securityPatch': build.version.securityPatch,
-      'version.sdkInt': build.version.sdkInt,
-      'version.release': build.version.release,
-      'version.previewSdkInt': build.version.previewSdkInt,
-      'version.incremental': build.version.incremental,
-      'version.codename': build.version.codename,
-      'board': build.board,
-      'bootloader': build.bootloader,
-      'display': build.display,
-      'hardware': build.hardware,
-      'host': build.host,
-      'id': build.id,
-      'product': build.product,
-      'supported32BitAbis': build.supported32BitAbis,
-      'supported64BitAbis': build.supported64BitAbis,
-      'tags': build.tags,
-      'type': build.type,
-      'isPhysicalDevice': build.isPhysicalDevice,
-      'androidId': build.androidId,
-    };
-  }
-
-  Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo data) {
-    return <String, dynamic>{
-      'name': data.name,
-      'systemName': data.systemName,
-      'systemVersion': data.systemVersion,
-      'model': data.model,
-      'localizedModel': data.localizedModel,
-      'identifierForVendor': data.identifierForVendor,
-      'isPhysicalDevice': data.isPhysicalDevice,
-      'utsname.sysname:': data.utsname.sysname,
-      'utsname.nodename:': data.utsname.nodename,
-      'utsname.release:': data.utsname.release,
-      'utsname.version:': data.utsname.version,
-      'utsname.machine:': data.utsname.machine,
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -141,187 +66,25 @@ class _SensorDataState extends State<SensorData> {
           title: Text(
             Platform.isAndroid ? 'Android Device Info' : 'iOS Device Info'),
         ),
-        body: ListView(
-          children: <Widget> [
-            Container(
-              child: ListTile(
-                title: Text(
-                  'Device Info',
-                  style: Theme.of(context).textTheme.headline
-                ),
-              ),
+        body: _widgetOptions.elementAt(_selectedIndex),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              title: Text('Home'),
             ),
-            Container(
-              color: Colors.white,
-              child: ListView(
-                shrinkWrap: true,
-                physics: ClampingScrollPhysics(),
-                children: _deviceData.keys.map((String property) {
-                  return Column(
-                    children: <Widget>[
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Container(
-                              child: Text(
-                                property,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16
-                                ),
-                              ),
-                            ),
-                            Flexible(
-                              child: Container(
-                                child: Text(
-                                  '${_deviceData[property]}',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 16
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      FractionallySizedBox(
-                        widthFactor: 0.95,
-                        child: Container(color: Color.fromARGB(255, 220, 220, 220), height: 0.6),
-                      )
-                    ],
-                  );
-                }).toList(),
-              ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.business),
+              title: Text('Business'),
             ),
-
-            Platform.isAndroid ? (
-              ListView(
-                shrinkWrap: true,
-                children: <Widget>[
-                  Container(
-                    child: ListTile(
-                      title: Text(
-                        'CPU',
-                        style: Theme.of(context).textTheme.headline
-                      ),
-                    ),
-                  ),
-                  Container(
-                    color: Colors.white,
-                    child: ListView(
-                      shrinkWrap: true,
-                      physics: ClampingScrollPhysics(),
-                      children: _cpuInfo.keys.map((String property) {
-                        return Column(
-                          children: <Widget>[
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                    child: Text(
-                                      property,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16
-                                      ),
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Container(
-                                      child: Text(
-                                        '${_cpuInfo[property]}',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 16
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            FractionallySizedBox(
-                              widthFactor: 0.95,
-                              child: Container(color: Color.fromARGB(255, 220, 220, 220), height: 0.6),
-                            )
-                          ],
-                        );
-                      }).toList(),
-                    )
-                  )
-                ],
-              )
-            ) : null,
-
-            Platform.isAndroid ? (
-              ListView(
-                shrinkWrap: true,
-                children: <Widget>[
-                  Container(
-                    child: ListTile(
-                      title: Text(
-                        'Acceleration',
-                        style: Theme.of(context).textTheme.headline
-                      ),
-                    ),
-                  ),
-                  Container(
-                    color: Colors.white,
-                    child: ListView(
-                      shrinkWrap: true,
-                      physics: ClampingScrollPhysics(),
-                      children: _acceleration.keys.map((String property) {
-                        return Column(
-                          children: <Widget>[
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                    child: Text(
-                                      property,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16
-                                      ),
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Container(
-                                      child: Text(
-                                        '${_acceleration[property]}',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 16
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            FractionallySizedBox(
-                              widthFactor: 0.95,
-                              child: Container(color: Color.fromARGB(255, 220, 220, 220), height: 0.6),
-                            )
-                          ],
-                        );
-                      }).toList(),
-                    )
-                  )
-                ],
-              )
-            ) : null
-          ]
+            BottomNavigationBarItem(
+              icon: Icon(Icons.school),
+              title: Text('School'),
+            ),
+          ],
+          selectedItemColor: Colors.amber[800],
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
         ),
       ),
     );
