@@ -95,7 +95,7 @@ class SensorServiceModule() {
 
         handler.postDelayed(this, updateInterval)
       }
-    }, 750)
+    }, 3000)
   }
 
   companion object {

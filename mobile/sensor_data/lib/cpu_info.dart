@@ -17,6 +17,7 @@ class CpuInfo extends StatefulWidget {
 class _CpuInfoState extends State<CpuInfo> {
   Map<String, dynamic> _cpuInfo = <String, dynamic>{};
   static const _messageChannel = BasicMessageChannel<String>('sensor', StringCodec());
+  static const _platform = const MethodChannel('sensor_data.flutter.dev/cpu_info');
 
   @override
   void initState() {
@@ -25,23 +26,27 @@ class _CpuInfoState extends State<CpuInfo> {
   }
 
   Future<void> initPlatformState() async {
-    Map<String, dynamic> cpuInfo = <String, dynamic>{};
+    Map<String, dynamic> _cpuInfo = <String, dynamic>{};
+
+    void setCpuInfo(Map<String, dynamic> cpuDecode) {
+      _cpuInfo.clear();
+      _cpuInfo.putIfAbsent('cores', () => cpuDecode['cores']);
+      cpuDecode['frequency'].forEach((k, v) => _cpuInfo.putIfAbsent(k, () => v));
+
+      if (mounted) {
+        setState(() {
+          _cpuInfo = _cpuInfo;
+        });
+      }
+    }
 
     if (Platform.isAndroid) {
+      setCpuInfo(jsonDecode(await _platform.invokeMethod('getCpuInfo')));
+
       _messageChannel.setMessageHandler((String sensorData) async {
         Map<String, dynamic> sensorDecode = jsonDecode(sensorData);
         sensorDecode = sensorDecode['records'][0]['value'];
-
-        cpuInfo.clear();
-        Map<String, dynamic> cpuDecode = sensorDecode['cpu'];
-        cpuInfo.putIfAbsent('cores', () => cpuDecode['cores']);
-        cpuDecode['frequency'].forEach((k, v) => cpuInfo.putIfAbsent(k, () => v));
-
-        if (mounted) {
-          setState(() {
-            _cpuInfo = cpuInfo;
-          });
-        }
+        setCpuInfo(sensorDecode['cpu']);
 
         return sensorData;
       });
