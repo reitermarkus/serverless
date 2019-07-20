@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "parcel-plugin-cargo-web": "^0.3.1"
+  }
+}

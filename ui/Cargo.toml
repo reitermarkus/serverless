@@ -1,0 +1,9 @@
+[package]
+name = "ui"
+version = "0.1.0"
+authors = ["Markus Reiter <me@reitermark.us>"]
+edition = "2018"
+
+[dependencies]
+stdweb = "0.4"
+yew = "0.7"
