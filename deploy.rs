@@ -210,7 +210,9 @@ fn main() -> Result<(), Box<Error>> {
   fs::create_dir_all("faas/prometheus")?;
   fs::copy("deploy.yml", "faas/deploy.yml")?;
 
-  env::set_var("DATABASE_DIR", format!("{}/faas/db-data", env::current_dir()?.display()));
+  let database_dir = format!("{}/faas/db-data", env::current_dir()?.display());
+  fs::create_dir_all(&database_dir)?;
+  env::set_var("DATABASE_DIR", database_dir);
 
   curl_download!("https://raw.githubusercontent.com/openfaas/faas/master/prometheus/alertmanager.yml", "faas/prometheus/alertmanager.yml");
   curl_download!("https://raw.githubusercontent.com/openfaas/faas/master/prometheus/alert.rules.yml", "faas/prometheus/alert.rules.yml");
