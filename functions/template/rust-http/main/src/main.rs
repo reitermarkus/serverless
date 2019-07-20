@@ -1,80 +1,45 @@
 #![feature(async_await)]
 
-use std::fmt::{self, Display, Debug};
-use std::error::Error;
-
-use futures01::stream::Stream;
-use futures::{compat::Future01CompatExt, future::{FutureExt, TryFutureExt}};
-use gotham::{self, handler::{HandlerFuture, IntoHandlerError}, helpers::http::response::create_response, router::{builder::*, Router}, state::{FromState, State}};
-use hyper::Body;
-use http::{Method, HeaderMap, Uri};
-use mime;
+use futures::TryStreamExt;
+use hyper::{Body, Server, Request, Response, StatusCode, service::{make_service_fn, service_fn}};
 
 use handler::handle;
 
-struct HandlerErrorWrapper {
-  cause: Box<dyn Error + Send>,
-}
+#[hyper::rt::main]
+async fn main() -> Result<(), hyper::Error> {
+  let addr = ([127, 0, 0, 1], 7878).into();
 
-impl Display for HandlerErrorWrapper {
-  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    Display::fmt(&*self.cause, f)
-  }
-}
+  let make_service = make_service_fn(|_| async {
+    Ok::<_, hyper::Error>(service_fn(|request: Request<Body>| async {
+      let method = request.method().clone();
+      let uri = request.uri().clone();
+      let headers = request.headers().clone();
 
-impl Debug for HandlerErrorWrapper {
-  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    Debug::fmt(&*self.cause, f)
-  }
-}
+      let bytes = request.into_body().try_concat().await?.to_vec();
 
-impl Error for HandlerErrorWrapper {
-  fn description(&self) -> &str {
-    ""
-  }
+      let body = match String::from_utf8(bytes) {
+        Ok(body) => body,
+        Err(_) => return Ok::<_, hyper::Error>(Response::builder()
+          .status(StatusCode::BAD_REQUEST)
+          .body(Body::from(""))
+          .unwrap()),
+      };
 
-  fn cause(&self) -> Option<&dyn Error> {
-    Some(&*self.cause)
-  }
-}
+      match handle(method, uri, headers, body).await {
+        Ok((status_code, response)) => Ok(Response::builder()
+          .status(status_code)
+          .body(Body::from(response))
+          .unwrap()),
+        Err(err) => Ok(Response::builder()
+          .status(StatusCode::INTERNAL_SERVER_ERROR)
+          .body(Body::from(err.to_string()))
+          .unwrap())
+      }
+    }))
+  });
 
-pub fn handler(mut state: State) -> Box<HandlerFuture> {
-  Box::new(async {
-    let body = match Body::take_from(&mut state).concat2().compat().await {
-      Ok(body) => match String::from_utf8(body.to_vec()) {
-        Ok(content) => content,
-        Err(err) => return Err((state, err.into_handler_error())),
-      },
-      Err(err) => return Err((state, err.into_handler_error())),
-    };
+  let server = Server::bind(&addr)
+    .serve(make_service);
 
-    let method = http::Method::borrow_from(&state).to_owned();
-    let headers = HeaderMap::borrow_from(&state).to_owned();
-    let uri = Uri::borrow_from(&state).to_owned();
-
-    match handle(method, uri, headers, body).await {
-      Ok((status_code, response)) => {
-        let res = create_response(
-            &state,
-            status_code,
-            mime::TEXT_PLAIN,
-            response,
-        );
-
-        Ok((state, res))
-      },
-      Err(err) => Err((state, HandlerErrorWrapper { cause: err }.into_handler_error())),
-    }
-  }.boxed().compat())
-}
-
-fn router() -> Router {
-  build_simple_router(|route| {
-    route.request(vec![Method::GET, Method::PUT, Method::POST, Method::DELETE], "/").to(handler);
-    route.request(vec![Method::GET, Method::PUT, Method::POST, Method::DELETE], "/*").to(handler);
-  })
-}
-
-fn main() {
-  gotham::start("127.0.0.1:7878", router())
+  server.await
 }

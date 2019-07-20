@@ -5,10 +5,7 @@ authors = ["Markus Reiter <me@reitermark.us>"]
 edition = "2018"
 
 [dependencies]
-futures01 = { package = "futures", version = "0.1" }
-futures-preview = { version = "0.3.0-alpha.17", features = ["compat"] }
-gotham = "*"
+futures-preview = { version = "0.3.0-alpha.17" }
 handler = { path = "../function" }
-http = "*"
-hyper = "*"
-mime = "*"
+hyper = { git = "https://github.com/hyperium/hyper", features = ["runtime"] }
+tokio = { git = "https://github.com/tokio-rs/tokio" }

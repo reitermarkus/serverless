@@ -5,10 +5,8 @@ use std::error::Error;
 use std::fs;
 use std::io;
 
-use futures01::{future::Future, stream::Stream};
-use futures::compat::Future01CompatExt;
-use http::StatusCode;
-use reqwest::r#async::Client;
+use futures::{TryFutureExt, TryStreamExt};
+use hyper::{Client, Request, Body, StatusCode};
 
 pub fn secret(name: &str) -> Result<String, io::Error> {
   match fs::read_to_string(&format!("/var/openfaas/secrets/{}", name)) {
@@ -22,24 +20,24 @@ pub fn gateway_url() -> String {
 }
 
 pub async fn call(function: &str, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
+  let request = Request::post(format!("{}/function/{}", gateway_url(), function))
+    .body(Body::from(body))
+    .unwrap();
+
   let response = Client::new()
-                   .post(&format!("{}/function/{}", gateway_url(), function))
-                   .body(body)
-                   .send()
-                   .map_err(|err| Box::new(err) as _)
-                   .compat()
-                   .await?;
+    .request(request)
+    .map_err(|err| Box::new(err) as _)
+    .await?;
 
   let status = response.status();
 
-  let body = response.into_body()
-               .concat2()
-               .map_err(|err| Box::new(err) as _)
-               .compat()
-               .await?;
+  let bytes = response.into_body()
+    .try_concat()
+    .map_err(|err| Box::new(err) as _)
+    .await?.to_vec();
 
-  match String::from_utf8(body.to_vec()) {
+  match String::from_utf8(bytes) {
     Ok(content) => Ok((status, content)),
-    Err(err) => Err(Box::new(err) as Box<dyn Error + Send>),
+    Err(err) => Err(Box::new(err) as _),
   }
 }
