@@ -17,6 +17,7 @@ class Acceleration extends StatefulWidget {
 class _AccelerationState extends State<Acceleration> {
   Map<String, dynamic> _acceleration = <String, dynamic>{};
   static const _messageChannel = BasicMessageChannel<String>('sensor', StringCodec());
+    static const _sensorChannel = const MethodChannel('sensor_data.flutter.dev/sensor');
 
   @override
   void initState() {
@@ -27,19 +28,23 @@ class _AccelerationState extends State<Acceleration> {
   Future<void> initPlatformState() async {
     Map<String, dynamic> acceleration = <String, dynamic>{};
 
+    void setSensorInfo(Map<String, dynamic> sensorDecode) {
+      acceleration = sensorDecode['acceleration'];
+
+      if (mounted) {
+        setState(() {
+          _acceleration = acceleration;
+        });
+      }
+    }
+
     if (Platform.isAndroid) {
+      setSensorInfo(jsonDecode(await _sensorChannel.invokeMethod('getSensorInfo')));
+
       _messageChannel.setMessageHandler((String sensorData) async {
         Map<String, dynamic> sensorDecode = jsonDecode(sensorData);
         sensorDecode = sensorDecode['records'][0]['value'];
-
-        acceleration = sensorDecode['sensors']['acceleration'];
-
-        if (mounted) {
-          setState(() {
-            _acceleration = acceleration;
-          });
-        }
-
+        setSensorInfo(sensorDecode['sensors']);
         return sensorData;
       });
     }

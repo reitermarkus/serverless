@@ -26,16 +26,16 @@ class _CpuInfoState extends State<CpuInfo> {
   }
 
   Future<void> initPlatformState() async {
-    Map<String, dynamic> _cpuInfo = <String, dynamic>{};
+    Map<String, dynamic> _cpuInfoDecode = <String, dynamic>{};
 
     void setCpuInfo(Map<String, dynamic> cpuDecode) {
-      _cpuInfo.clear();
-      _cpuInfo.putIfAbsent('cores', () => cpuDecode['cores']);
-      cpuDecode['frequency'].forEach((k, v) => _cpuInfo.putIfAbsent(k, () => v));
+      _cpuInfoDecode.clear();
+      _cpuInfoDecode.putIfAbsent('cores', () => cpuDecode['cores']);
+      cpuDecode['frequency'].forEach((k, v) => _cpuInfoDecode.putIfAbsent(k, () => v));
 
       if (mounted) {
         setState(() {
-          _cpuInfo = _cpuInfo;
+          _cpuInfo = _cpuInfoDecode;
         });
       }
     }

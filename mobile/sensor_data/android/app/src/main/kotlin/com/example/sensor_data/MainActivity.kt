@@ -15,6 +15,7 @@ import org.json.JSONObject
 class MainActivity: FlutterActivity() {
   private val CPU_CHANNEL = "sensor_data.flutter.dev/cpu_info"
   private val SERVICE_CHANNEL = "sensor_data.flutter.dev/service"
+  private val SENSOR_CHANNEL = "sensor_data.flutter.dev/sensor"
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -25,7 +26,7 @@ class MainActivity: FlutterActivity() {
         val cpuInfo : JSONObject? = CpuInfo.asJson()
 
         if (cpuInfo != null) {
-          result.success(CpuInfo.asJson().toString())
+          result.success(cpuInfo.toString())
         } else {
           result.error("UNAVAILABLE", "CPU Info not available.", null);
         }
@@ -46,6 +47,20 @@ class MainActivity: FlutterActivity() {
           result.success("successfully started service.")
         } else {
           result.error("UNAVAILABLE", res.second, null)
+        }
+      } else {
+        result.notImplemented()
+      }
+    }
+
+    MethodChannel(flutterView, SENSOR_CHANNEL).setMethodCallHandler { call, result ->
+      if (call.method.equals("getSensorInfo")) {
+        val sensorInfo : JSONObject? = Sensors.getInstance(getApplicationContext()).asJson()
+
+        if (sensorInfo != null) {
+          result.success(sensorInfo.toString())
+        } else {
+          result.error("UNAVAILABLE", "Sensor Info not available.", null);
         }
       } else {
         result.notImplemented()
