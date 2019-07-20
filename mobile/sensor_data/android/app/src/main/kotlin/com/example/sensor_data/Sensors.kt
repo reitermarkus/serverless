@@ -4,12 +4,21 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.content.Context
 
 import org.json.JSONObject
 
 class Sensors(private val manager: SensorManager) : SensorEventListener {
   companion object {
     private var _sensorData: HashMap<String, String> = HashMap()
+
+    @Volatile
+    private var INSTANCE: Sensors? = null
+    fun getInstance(context: Context) = INSTANCE ?: synchronized(this) {
+      INSTANCE ?: Sensors(context.getSystemService(Context.SENSOR_SERVICE) as SensorManager).also {
+        INSTANCE = it
+      }
+    }
   }
 
   init {

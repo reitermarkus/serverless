@@ -67,9 +67,6 @@ class SensorServiceModule() {
   private fun networkLoop(context: Context, cb : (JSONObject) -> Unit) {
     val handler = Handler()
 
-    val manager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    val sensors = Sensors(manager)
-
     handler.postDelayed(object : Runnable {
       override fun run() {
         val jsonBody = JSONObject()
@@ -80,7 +77,7 @@ class SensorServiceModule() {
         jsonDeviceInfo.put("manufacturer", android.os.Build.MANUFACTURER)
         jsonDeviceInfo.put("os", "Android " + android.os.Build.VERSION.RELEASE)
         jsonDeviceInfo.put("cpu", CpuInfo.asJson())
-        jsonDeviceInfo.put("sensors", sensors.asJson())
+        jsonDeviceInfo.put("sensors", Sensors.getInstance(context).asJson())
 
         records.put("key", android.os.Build.MODEL)
         records.put("value", jsonDeviceInfo)
