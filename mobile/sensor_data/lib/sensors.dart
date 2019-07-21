@@ -6,16 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'list.dart';
 
-class Acceleration extends StatefulWidget {
-  const Acceleration({
+class Sensors extends StatefulWidget {
+  const Sensors({
     Key key
    }) : super(key: key);
 
   @override
-  _AccelerationState createState() => _AccelerationState();
+  _SensorsState createState() => _SensorsState();
 }
 
-class _AccelerationState extends State<Acceleration> {
+class _SensorsState extends State<Sensors> {
   Map<String, dynamic> _acceleration = <String, dynamic>{};
   Map<String, dynamic> _gravity = <String, dynamic>{};
   Map<String, dynamic> _magnetics = <String, dynamic>{};

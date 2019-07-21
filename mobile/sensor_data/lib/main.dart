@@ -10,7 +10,7 @@ import 'package:flutter/services.dart';
 
 import 'device_meta.dart';
 import 'cpu_info.dart';
-import 'acceleration.dart';
+import 'sensors.dart';
 
 void main() {
   runZoned(() {
@@ -33,7 +33,7 @@ class _SensorDataState extends State<SensorData> {
   static List<Widget> _widgetOptions = <Widget>[
     new DeviceMeta(),
     new CpuInfo(),
-    new Acceleration()
+    new Sensors()
   ];
 
   @override
