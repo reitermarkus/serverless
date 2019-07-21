@@ -70,19 +70,19 @@ class _SensorDataState extends State<SensorData> {
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Text('Home'),
+              icon: Icon(Icons.phone_android),
+              title: Text('Device Info'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.business),
-              title: Text('Business'),
+              icon: Icon(Icons.memory),
+              title: Text('CPU'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.school),
-              title: Text('School'),
+              icon: Icon(Icons.settings_remote),
+              title: Text('Sensors'),
             ),
           ],
-          selectedItemColor: Colors.amber[800],
+          selectedItemColor: Color.fromARGB(255, 173, 34, 17),
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
         ),
