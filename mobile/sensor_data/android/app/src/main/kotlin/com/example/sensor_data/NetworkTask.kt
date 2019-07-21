@@ -1,4 +1,4 @@
-package com.example.sensor_data
+package com.sensor_data
 
 import com.android.volley.Request
 import com.android.volley.RequestQueue

@@ -1,6 +1,6 @@
-package com.example.sensor_data
+package com.sensor_data
 
-import com.example.sensor_data.R
+import com.sensor_data.R
 import android.app.Activity
 import android.app.Service
 import android.app.NotificationChannel

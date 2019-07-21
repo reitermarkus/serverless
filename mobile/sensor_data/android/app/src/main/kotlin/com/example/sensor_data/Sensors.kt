@@ -1,4 +1,4 @@
-package com.example.sensor_data
+package com.sensor_data
 
 import android.hardware.Sensor
 import android.hardware.SensorEvent

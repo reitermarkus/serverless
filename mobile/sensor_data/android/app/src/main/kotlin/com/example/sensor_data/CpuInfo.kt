@@ -1,4 +1,4 @@
-package com.example.sensor_data
+package com.sensor_data
 import java.io.*
 import java.util.*
 
