@@ -30,8 +30,14 @@ class SensorService: Service() {
   }
 
   override fun onStartCommand(intent: Intent?, flags:Int, startId:Int): Int {
-    Log.d(FLUTTER_CLASS, "onStartCommand, calling startForeground")
-    createAndShowForegroundNotification(3313)
+    if (intent?.getAction().equals("stop_service")) {
+      Log.d(FLUTTER_CLASS, "onStartCommand, stopping service")
+      stopSelf()
+    } else {
+      Log.d(FLUTTER_CLASS, "onStartCommand, calling startForeground")
+      createAndShowForegroundNotification(3313)
+    }
+
     return START_STICKY
   }
 
@@ -71,10 +77,16 @@ class SensorService: Service() {
 
     val desc = "getting sensor data..."
 
+    //https://stackoverflow.com/questions/30422452/how-to-stop-service-from-its-own-foreground-notification/35171958
+    val intent = Intent(this, SensorService::class.java)
+    intent.setAction("stop_service")
+    val stopAction = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+
     builder
       .setOngoing(true)
       .setSmallIcon(R.mipmap.ic_launcher)
       .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+      .addAction(R.mipmap.ic_launcher, "Stop", stopAction)
       .setContentTitle("Sensor Data")
       .setContentText(desc)
       .setTicker(desc)
