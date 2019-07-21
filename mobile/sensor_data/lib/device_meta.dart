@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:device_info/device_info.dart';
+import 'package:sensor_data/list.dart';
 
 class DeviceMeta extends StatefulWidget {
   const DeviceMeta({
@@ -93,64 +94,7 @@ class _DeviceMetaState extends State<DeviceMeta> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        children: <Widget> [
-          Container(
-            child: ListTile(
-              title: Text(
-                'Device Info',
-                style: Theme.of(context).textTheme.headline
-              ),
-            ),
-          ),
-          Container(
-            color: Colors.white,
-            child: ListView(
-              shrinkWrap: true,
-              physics: ClampingScrollPhysics(),
-              children: _deviceData.keys.map((String property) {
-                return Column(
-                  children: <Widget>[
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Container(
-                            child: Text(
-                              property,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16
-                              ),
-                            ),
-                          ),
-                          Flexible(
-                            child: Container(
-                              child: Text(
-                                '${_deviceData[property]}',
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 16
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    FractionallySizedBox(
-                      widthFactor: 0.95,
-                      child: Container(color: Color.fromARGB(255, 220, 220, 220), height: 0.6),
-                    )
-                  ],
-                );
-              }).toList(),
-            ),
-          ),
-        ],
-      ),
+      child: buildList(context, _deviceData, 'Device Info')
     );
   }
 }
