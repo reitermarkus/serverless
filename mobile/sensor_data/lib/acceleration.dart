@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'list.dart';
 
 class Acceleration extends StatefulWidget {
   const Acceleration({
@@ -16,8 +17,14 @@ class Acceleration extends StatefulWidget {
 
 class _AccelerationState extends State<Acceleration> {
   Map<String, dynamic> _acceleration = <String, dynamic>{};
+  Map<String, dynamic> _gravity = <String, dynamic>{};
+  Map<String, dynamic> _magnetics = <String, dynamic>{};
+  Map<String, dynamic> _gyroscope = <String, dynamic>{};
+  Map<String, dynamic> _orientation = <String, dynamic>{};
+  String _pressure = '';
+
   static const _messageChannel = BasicMessageChannel<String>('sensor', StringCodec());
-    static const _sensorChannel = const MethodChannel('sensor_data.flutter.dev/sensor');
+  static const _sensorChannel = const MethodChannel('sensor_data.flutter.dev/sensor');
 
   @override
   void initState() {
@@ -27,13 +34,28 @@ class _AccelerationState extends State<Acceleration> {
 
   Future<void> initPlatformState() async {
     Map<String, dynamic> acceleration = <String, dynamic>{};
+    Map<String, dynamic> gravity = <String, dynamic>{};
+    Map<String, dynamic> magnetics = <String, dynamic>{};
+    Map<String, dynamic> gyroscope = <String, dynamic>{};
+    Map<String, dynamic> orientation = <String, dynamic>{};
+    String pressure = '';
 
     void setSensorInfo(Map<String, dynamic> sensorDecode) {
       acceleration = sensorDecode['acceleration'];
+      gravity = sensorDecode['gravity'];
+      magnetics = sensorDecode['magnetic'];
+      gyroscope = sensorDecode['gyroscope'];
+      orientation = sensorDecode['orientation'];
+      pressure = sensorDecode['air_pressure'];
 
       if (mounted) {
         setState(() {
           _acceleration = acceleration;
+          _gravity = gravity;
+          _magnetics = magnetics;
+          _gyroscope = gyroscope;
+          _orientation = orientation;
+          _pressure = pressure;
         });
       }
     }
@@ -57,21 +79,24 @@ class _AccelerationState extends State<Acceleration> {
     return ListView(
       shrinkWrap: true,
       children: <Widget>[
-        Container(
-          child: ListTile(
-            title: Text(
-              'Acceleration',
-              style: Theme.of(context).textTheme.headline
+        buildList(context, _acceleration, 'Acceleration'),
+        buildList(context, _gravity, 'Gravity'),
+        buildList(context, _magnetics, 'Magnetics'),
+        buildList(context, _gyroscope, 'Gyroscope'),
+        buildList(context, _orientation, 'Orientation'),
+        Column(
+          children: <Widget>[
+            Container(
+              child: ListTile(
+                title: Text(
+                  'Air pressure',
+                  style: Theme.of(context).textTheme.headline
+                ),
+              ),
             ),
-          ),
-        ),
-        Container(
-          color: Colors.white,
-          child: ListView(
-            shrinkWrap: true,
-            physics: ClampingScrollPhysics(),
-            children: _acceleration.keys.map((String property) {
-              return Column(
+            Container(
+              color: Colors.white,
+              child: Column(
                 children: <Widget>[
                   Container(
                     padding: const EdgeInsets.all(12),
@@ -81,7 +106,7 @@ class _AccelerationState extends State<Acceleration> {
                       children: <Widget>[
                         Container(
                           child: Text(
-                            property,
+                            'pressure',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16
@@ -91,7 +116,7 @@ class _AccelerationState extends State<Acceleration> {
                         Flexible(
                           child: Container(
                             child: Text(
-                              '${_acceleration[property]}',
+                              '$_pressure',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontSize: 16
@@ -107,9 +132,9 @@ class _AccelerationState extends State<Acceleration> {
                     child: Container(color: Color.fromARGB(255, 220, 220, 220), height: 0.6),
                   )
                 ],
-              );
-            }).toList(),
-          )
+              ),
+            ),
+          ]
         )
       ],
     );
