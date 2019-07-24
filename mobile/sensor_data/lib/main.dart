@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'device_meta.dart';
 import 'cpu_info.dart';
 import 'sensors.dart';
+import 'settings.dart';
 
 void main() {
   runZoned(() {
@@ -33,7 +34,8 @@ class _SensorDataState extends State<SensorData> {
   static List<Widget> _widgetOptions = <Widget>[
     new DeviceMeta(),
     new CpuInfo(),
-    new Sensors()
+    new Sensors(),
+    new Settings()
   ];
 
   @override
@@ -60,15 +62,16 @@ class _SensorDataState extends State<SensorData> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(primaryColor: Color.fromARGB(255, 173, 34, 17)),
       home: Scaffold(
         backgroundColor: Color.fromARGB(255, 232, 232, 232),
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 173, 34, 17),
           title: Text(
             Platform.isAndroid ? 'Android Device Info' : 'iOS Device Info'),
         ),
         body: _widgetOptions.elementAt(_selectedIndex),
         bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.phone_android),
@@ -81,6 +84,10 @@ class _SensorDataState extends State<SensorData> {
             BottomNavigationBarItem(
               icon: Icon(Icons.settings_remote),
               title: Text('Sensors'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              title: Text('Settings'),
             ),
           ],
           selectedItemColor: Color.fromARGB(255, 173, 34, 17),
