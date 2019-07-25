@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,6 +18,7 @@ class _SettingsState extends State<Settings> {
   String _url = '';
   final _intervalController = TextEditingController();
   final _urlController = TextEditingController();
+  static const _methodChannel = const MethodChannel('sensor_data.flutter.dev/settings');
 
   @override
   void initState() {
@@ -109,6 +113,7 @@ class _SettingsState extends State<Settings> {
                       if (_interval >= 1000 && _interval <= 60000) {
                         prefs.setInt('interval', _interval);
                         prefs.setString('url', _url);
+                        print(await _methodChannel.invokeMethod('changeSettings', {'interval' : _interval, 'url': _url}));
 
                         Scaffold.of(context).showSnackBar(
                           SnackBar(

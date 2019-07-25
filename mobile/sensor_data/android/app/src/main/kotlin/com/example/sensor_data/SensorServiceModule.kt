@@ -1,7 +1,7 @@
 package com.sensor_data
 
 import java.util.HashMap
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import android.util.Log
 import android.content.Intent
@@ -17,12 +17,12 @@ import org.json.JSONArray
 class SensorServiceModule() {
   var url: String = "http://10.0.0.198"
     get() = field
-    private set(value) {
+    set(value) {
       field = value
     }
 
-  var updateInterval: Long = 15000
-    private set(value) {
+  var updateInterval: Int = 15000
+    set(value) {
       field = value
     }
 
@@ -69,7 +69,7 @@ class SensorServiceModule() {
 
   private fun networkLoop(context: Context, cb : (JSONObject) -> Unit) {
     val handler = Handler()
-    val counter = AtomicLong(0L)
+    val counter = AtomicInteger(0)
 
     handler.postDelayed(object : Runnable {
       override fun run() {
@@ -92,9 +92,9 @@ class SensorServiceModule() {
 
         cb(jsonBody)
 
-        if (counter.addAndGet(1L) == (updateInterval / 500)) {
+        if (counter.addAndGet(1) == (updateInterval / 500)) {
           NetworkTask.getInstance(context).sendRequest(jsonBody, url)
-          counter.set(0L)
+          counter.set(0)
         }
 
         handler.postDelayed(this, 500)

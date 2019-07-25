@@ -12,6 +12,7 @@ import 'device_meta.dart';
 import 'cpu_info.dart';
 import 'sensors.dart';
 import 'settings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runZoned(() {
@@ -46,8 +47,9 @@ class _SensorDataState extends State<SensorData> {
 
   Future<void> initPlatformState() async {
     if (Platform.isAndroid) {
+      final prefs = await SharedPreferences.getInstance();
       //start service
-      await service.invokeMethod('startService');
+      await service.invokeMethod('startService', {'url' : prefs.getString('url') ?? '10.0.0.198'});
     }
 
     if (!mounted) return;
