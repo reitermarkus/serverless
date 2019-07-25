@@ -34,7 +34,9 @@ class NetworkTask()  {
 
   fun sendRequest(jsonBody: JSONObject, ip: String) {
     val normalizedIp = ip.replace("\"", "")
-    val url = "$normalizedIp:8082/topics/mobile"
+
+    val url = "$normalizedIp:8082/topics/sensor"
+    Log.d("NetworkTask", "sending request to $url.")
 
     val stringRequest = object : StringRequest(Request.Method.POST, url,
       Response.Listener<String> { response ->
