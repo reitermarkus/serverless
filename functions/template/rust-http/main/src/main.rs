@@ -5,7 +5,7 @@ use hyper::{Body, Server, Request, Response, StatusCode, service::{make_service_
 
 use handler::handle;
 
-#[hyper::rt::main]
+#[tokio::main]
 async fn main() -> Result<(), hyper::Error> {
   let addr = ([127, 0, 0, 1], 7878).into();
 
