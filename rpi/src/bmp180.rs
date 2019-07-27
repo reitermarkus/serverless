@@ -1,5 +1,3 @@
-pub const BMP180_ADDRESS: u16 = 0x77;
-
 use std::env;
 
 use i2cdev::linux::{LinuxI2CDevice, LinuxI2CError};
@@ -7,7 +5,7 @@ use i2cdev_bmp180::{BMP180BarometerThermometer, BMP180PressureMode::BMP180Standa
 use i2csensors::Thermometer;
 
 fn barometer() -> Result<BMP180BarometerThermometer<LinuxI2CDevice>, LinuxI2CError> {
-  let dev = LinuxI2CDevice::new(env::var("I2C_DEVICE").expect("I2C_DEVICE is not set"), BMP180_ADDRESS)?;
+  let dev = LinuxI2CDevice::new(env::var("I2C_DEVICE").expect("I2C_DEVICE is not set"), i2cdev_bmp180::BMP180_I2C_ADDR)?;
   BMP180BarometerThermometer::new(dev, BMP180Standard)
 }
 
