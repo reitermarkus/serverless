@@ -78,6 +78,14 @@ fn sys_stats() -> Result<Value, std::io::Error> {
     stats.insert("illuminance", json!(illuminance));
   }
 
+  let i2c_dev = linux_embedded_hal::I2cdev::new(env::var("I2C_DEVICE").expect("I2C_DEVICE is not set")).unwrap();
+  let mut am2320 = am2320::Am2320::new(i2c_dev, linux_embedded_hal::Delay);
+
+  if let Ok(measurement) = am2320.read() {
+    stats.insert("temperature2", json!(measurement.temperature));
+    stats.insert("humidity", json!(measurement.humidity));
+  }
+
   Ok(json!(stats))
 }
 
