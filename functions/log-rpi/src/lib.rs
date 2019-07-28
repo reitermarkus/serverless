@@ -26,7 +26,11 @@ struct TemperatureData {
   pub time: String,
 }
 
-pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
+pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
+  if method != Method::POST {
+    return Ok((StatusCode::METHOD_NOT_ALLOWED, "".to_string()))
+  }
+
   let mut status_code = StatusCode::INTERNAL_SERVER_ERROR;
   let mut response = "".to_string();
 
@@ -37,7 +41,8 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
       "doc": illuminance_data,
     }).to_string()).await {
       status_code = s;
-      response = format!("{}{}\n", response, r);
+      response.push_str(&r);
+      response.push('\n');
     }
   }
 
@@ -48,7 +53,8 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
       "doc": pressure_data,
     }).to_string()).await {
       status_code = s;
-      response = format!("{}{}\n", response, r);
+      response.push_str(&r);
+      response.push('\n');
     }
   }
 
@@ -59,7 +65,8 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
       "doc": temperature_data,
     }).to_string()).await {
       status_code = s;
-      response = format!("{}{}\n", response, r);
+      response.push_str(&r);
+      response.push('\n');
     }
   }
 
