@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -113,7 +114,10 @@ class _SettingsState extends State<Settings> {
                       if (_interval >= 1000 && _interval <= 60000) {
                         prefs.setInt('interval', _interval);
                         prefs.setString('url', _url);
-                        print(await _methodChannel.invokeMethod('changeSettings', {'interval' : _interval, 'url': _url}));
+
+                        if (Platform.isAndroid) {
+                          print(await _methodChannel.invokeMethod('changeSettings', {'interval' : _interval, 'url': _url}));
+                        }
 
                         Scaffold.of(context).showSnackBar(
                           SnackBar(
