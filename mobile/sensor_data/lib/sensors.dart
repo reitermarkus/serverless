@@ -50,14 +50,24 @@ class _SensorsState extends State<Sensors> {
 
       if (mounted) {
         setState(() {
-          _acceleration = acceleration;
-          _gravity = gravity;
-          _magnetics = magnetics;
-          _gyroscope = gyroscope;
-          _orientation = orientation;
-          _pressure = pressure;
+          _acceleration = acceleration ?? {};
+          _gravity = gravity ?? {};
+          _magnetics = magnetics ?? {};
+          _gyroscope = gyroscope ?? {};
+          _orientation = orientation ?? {};
+          _pressure = pressure ?? "";
         });
       }
+    }
+
+    if (Platform.isIOS) {
+      var batteryLevel = (await _sensorChannel.invokeMethod('getBatteryLevel'));
+      print(batteryLevel);
+
+      var pressure = (await _sensorChannel.invokeMethod('getPressure'));
+      print(pressure);
+
+      setSensorInfo({'air_pressure': "$pressure hPa"});
     }
 
     if (Platform.isAndroid) {
