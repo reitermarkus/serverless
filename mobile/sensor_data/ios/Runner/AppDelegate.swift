@@ -25,6 +25,11 @@ import CoreMotion
         return
       }
       
+      if call.method == "getAcceleration" {
+        self?.receiveAcceleration(result: result)
+        return
+      }
+      
       result(FlutterMethodNotImplemented)
     })
     GeneratedPluginRegistrant.register(with: self)
@@ -51,11 +56,27 @@ import CoreMotion
       altimeter.stopRelativeAltitudeUpdates()
       
       if let error = error {
-        result(FlutterError(code: "RELATIVE_ALTITUDE_UPDATES_ERROR", message: error.localizedDescription, details: nil))
+        result(FlutterError(code: "RELATIVE_ALTITUDE_UPDATE_ERROR", message: error.localizedDescription, details: nil))
         return
       }
       
       result(data!.pressure.doubleValue * 10.0)
+    }
+  }
+  
+  private func receiveAcceleration(result: @escaping FlutterResult) {
+    let motionManager = CMMotionManager()
+    
+    motionManager.startAccelerometerUpdates(to: .main) { (data, error) in
+      motionManager.stopAccelerometerUpdates()
+      
+      if let error = error {
+        result(FlutterError(code: "ACCELEROMETER_UPDATE_ERROR", message: error.localizedDescription, details: nil))
+        return
+      }
+      
+      let acceleration = data!.acceleration
+      result([acceleration.x, acceleration.y, acceleration.z])
     }
   }
 }

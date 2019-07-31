@@ -50,12 +50,12 @@ class _SensorsState extends State<Sensors> {
 
       if (mounted) {
         setState(() {
-          _acceleration = acceleration ?? {};
+          _acceleration = acceleration;
           _gravity = gravity ?? {};
           _magnetics = magnetics ?? {};
           _gyroscope = gyroscope ?? {};
           _orientation = orientation ?? {};
-          _pressure = pressure ?? "";
+          _pressure = pressure;
         });
       }
     }
@@ -64,10 +64,21 @@ class _SensorsState extends State<Sensors> {
       var batteryLevel = (await _sensorChannel.invokeMethod('getBatteryLevel'));
       print(batteryLevel);
 
-      var pressure = (await _sensorChannel.invokeMethod('getPressure'));
-      print(pressure);
+      double pressure = (await _sensorChannel.invokeMethod('getPressure'));
 
-      setSensorInfo({'air_pressure': "$pressure hPa"});
+      List<double> acceleration = (await _sensorChannel.invokeMethod('getAcceleration')).cast<double>();
+      double x = acceleration[0];
+      double y = acceleration[1];
+      double z = acceleration[2];
+
+      setSensorInfo({
+        'air_pressure': "$pressure hPa",
+        'acceleration': {
+          'x': x,
+          'y': y,
+          'z': z,
+        },
+      });
     }
 
     if (Platform.isAndroid) {
