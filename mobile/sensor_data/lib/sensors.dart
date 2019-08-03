@@ -18,10 +18,11 @@ class Sensors extends StatefulWidget {
 class _SensorsState extends State<Sensors> {
   Map<String, dynamic> _acceleration = <String, dynamic>{};
   Map<String, dynamic> _gravity = <String, dynamic>{};
-  Map<String, dynamic> _magnetics = <String, dynamic>{};
+  Map<String, dynamic> _magneticField = <String, dynamic>{};
   Map<String, dynamic> _gyroscope = <String, dynamic>{};
   Map<String, dynamic> _orientation = <String, dynamic>{};
   String _pressure = '';
+  Timer _timer;
 
   static const _messageChannel = BasicMessageChannel<String>('sensor', StringCodec());
   static const _sensorChannel = const MethodChannel('sensor_data.flutter.dev/sensor');
@@ -29,41 +30,35 @@ class _SensorsState extends State<Sensors> {
   @override
   void initState() {
     super.initState();
+
+    _timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
+      updateState();
+    });
+
     initPlatformState();
   }
 
-  Future<void> initPlatformState() async {
-    Map<String, dynamic> acceleration = <String, dynamic>{};
-    Map<String, dynamic> gravity = <String, dynamic>{};
-    Map<String, dynamic> magnetics = <String, dynamic>{};
-    Map<String, dynamic> gyroscope = <String, dynamic>{};
-    Map<String, dynamic> orientation = <String, dynamic>{};
-    String pressure = '';
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
-    void setSensorInfo(Map<String, dynamic> sensorDecode) {
-      acceleration = sensorDecode['acceleration'];
-      gravity = sensorDecode['gravity'];
-      magnetics = sensorDecode['magnetic'];
-      gyroscope = sensorDecode['gyroscope'];
-      orientation = sensorDecode['orientation'];
-      pressure = sensorDecode['air_pressure'];
-
-      if (mounted) {
-        setState(() {
-          _acceleration = acceleration;
-          _gravity = gravity ?? {};
-          _magnetics = magnetics ?? {};
-          _gyroscope = gyroscope ?? {};
-          _orientation = orientation ?? {};
-          _pressure = pressure;
-        });
-      }
+  void setSensorInfo(Map<String, dynamic> sensorDecode) {
+    if (mounted) {
+      setState(() {
+        _acceleration = sensorDecode['acceleration'];
+        _gravity = sensorDecode['gravity'] ?? {};
+        _magneticField = sensorDecode['magnetic_field'] ?? {};
+        _gyroscope = sensorDecode['gyroscope'] ?? {};
+        _orientation = sensorDecode['orientation'] ?? {};
+        _pressure = sensorDecode['air_pressure'];
+      });
     }
+  }
 
+  Future<void> updateState() async {
     if (Platform.isIOS) {
-      var batteryLevel = (await _sensorChannel.invokeMethod('getBatteryLevel'));
-      print(batteryLevel);
-
       double pressure = (await _sensorChannel.invokeMethod('getPressure'));
 
       List<double> acceleration = (await _sensorChannel.invokeMethod('getAcceleration')).cast<double>();
@@ -83,7 +78,7 @@ class _SensorsState extends State<Sensors> {
           'y': gravity[1],
           'z': gravity[2],
         },
-        'magnetic': {
+        'magnetic_field': {
           'x': magneticField[0],
           'y': magneticField[1],
           'z': magneticField[2],
@@ -101,6 +96,10 @@ class _SensorsState extends State<Sensors> {
         'air_pressure': "$pressure hPa",
       });
     }
+  }
+
+  Future<void> initPlatformState() async {
+    await updateState();
 
     if (Platform.isAndroid) {
       setSensorInfo(jsonDecode(await _sensorChannel.invokeMethod('getSensorInfo')));
@@ -123,7 +122,7 @@ class _SensorsState extends State<Sensors> {
       children: <Widget>[
         buildList(context, _acceleration, 'Acceleration'),
         buildList(context, _gravity, 'Gravity'),
-        buildList(context, _magnetics, 'Magnetics'),
+        buildList(context, _magneticField, 'Magnetic Field'),
         buildList(context, _gyroscope, 'Gyroscope'),
         buildList(context, _orientation, 'Orientation'),
         Column(

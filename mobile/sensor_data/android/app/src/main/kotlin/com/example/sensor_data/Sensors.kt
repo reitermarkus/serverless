@@ -87,7 +87,7 @@ class Sensors(private val manager: SensorManager) : SensorEventListener {
         )
       Sensor.TYPE_MAGNETIC_FIELD ->
         _sensorData.set(
-          "magnetic",
+          "magnetic_field",
           "x=${event.values[0]}μT y=${event.values[1]}μT z=${event.values[2]}μT"
         )
       Sensor.TYPE_ORIENTATION ->
@@ -127,7 +127,7 @@ class Sensors(private val manager: SensorManager) : SensorEventListener {
         )
       Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED ->
         _sensorData.set(
-          "magnetics_uncalibrated",
+          "magnetic_field_uncalibrated",
           "x=${event.values[0]}μT y=${event.values[1]}μT z=${event.values[2]}μT"
         )
       Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR ->
