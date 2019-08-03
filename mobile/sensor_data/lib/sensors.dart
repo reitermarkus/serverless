@@ -67,17 +67,38 @@ class _SensorsState extends State<Sensors> {
       double pressure = (await _sensorChannel.invokeMethod('getPressure'));
 
       List<double> acceleration = (await _sensorChannel.invokeMethod('getAcceleration')).cast<double>();
-      double x = acceleration[0];
-      double y = acceleration[1];
-      double z = acceleration[2];
+      List<double> gravity = (await _sensorChannel.invokeMethod('getGravity')).cast<double>();
+      List<double> magneticField = (await _sensorChannel.invokeMethod('getMagneticField')).cast<double>();
+      List<double> rotationRate = (await _sensorChannel.invokeMethod('getRotationRate')).cast<double>();
+      List<double> attitude = (await _sensorChannel.invokeMethod('getAttitude')).cast<double>();
 
       setSensorInfo({
-        'air_pressure': "$pressure hPa",
         'acceleration': {
-          'x': x,
-          'y': y,
-          'z': z,
+          'x': acceleration[0],
+          'y': acceleration[1],
+          'z': acceleration[2],
         },
+        'gravity': {
+          'x': gravity[0],
+          'y': gravity[1],
+          'z': gravity[2],
+        },
+        'magnetic': {
+          'x': magneticField[0],
+          'y': magneticField[1],
+          'z': magneticField[2],
+        },
+        'gyroscope': {
+          'x': rotationRate[0],
+          'y': rotationRate[1],
+          'z': rotationRate[2],
+        },
+        'orientation': {
+          'roll': attitude[0],
+          'pitch': attitude[1],
+          'yaw': attitude[2],
+        },
+        'air_pressure': "$pressure hPa",
       });
     }
 
