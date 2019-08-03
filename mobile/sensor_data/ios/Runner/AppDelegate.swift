@@ -13,40 +13,19 @@ import CoreMotion
 
     let sensors = Sensors()
 
-    sensorChannel.setMethodCallHandler({
+    sensorChannel.setMethodCallHandler {
       [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
-      if call.method == "getPressure" {
-        result(sensors.pressure)
-        return
-      }
-
-      if call.method == "getAcceleration" {
-        result(sensors.acceleration.map { [$0.x, $0.y, $0.z] })
-        return
-      }
-
-      if call.method == "getGravity" {
-        result(sensors.gravity.map { [$0.x, $0.y, $0.z] })
-        return
-      }
-
-      if call.method == "getAttitude" {
-        result(sensors.attitude.map { [$0.roll, $0.pitch, $0.yaw] })
-        return
-      }
-
-      if call.method == "getRotationRate" {
-        result(sensors.rotationRate.map { [$0.x, $0.y, $0.z] })
-        return
-      }
-
-      if call.method == "getMagneticField" {
-        result(sensors.magneticField.map { [$0.x, $0.y, $0.z] })
+      if call.method == "getSensorInfo" {
+        result(sensors.toDict().map {
+          let jsonData = try! JSONSerialization.data(withJSONObject: $0, options: .prettyPrinted)
+          return String(data: jsonData, encoding: .utf8)!
+        })
         return
       }
 
       result(FlutterMethodNotImplemented)
-    })
+    }
+
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

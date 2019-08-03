@@ -55,19 +55,14 @@ class Sensors {
 
   func sendData() {
     self.semaphore.wait()
-    
+
     defer {
       self.semaphore.signal()
     }
 
     guard self.currentTask == nil else { return }
 
-    guard let acceleration = self.acceleration else { return }
-    guard let rotationRate = self.rotationRate else { return }
-    guard let magneticField = self.magneticField else { return }
-    guard let gravity = self.gravity else { return }
-    guard let attitude = self.attitude else { return }
-    guard let pressure = self.pressure else { return }
+    guard let value = self.toDict() else { return }
 
     var intervalMs = UserDefaults.standard.double(forKey: "flutter.interval")
     intervalMs = intervalMs == 0 ? 10000 : intervalMs
@@ -79,7 +74,6 @@ class Sensors {
       }
     }
 
-    lastSend = Date()
 
     guard let host = UserDefaults.standard.string(forKey: "flutter.url") else {
       os_log("No URL set, cancelling send.")
@@ -90,14 +84,7 @@ class Sensors {
 
     let json: [String : Any] = [
       "records": [[
-        "value": value(
-          acceleration: acceleration,
-          rotationRate: rotationRate,
-          magneticField: magneticField,
-          gravity: gravity,
-          attitude: attitude,
-          pressure: pressure
-        ),
+        "value": value,
       ]]
     ]
 
@@ -129,9 +116,16 @@ class Sensors {
     }
     self.currentTask!.resume()
   }
-  
 
-  func value(acceleration: CMAcceleration, rotationRate: CMRotationRate, magneticField: CMMagneticField, gravity: CMAcceleration, attitude: CMAttitude, pressure: Double) -> [String : Any] {
+
+  func toDict() -> [String : Any]? {
+    guard let acceleration = self.acceleration else { return nil }
+    guard let rotationRate = self.rotationRate else { return nil }
+    guard let magneticField = self.magneticField else { return nil }
+    guard let gravity = self.gravity else { return nil }
+    guard let attitude = self.attitude else { return nil }
+    guard let pressure = self.pressure else { return nil }
+
     return [
       "acceleration": [
         "x": acceleration.x,
@@ -153,10 +147,10 @@ class Sensors {
         "y": gravity.y,
         "z": gravity.z,
       ],
-      "attitude": [
-        "roll": attitude.roll,
-        "pitch": attitude.pitch,
+      "orientation": [
         "yaw": attitude.yaw,
+        "pitch": attitude.pitch,
+        "roll": attitude.roll,
       ],
       "pressure": pressure
     ]

@@ -5,6 +5,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.content.Context
+import kotlin.math.PI
 
 import org.json.JSONObject
 
@@ -68,17 +69,17 @@ class Sensors(private val manager: SensorManager) : SensorEventListener {
       Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_LINEAR_ACCELERATION ->
         _sensorData.set(
           "acceleration",
-          "x=${event.values[0]}m/s² y=${event.values[1]}m/s² z=${event.values[2]}m/s²"
+          "x=${event.values[0]} y=${event.values[1]} z=${event.values[2]}"
         )
       Sensor.TYPE_GRAVITY ->
         _sensorData.set(
           "gravity",
-          "x=${event.values[0]}m/s² y=${event.values[1]}m/s² z=${event.values[2]}m/s²"
+          "x=${event.values[0]} y=${event.values[1]} z=${event.values[2]}"
         )
       Sensor.TYPE_GYROSCOPE ->
         _sensorData.set(
-          "gyroscope",
-          "x=${event.values[0]}rad/s y=${ event.values[1]}rad/s z=${event.values[2]}rad/s"
+          "rotation_rate",
+          "x=${event.values[0]} y=${ event.values[1]} z=${event.values[2]}"
         )
       Sensor.TYPE_ROTATION_VECTOR ->
         _sensorData.set(
@@ -88,13 +89,18 @@ class Sensors(private val manager: SensorManager) : SensorEventListener {
       Sensor.TYPE_MAGNETIC_FIELD ->
         _sensorData.set(
           "magnetic_field",
-          "x=${event.values[0]}μT y=${event.values[1]}μT z=${event.values[2]}μT"
+          "x=${event.values[0]} y=${event.values[1]} z=${event.values[2]}"
         )
-      Sensor.TYPE_ORIENTATION ->
+      Sensor.TYPE_ORIENTATION -> {
+        val yaw = (if (event.values[0] > 180.0) (event.values[0] - 360.0).toFloat() else event.values[0]) / 180.0 * PI
+        val pitch = event.values[1] / 180.0 * PI
+        val roll = event.values[2] / 180.0 * PI
+
         _sensorData.set(
           "orientation",
-          "azimuth=${event.values[0]}° pitch=${event.values[1]}° roll=${event.values[2]}°"
+          "yaw=${yaw} pitch=${pitch} roll=${roll}"
         )
+      }
       Sensor.TYPE_PROXIMITY ->
         _sensorData.set(
           "proximity",
@@ -112,8 +118,8 @@ class Sensors(private val manager: SensorManager) : SensorEventListener {
         )
       Sensor.TYPE_PRESSURE ->
         _sensorData.set(
-          "air_pressure",
-          "${event.values[0]}hPa"
+          "pressure",
+          "${event.values[0]}"
         )
       Sensor.TYPE_RELATIVE_HUMIDITY ->
         _sensorData.set(
@@ -122,7 +128,7 @@ class Sensors(private val manager: SensorManager) : SensorEventListener {
         )
       Sensor.TYPE_GYROSCOPE_UNCALIBRATED ->
         _sensorData.set(
-          "gyroscope_uncalibrated",
+          "rotation_rate_uncalibrated",
           "x=${event.values[0]}rad/s y=${event.values[1]}rad/s z=${event.values[2]}rad/s"
         )
       Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED ->

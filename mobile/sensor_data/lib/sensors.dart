@@ -19,7 +19,7 @@ class _SensorsState extends State<Sensors> {
   Map<String, dynamic> _acceleration = <String, dynamic>{};
   Map<String, dynamic> _gravity = <String, dynamic>{};
   Map<String, dynamic> _magneticField = <String, dynamic>{};
-  Map<String, dynamic> _gyroscope = <String, dynamic>{};
+  Map<String, dynamic> _rotationRate = <String, dynamic>{};
   Map<String, dynamic> _orientation = <String, dynamic>{};
   String _pressure = '';
   Timer _timer;
@@ -31,11 +31,11 @@ class _SensorsState extends State<Sensors> {
   void initState() {
     super.initState();
 
-    _timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
-      updateState();
+    _timer = Timer.periodic(Duration(milliseconds: 500), (timer) async {
+      await updateState();
     });
 
-    initPlatformState();
+    updateState();
   }
 
   @override
@@ -44,66 +44,45 @@ class _SensorsState extends State<Sensors> {
     super.dispose();
   }
 
-  void setSensorInfo(Map<String, dynamic> sensorDecode) {
+  void setSensorInfo(Map<String, dynamic> sensorInfo) {
     if (mounted) {
       setState(() {
-        _acceleration = sensorDecode['acceleration'];
-        _gravity = sensorDecode['gravity'] ?? {};
-        _magneticField = sensorDecode['magnetic_field'] ?? {};
-        _gyroscope = sensorDecode['gyroscope'] ?? {};
-        _orientation = sensorDecode['orientation'] ?? {};
-        _pressure = sensorDecode['air_pressure'];
+        _acceleration = {
+          'x': "${sensorInfo['acceleration']['x']} m/s²",
+          'y': "${sensorInfo['acceleration']['y']} m/s²",
+          'z': "${sensorInfo['acceleration']['z']} m/s²",
+        };
+        _gravity = {
+          'x': "${sensorInfo['gravity']['x']} m/s²",
+          'y': "${sensorInfo['gravity']['y']} m/s²",
+          'z': "${sensorInfo['gravity']['z']} m/s²",
+        };
+        _magneticField = {
+          'x': "${sensorInfo['magnetic_field']['x']} µT",
+          'y': "${sensorInfo['magnetic_field']['y']} µT",
+          'z': "${sensorInfo['magnetic_field']['z']} µT",
+        };
+        _rotationRate = {
+          'x': "${sensorInfo['rotation_rate']['x']} rad/s",
+          'y': "${sensorInfo['rotation_rate']['y']} rad/s",
+          'z': "${sensorInfo['rotation_rate']['z']} rad/s",
+        };
+        _orientation = {
+          'yaw': "${sensorInfo['orientation']['yaw']} rad",
+          'pitch': "${sensorInfo['orientation']['pitch']} rad",
+          'roll': "${sensorInfo['orientation']['roll']} rad",
+        };
+        _pressure = "${sensorInfo['pressure']} hPa";
       });
     }
   }
 
   Future<void> updateState() async {
-    if (Platform.isIOS) {
-      double pressure = (await _sensorChannel.invokeMethod('getPressure'));
-
-      List<double> acceleration = (await _sensorChannel.invokeMethod('getAcceleration')).cast<double>();
-      List<double> gravity = (await _sensorChannel.invokeMethod('getGravity')).cast<double>();
-      List<double> magneticField = (await _sensorChannel.invokeMethod('getMagneticField')).cast<double>();
-      List<double> rotationRate = (await _sensorChannel.invokeMethod('getRotationRate')).cast<double>();
-      List<double> attitude = (await _sensorChannel.invokeMethod('getAttitude')).cast<double>();
-
-      setSensorInfo({
-        'acceleration': {
-          'x': acceleration[0],
-          'y': acceleration[1],
-          'z': acceleration[2],
-        },
-        'gravity': {
-          'x': gravity[0],
-          'y': gravity[1],
-          'z': gravity[2],
-        },
-        'magnetic_field': {
-          'x': magneticField[0],
-          'y': magneticField[1],
-          'z': magneticField[2],
-        },
-        'gyroscope': {
-          'x': rotationRate[0],
-          'y': rotationRate[1],
-          'z': rotationRate[2],
-        },
-        'orientation': {
-          'roll': attitude[0],
-          'pitch': attitude[1],
-          'yaw': attitude[2],
-        },
-        'air_pressure': "$pressure hPa",
-      });
-    }
+    setSensorInfo(jsonDecode(await _sensorChannel.invokeMethod('getSensorInfo')));
   }
 
   Future<void> initPlatformState() async {
-    await updateState();
-
     if (Platform.isAndroid) {
-      setSensorInfo(jsonDecode(await _sensorChannel.invokeMethod('getSensorInfo')));
-
       _messageChannel.setMessageHandler((String sensorData) async {
         Map<String, dynamic> sensorDecode = jsonDecode(sensorData);
         sensorDecode = sensorDecode['records'][0]['value'];
@@ -111,8 +90,6 @@ class _SensorsState extends State<Sensors> {
         return sensorData;
       });
     }
-
-    if (!mounted) return;
   }
 
   @override
@@ -123,7 +100,7 @@ class _SensorsState extends State<Sensors> {
         buildList(context, _acceleration, 'Acceleration'),
         buildList(context, _gravity, 'Gravity'),
         buildList(context, _magneticField, 'Magnetic Field'),
-        buildList(context, _gyroscope, 'Gyroscope'),
+        buildList(context, _rotationRate, 'Rotation Rate'),
         buildList(context, _orientation, 'Orientation'),
         Column(
           children: <Widget>[
