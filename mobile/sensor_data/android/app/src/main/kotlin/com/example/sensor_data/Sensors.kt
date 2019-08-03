@@ -11,7 +11,7 @@ import org.json.JSONObject
 
 class Sensors(private val manager: SensorManager) : SensorEventListener {
   companion object {
-    private var _sensorData: HashMap<String, String> = HashMap()
+    private var _sensorData: JSONObject = JSONObject()
 
     @Volatile
     private var INSTANCE: Sensors? = null
@@ -23,124 +23,68 @@ class Sensors(private val manager: SensorManager) : SensorEventListener {
   }
 
   init {
-    for (sensor in getSensors()) {
+    for (sensor in manager.getSensorList(Sensor.TYPE_ALL)) {
       manager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
     }
   }
 
-  override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) { }
-  override fun onSensorChanged(event: SensorEvent) = parseSensorInfo(event)
-
-  public val sensorInfo: HashMap<String, String>
-    get() = _sensorData
-
-  public fun getSensors() : List<Sensor> = manager.getSensorList(Sensor.TYPE_ALL)
-
   public fun asJson(): JSONObject {
-    val sensorsJson = JSONObject()
-
-    _sensorData.forEach { (key, value) ->
-      val splitted = value.split(" ")
-
-      if (splitted.size > 1) {
-        val obj = JSONObject()
-
-        for (sensorVal in splitted) {
-          val pair = sensorVal.split("=")
-
-          if (pair.size == 2) {
-            obj.put(pair[0], pair[1])
-          }
-        }
-
-        sensorsJson.put(key, obj)
-      } else {
-        sensorsJson.put(key, value)
-      }
-    }
-
-    return sensorsJson
+    return _sensorData
   }
 
-  public fun parseSensorInfo(event: SensorEvent) {
-    val type = event.sensor.type
+  override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) { }
 
-    when (type) {
+  fun xyz(event: SensorEvent): JSONObject {
+    val xyz = JSONObject()
+
+    xyz.put("x", event.values[0])
+    xyz.put("y", event.values[1])
+    xyz.put("z", event.values[2])
+
+    return xyz
+  }
+
+  override fun onSensorChanged(event: SensorEvent) {
+    when (event.sensor.type) {
       Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_LINEAR_ACCELERATION ->
-        _sensorData.set(
-          "acceleration",
-          "x=${event.values[0]} y=${event.values[1]} z=${event.values[2]}"
-        )
+        _sensorData.put("acceleration", xyz(event))
       Sensor.TYPE_GRAVITY ->
-        _sensorData.set(
-          "gravity",
-          "x=${event.values[0]} y=${event.values[1]} z=${event.values[2]}"
-        )
+        _sensorData.put("gravity", xyz(event))
       Sensor.TYPE_GYROSCOPE ->
-        _sensorData.set(
-          "rotation_rate",
-          "x=${event.values[0]} y=${ event.values[1]} z=${event.values[2]}"
-        )
+        _sensorData.put("rotation_rate", xyz(event))
       Sensor.TYPE_ROTATION_VECTOR ->
-        _sensorData.set(
-          "rotation",
-          "x=${event.values[0]} y=${event.values[1]} z=${event.values[2]}"
-        )
+        _sensorData.put("rotation", xyz(event))
       Sensor.TYPE_MAGNETIC_FIELD ->
-        _sensorData.set(
-          "magnetic_field",
-          "x=${event.values[0]} y=${event.values[1]} z=${event.values[2]}"
-        )
+        _sensorData.put("magnetic_field", xyz(event))
       Sensor.TYPE_ORIENTATION -> {
         val yaw = (if (event.values[0] > 180.0) (event.values[0] - 360.0).toFloat() else event.values[0]) / 180.0 * PI
         val pitch = event.values[1] / 180.0 * PI
         val roll = event.values[2] / 180.0 * PI
 
-        _sensorData.set(
-          "orientation",
-          "yaw=${yaw} pitch=${pitch} roll=${roll}"
-        )
+        var orientation = JSONObject()
+
+        orientation.put("yaw", yaw)
+        orientation.put("pitch", pitch)
+        orientation.put("roll", roll)
+
+        _sensorData.put("orientation", orientation)
       }
       Sensor.TYPE_PROXIMITY ->
-        _sensorData.set(
-          "proximity",
-          "${event.values[0]}cm"
-        )
+        _sensorData.put("proximity", event.values[0])
       Sensor.TYPE_AMBIENT_TEMPERATURE ->
-        _sensorData.set(
-          "air_temperature",
-          "${event.values[0]}°C"
-        )
+        _sensorData.put("air_temperature", event.values[0])
       Sensor.TYPE_LIGHT ->
-        _sensorData.set(
-          "illuminance",
-          "${event.values[0]}lx"
-        )
+        _sensorData.put("illuminance", event.values[0])
       Sensor.TYPE_PRESSURE ->
-        _sensorData.set(
-          "pressure",
-          "${event.values[0]}"
-        )
+        _sensorData.put("pressure", event.values[0])
       Sensor.TYPE_RELATIVE_HUMIDITY ->
-        _sensorData.set(
-          "relative_humidity",
-          "${event.values[0]}%"
-        )
+        _sensorData.put("relative_humidity", event.values[0])
       Sensor.TYPE_GYROSCOPE_UNCALIBRATED ->
-        _sensorData.set(
-          "rotation_rate_uncalibrated",
-          "x=${event.values[0]}rad/s y=${event.values[1]}rad/s z=${event.values[2]}rad/s"
-        )
+        _sensorData.put("rotation_rate_uncalibrated", xyz(event))
       Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED ->
-        _sensorData.set(
-          "magnetic_field_uncalibrated",
-          "x=${event.values[0]}μT y=${event.values[1]}μT z=${event.values[2]}μT"
-        )
+        _sensorData.put("magnetic_field_uncalibrated", xyz(event))
       Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR ->
-        _sensorData.set(
-          "geomagnetic_rotation",
-          "x=${event.values[0]} y=${event.values[1]} z=${event.values[2]}"
-        )
+        _sensorData.put("geomagnetic_rotation", xyz(event))
     }
   }
 }
