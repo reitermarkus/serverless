@@ -46,13 +46,18 @@ class _SensorDataState extends State<SensorData> {
   }
 
   Future<void> initPlatformState() async {
-    if (Platform.isAndroid) {
-      final prefs = await SharedPreferences.getInstance();
-      //start service
-      await service.invokeMethod('startService', {'url' : prefs.getString('url') ?? '10.0.0.198'});
-    }
+    final prefs = await SharedPreferences.getInstance();
 
-    if (!mounted) return;
+    // Initialize defaults.
+    final url = prefs.getString('url');
+    if (url == null) { prefs.setString('url', 'http://10.0.0.198'); }
+    final interval = prefs.getInt('interval');
+    if (interval == null) { prefs.setInt('interval', 15000); }
+
+    if (Platform.isAndroid) {
+      // Start service.
+      await service.invokeMethod('startService', {'url' : prefs.getString('url')});
+    }
   }
 
   void _onItemTapped(int index) {

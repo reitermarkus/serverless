@@ -32,8 +32,8 @@ class _SettingsState extends State<Settings> {
 
     if (mounted) {
       setState(() {
-        _interval = prefs.getInt('interval') ?? 15000;
-        _url = prefs.getString('url') ?? 'http://10.0.0.198';
+        _interval = prefs.getInt('interval');
+        _url = prefs.getString('url');
       });
 
       _intervalController.text = _interval.toString();
