@@ -94,7 +94,9 @@ class _DeviceMetaState extends State<DeviceMeta> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: buildList(context, _deviceData, 'Device Info')
+      child: Column(
+        children: buildList(context, _deviceData, 'Device Info')
+      )
     );
   }
 }

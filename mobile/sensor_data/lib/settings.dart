@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class Settings extends StatefulWidget {
   const Settings({
@@ -41,105 +43,120 @@ class _SettingsState extends State<Settings> {
     }
   }
 
+  void handleIntervalChange(String text) {
+    final parsedString = int.tryParse(text);
+
+    if (parsedString != null) {
+      if (mounted) {
+        setState(() {
+          _interval = int.parse(text);
+        });
+      }
+    }
+  }
+
+  void handleUrlChange(String text) {
+    if (mounted) {
+      setState(() {
+        _url = text;
+      });
+    }
+  }
+
+  Future<void> onSave(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (_interval >= 1000 && _interval <= 60000) {
+      prefs.setInt('interval', _interval);
+      prefs.setString('url', _url);
+
+      if (Platform.isAndroid) {
+        print(await _methodChannel.invokeMethod('changeSettings', {'interval' : _interval, 'url': _url}));
+
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Saved settings sucessfully.')
+          )
+        );
+      }
+
+      // Dismiss keyboard.
+      FocusScope.of(context).unfocus();
+    } else {
+      if (Platform.isAndroid) {
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('The value "$_interval" for interval is not allowed. It must be in milliseconds and between 1000ms and 60000ms.')
+          )
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Column(
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(left: 20, right: 20, top: 15),
-              child: TextField(
-                controller: _intervalController,
-                keyboardType: TextInputType.number,
+    final buttonColor = Color.fromARGB(255, 0, 200, 120);
+
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(left: 20, right: 20, top: 15),
+            child: PlatformTextField(
+              android: (_) => MaterialTextFieldData(
                 decoration: InputDecoration(
                   hintText: 'update interval',
                   icon: Icon(Icons.timer)
                 ),
-                style: new TextStyle(
+                style: TextStyle(
                   fontSize: 18
-                ),
-                onChanged: (text) {
-                  final parsedString = int.tryParse(text);
-
-                  if (parsedString != null) {
-                    if (mounted) {
-                      setState(() {
-                        _interval = int.parse(text);
-                      });
-                    }
-                  }
-                },
-              )
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 20, right: 20, top: 20),
-              child: TextField(
-                controller: _urlController,
-                keyboardType: TextInputType.url,
+                )
+              ),
+              controller: _intervalController,
+              keyboardType: TextInputType.number,
+              onChanged: handleIntervalChange,
+            )
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+            child: PlatformTextField(
+              android: (_) => MaterialTextFieldData(
                 decoration: InputDecoration(
                   hintText: 'url',
                   icon: Icon(Icons.dns)
                 ),
                 style: TextStyle(
                   fontSize: 18
-                ),
-                onChanged: (text) {
-                  if (mounted) {
-                    setState(() {
-                      _url = text;
-                    });
-                  }
-                },
-              )
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 30),
-              child: FractionallySizedBox(
-                widthFactor: 0.9,
-                child: ButtonTheme(
-                  height: 45,
-                  child: FlatButton(
-                    child: Text(
-                      'SAVE',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white
-                      ),
-                    ),
-                    color: Colors.green,
-                    onPressed: () async {
-                      final prefs = await SharedPreferences.getInstance();
-
-                      if (_interval >= 1000 && _interval <= 60000) {
-                        prefs.setInt('interval', _interval);
-                        prefs.setString('url', _url);
-
-                        if (Platform.isAndroid) {
-                          print(await _methodChannel.invokeMethod('changeSettings', {'interval' : _interval, 'url': _url}));
-                        }
-
-                        Scaffold.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Saved settings sucessfully.')
-                          )
-                        );
-                      } else {
-                        Scaffold.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: Colors.red,
-                            content: Text('The value "$_interval" for interval is not allowed. It must be in milliseconds and between 1000ms and 60000ms.')
-                          )
-                        );
-                      }
-                    },
-                  ),
                 )
+              ),
+              ios: (_) => CupertinoTextFieldData(
+                placeholder: 'URL'
+              ),
+              controller: _urlController,
+              keyboardType: TextInputType.url,
+              onChanged: handleUrlChange,
+            )
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 30),
+            child: FractionallySizedBox(
+              widthFactor: 0.9,
+              child: PlatformButton(
+                androidFlat: (_) => MaterialFlatButtonData(color: buttonColor),
+                child: PlatformText(
+                  'Save',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+                color: buttonColor,
+                onPressed: () async { await onSave(context); },
               )
             )
-          ],
-        )
-      ],
+          )
+        ]
+      )
     );
   }
 }

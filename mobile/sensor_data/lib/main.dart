@@ -6,7 +6,9 @@ import 'dart:async';
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 import 'device_meta.dart';
 import 'cpu_info.dart';
@@ -46,15 +48,24 @@ class _SensorDataState extends State<SensorData> {
 
     _items = [
       BottomNavigationBarItem(
-        icon: Icon(Icons.phone_android),
+        icon: PlatformWidget(
+          ios: (_) => Icon(IconData(0xf3a2, fontFamily: CupertinoIcons.iconFont, fontPackage: CupertinoIcons.iconFontPackage)),
+          android: (_) => Icon(Icons.phone_android),
+        ),
         title: Text('Device Info'),
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.settings_remote),
+        icon: PlatformWidget(
+          ios: (_) => Icon(IconData(0xf493, fontFamily: CupertinoIcons.iconFont, fontPackage: CupertinoIcons.iconFontPackage)),
+          android: (_) => Icon(Icons.settings_remote),
+        ),
         title: Text('Sensors'),
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.settings),
+        icon: PlatformWidget(
+          ios: (_) => Icon(CupertinoIcons.settings),
+          android: (_) => Icon(Icons.settings),
+        ),
         title: Text('Settings'),
       ),
     ];
@@ -97,23 +108,45 @@ class _SensorDataState extends State<SensorData> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primaryColor: Color.fromARGB(255, 173, 34, 17),
-        accentColor: Color.fromARGB(255, 210, 210, 210)
+
+    final primaryColor = Color.fromARGB(255, 200, 50, 80);
+
+    final androidTheme = ThemeData(
+      primaryColor: primaryColor,
+      accentColor: Color.fromARGB(255, 210, 210, 210),
+      backgroundColor: Colors.white,
+    );
+
+    final iosTheme = CupertinoThemeData(
+      primaryColor: primaryColor,
+      primaryContrastingColor: Colors.white,
+      barBackgroundColor: primaryColor,
+      scaffoldBackgroundColor: CupertinoColors.extraLightBackgroundGray,
+      textTheme: CupertinoTextThemeData(
+        navTitleTextStyle: CupertinoTextThemeData().navTitleTextStyle.apply(
+          color: Colors.white,
+        ),
       ),
-      home: Scaffold(
-        backgroundColor: Color.fromARGB(255, 232, 232, 232),
-        appBar: AppBar(
+    );
+
+    return PlatformApp(
+      debugShowCheckedModeBanner: false,
+      android: (_) => new MaterialAppData(theme: androidTheme),
+      ios: (_) => new CupertinoAppData(theme: iosTheme),
+      home: PlatformScaffold(
+        // iosContentPadding: true,
+        android: (_) => MaterialScaffoldData(backgroundColor: Color.fromARGB(255, 232, 232, 232)),
+        appBar: PlatformAppBar(
+          ios: (_) => CupertinoNavigationBarData(backgroundColor: primaryColor),
           title: _items[_selectedIndex].title,
         ),
         body: _widgets[_selectedIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
+        bottomNavBar: PlatformNavBar(
+          android: (_) => MaterialNavBarData(selectedItemColor: androidTheme.primaryColor, unselectedItemColor: androidTheme.accentColor),
+          ios: (_) => CupertinoTabBarData(backgroundColor: Colors.white),
           items: _items,
-          selectedItemColor: Color.fromARGB(255, 173, 34, 17),
           currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
+          itemChanged: _onItemTapped,
         ),
       ),
     );

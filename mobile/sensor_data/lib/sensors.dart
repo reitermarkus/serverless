@@ -81,67 +81,17 @@ class _SensorsState extends State<Sensors> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
-      children: <Widget>[
-        buildList(context, _acceleration, 'Acceleration'),
-        buildList(context, _gravity, 'Gravity'),
-        buildList(context, _magneticField, 'Magnetic Field'),
-        buildList(context, _rotationRate, 'Rotation Rate'),
-        buildList(context, _orientation, 'Orientation'),
-        Column(
-          children: <Widget>[
-            Container(
-              child: ListTile(
-                title: Text(
-                  'Air pressure',
-                  style: Theme.of(context).textTheme.headline
-                ),
-              ),
-            ),
-            _pressure.isNotEmpty ? Container(
-              color: Colors.white,
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Container(
-                          child: Text(
-                            'pressure',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          child: Container(
-                            child: Text(
-                              '$_pressure',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 16
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  FractionallySizedBox(
-                    widthFactor: 0.95,
-                    child: Container(color: Color.fromARGB(255, 220, 220, 220), height: 0.6),
-                  )
-                ],
-              ),
-            ) : LinearProgressIndicator(backgroundColor: Color.fromARGB(255, 210, 210, 210)),
-          ]
-        )
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          ...buildList(context, _acceleration, 'Acceleration'),
+          ...buildList(context, _gravity, 'Gravity'),
+          ...buildList(context, _magneticField, 'Magnetic Field'),
+          ...buildList(context, _rotationRate, 'Rotation Rate'),
+          ...buildList(context, _orientation, 'Orientation'),
+          ...buildList(context, {'pressure': _pressure}, 'Air Pressure'),
+        ]
+      )
     );
   }
 }
