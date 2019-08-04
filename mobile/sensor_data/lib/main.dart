@@ -31,17 +31,43 @@ class SensorData extends StatefulWidget {
 class _SensorDataState extends State<SensorData> {
   static const service = const MethodChannel('sensor_data.flutter.dev/service');
   static int _selectedIndex = 0;
-
-  static List<Widget> _widgetOptions = <Widget>[
-    new DeviceMeta(),
-    new CpuInfo(),
-    new Sensors(),
-    new Settings()
-  ];
+  List<Widget> _widgets;
+  List<BottomNavigationBarItem> _items;
 
   @override
   void initState() {
     super.initState();
+
+    _widgets = <Widget>[
+      new DeviceMeta(),
+      new Sensors(),
+      new Settings()
+    ];
+
+    _items = [
+      BottomNavigationBarItem(
+        icon: Icon(Icons.phone_android),
+        title: Text('Device Info'),
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.settings_remote),
+        title: Text('Sensors'),
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.settings),
+        title: Text('Settings'),
+      ),
+    ];
+
+    if (Platform.isAndroid) {
+      _widgets.insert(1, new CpuInfo());
+
+      _items.insert(1, BottomNavigationBarItem(
+        icon: Icon(Icons.memory),
+        title: Text('CPU'),
+      ));
+    }
+
     initPlatformState();
   }
 
@@ -79,30 +105,12 @@ class _SensorDataState extends State<SensorData> {
       home: Scaffold(
         backgroundColor: Color.fromARGB(255, 232, 232, 232),
         appBar: AppBar(
-          title: Text(
-            Platform.isAndroid ? 'Android Device Info' : 'iOS Device Info'),
+          title: _items[_selectedIndex].title,
         ),
-        body: _widgetOptions.elementAt(_selectedIndex),
+        body: _widgets[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.phone_android),
-              title: Text('Device Info'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.memory),
-              title: Text('CPU'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings_remote),
-              title: Text('Sensors'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              title: Text('Settings'),
-            ),
-          ],
+          items: _items,
           selectedItemColor: Color.fromARGB(255, 173, 34, 17),
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
