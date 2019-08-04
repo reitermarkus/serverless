@@ -142,7 +142,11 @@ class _SensorDataState extends State<SensorData> {
         ),
         body: _widgets[_selectedIndex],
         bottomNavBar: PlatformNavBar(
-          android: (_) => MaterialNavBarData(selectedItemColor: androidTheme.primaryColor, unselectedItemColor: androidTheme.accentColor),
+          android: (_) => MaterialNavBarData(
+            selectedItemColor: androidTheme.primaryColor,
+            unselectedItemColor: androidTheme.accentColor,
+            type: BottomNavigationBarType.fixed,
+          ),
           ios: (_) => CupertinoTabBarData(backgroundColor: Colors.white),
           items: _items,
           currentIndex: _selectedIndex,
