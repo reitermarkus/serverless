@@ -5,14 +5,17 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 Container border(double inset) {
   final borderColor = Platform.isIOS ? Color(0xFFBCBBC1) : Color.fromARGB(255, 220, 220, 220);
+  final height = Platform.isIOS ? 1.0 / 3.0 : 0.6;
+  final alignment = Platform.isIOS ? Alignment.centerRight : Alignment.center;
+  final padding = Platform.isIOS ? EdgeInsets.only(left: inset) : EdgeInsets.symmetric(horizontal: inset / 2.0);
 
   return Container(
     color: Colors.white,
-    alignment: Alignment.centerRight,
-    height: 0.5,
+    alignment: alignment,
+    height: height,
     child: Padding(
-      padding: EdgeInsets.only(left: inset),
-      child: Container(color: borderColor, height: 1.0 / 3.0),
+      padding: padding,
+      child: Container(color: borderColor, height: height),
     ),
   );
 }
