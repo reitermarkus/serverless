@@ -94,8 +94,11 @@ class _DeviceMetaState extends State<DeviceMeta> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        children: buildList(context, _deviceData)
+      child: Container(
+        padding: Platform.isAndroid ? EdgeInsets.only(top: 25) : null,
+        child: Column(
+          children: buildList(context, _deviceData)
+        ),
       )
     );
   }

@@ -59,8 +59,11 @@ class _CpuInfoState extends State<CpuInfo> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        children: buildList(context, _cpuInfo)
+      child: Container(
+        padding: Platform.isAndroid ? EdgeInsets.only(top: 25) : null,
+        child: Column(
+          children: buildList(context, _cpuInfo)
+        ),
       )
     );
   }
