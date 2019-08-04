@@ -50,13 +50,16 @@ class _SensorDataState extends State<SensorData> {
 
     // Initialize defaults.
     final url = prefs.getString('url');
-    if (url == null) { prefs.setString('url', 'http://10.0.0.198'); }
+    if (url == null) { prefs.setString('url', 'http://0.0.0.0'); }
     final interval = prefs.getInt('interval');
     if (interval == null) { prefs.setInt('interval', 15000); }
 
     if (Platform.isAndroid) {
       // Start service.
-      await service.invokeMethod('startService', {'url' : prefs.getString('url')});
+      await service.invokeMethod('startService', {
+        'url' : prefs.getString('url'),
+        'interval' : prefs.getInt('interval')
+      });
     }
   }
 

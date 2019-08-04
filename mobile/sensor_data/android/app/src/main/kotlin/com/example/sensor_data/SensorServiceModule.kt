@@ -15,7 +15,7 @@ import org.json.JSONObject
 import org.json.JSONArray
 
 class SensorServiceModule() {
-  var url: String = "http://10.0.0.198"
+  var url: String = "http://0.0.0.0"
     get() = field
     set(value) {
       field = value
@@ -33,8 +33,9 @@ class SensorServiceModule() {
     context.stopService(intent)
   }
 
-  fun startService(ip: String, context: Context, cb : (JSONObject) -> Unit) : Pair<Boolean, String> {
+  fun startService(ip: String, interval: Int, context: Context, cb : (JSONObject) -> Unit) : Pair<Boolean, String> {
     url = ip
+    updateInterval = interval
 
     try {
       //resetService(context)

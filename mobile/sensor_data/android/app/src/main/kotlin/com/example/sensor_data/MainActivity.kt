@@ -42,8 +42,9 @@ class MainActivity: FlutterActivity() {
 
       if (call.method.equals("startService")) {
         val url : String? = call.argument("url")
+        val interval : Int? = call.argument("interval")
 
-        val res = sensorServiceModule.startService(url!!, getApplicationContext(), {
+        val res = sensorServiceModule.startService(url!!, interval!!, getApplicationContext(), {
           jBody -> channel.send(jBody.toString())
         })
         if (res.first) {
