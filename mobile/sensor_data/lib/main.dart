@@ -69,7 +69,10 @@ class _SensorDataState extends State<SensorData> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(primaryColor: Color.fromARGB(255, 173, 34, 17)),
+      theme: ThemeData(
+        primaryColor: Color.fromARGB(255, 173, 34, 17),
+        accentColor: Color.fromARGB(255, 210, 210, 210)
+      ),
       home: Scaffold(
         backgroundColor: Color.fromARGB(255, 232, 232, 232),
         appBar: AppBar(

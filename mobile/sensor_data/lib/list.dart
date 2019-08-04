@@ -13,7 +13,7 @@ Widget buildList(BuildContext context, Map<String, dynamic> propertyMap, String 
       ),
       Container(
         color: Colors.white,
-        child: ListView(
+        child: propertyMap.isNotEmpty ? ListView(
           shrinkWrap: true,
           physics: ClampingScrollPhysics(),
           children: propertyMap.keys.map((String property) {
@@ -55,7 +55,7 @@ Widget buildList(BuildContext context, Map<String, dynamic> propertyMap, String 
               ],
             );
           }).toList(),
-        )
+        ) : LinearProgressIndicator(backgroundColor: Color.fromARGB(255, 210, 210, 210))
       )
     ],
   );

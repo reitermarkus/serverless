@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,7 +23,6 @@ class _SensorsState extends State<Sensors> {
   String _pressure = '';
   Timer _timer;
 
-  static const _messageChannel = BasicMessageChannel<String>('sensor', StringCodec());
   static const _sensorChannel = const MethodChannel('sensor_data.flutter.dev/sensor');
 
   @override
@@ -45,7 +43,7 @@ class _SensorsState extends State<Sensors> {
   }
 
   void setSensorInfo(Map<String, dynamic> sensorInfo) {
-    if (mounted) {
+    if (mounted && sensorInfo.isNotEmpty) {
       setState(() {
         _acceleration = {
           'x': "${sensorInfo['acceleration']['x']} m/s²",
@@ -81,17 +79,6 @@ class _SensorsState extends State<Sensors> {
     setSensorInfo(jsonDecode(await _sensorChannel.invokeMethod('getSensorInfo')));
   }
 
-  Future<void> initPlatformState() async {
-    if (Platform.isAndroid) {
-      _messageChannel.setMessageHandler((String sensorData) async {
-        Map<String, dynamic> sensorDecode = jsonDecode(sensorData);
-        sensorDecode = sensorDecode['records'][0]['value'];
-        setSensorInfo(sensorDecode['sensors']);
-        return sensorData;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -112,7 +99,7 @@ class _SensorsState extends State<Sensors> {
                 ),
               ),
             ),
-            Container(
+            _pressure.isNotEmpty ? Container(
               color: Colors.white,
               child: Column(
                 children: <Widget>[
@@ -151,7 +138,7 @@ class _SensorsState extends State<Sensors> {
                   )
                 ],
               ),
-            ),
+            ) : LinearProgressIndicator(backgroundColor: Color.fromARGB(255, 210, 210, 210)),
           ]
         )
       ],
