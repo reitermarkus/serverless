@@ -98,13 +98,26 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     final buttonColor = Color.fromARGB(255, 0, 200, 120);
 
+    final cupertinoTextFieldDecoration = BoxDecoration(
+      color: Colors.white,
+      border: Border.all(
+        color: CupertinoColors.lightBackgroundGray,
+        width: 1.0 / 3.0,
+      ),
+      borderRadius: BorderRadius.circular(8.0),
+    );
+
+    final textFieldHeight = Platform.isIOS ? 44.0 : null;
+    final buttonHeight = Platform.isAndroid ? 45.0 : null;
+
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Container(
-            margin: EdgeInsets.only(left: 20, right: 20, top: 15),
+            height: textFieldHeight,
+            margin: EdgeInsets.only(left: 20, right: 20, top: 20),
             child: PlatformTextField(
               android: (_) => MaterialTextFieldData(
                 decoration: InputDecoration(
@@ -115,12 +128,17 @@ class _SettingsState extends State<Settings> {
                   fontSize: 18
                 )
               ),
+              ios: (_) => CupertinoTextFieldData(
+                placeholder: 'Update Interval',
+                decoration: cupertinoTextFieldDecoration,
+              ),
               controller: _intervalController,
               keyboardType: TextInputType.number,
               onChanged: handleIntervalChange,
             )
           ),
           Container(
+            height: textFieldHeight,
             margin: EdgeInsets.only(left: 20, right: 20, top: 20),
             child: PlatformTextField(
               android: (_) => MaterialTextFieldData(
@@ -133,7 +151,8 @@ class _SettingsState extends State<Settings> {
                 )
               ),
               ios: (_) => CupertinoTextFieldData(
-                placeholder: 'URL'
+                placeholder: 'URL',
+                decoration: cupertinoTextFieldDecoration,
               ),
               controller: _urlController,
               keyboardType: TextInputType.url,
@@ -141,9 +160,10 @@ class _SettingsState extends State<Settings> {
             )
           ),
           Container(
-            margin: EdgeInsets.only(top: 30),
+            margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+            height: buttonHeight,
             child: FractionallySizedBox(
-              widthFactor: 0.9,
+              widthFactor: 1.0,
               child: PlatformButton(
                 androidFlat: (_) => MaterialFlatButtonData(color: buttonColor),
                 child: PlatformText(
