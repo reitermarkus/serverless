@@ -109,7 +109,7 @@ class _SensorDataState extends State<SensorData> {
   @override
   Widget build(BuildContext context) {
 
-    final primaryColor = Color.fromARGB(255, 200, 50, 80);
+    final primaryColor = Platform.isIOS ? Color.fromARGB(255, 200, 50, 80) : Color.fromARGB(255, 173, 34, 17);
 
     final androidTheme = ThemeData(
       primaryColor: primaryColor,
@@ -130,7 +130,7 @@ class _SensorDataState extends State<SensorData> {
     );
 
     return PlatformApp(
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner:  Platform.isIOS ? false : true,
       android: (_) => new MaterialAppData(theme: androidTheme),
       ios: (_) => new CupertinoAppData(theme: iosTheme),
       home: PlatformScaffold(

@@ -125,7 +125,7 @@ class _SettingsState extends State<Settings> {
             child: PlatformTextField(
               android: (_) => MaterialTextFieldData(
                 decoration: InputDecoration(
-                  hintText: 'url',
+                  hintText: 'URL',
                   icon: Icon(Icons.dns)
                 ),
                 style: TextStyle(
