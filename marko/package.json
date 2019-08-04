@@ -1,0 +1,18 @@
+{
+  "name": "sensor_ui",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "marko": "^4.18.10",
+    "marko-loader": "^1.5.0"
+  },
+  "devDependencies": {
+    "webpack": "^4.39.1",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2"
+  },
+  "scripts": {
+    "build": "NODE_ENV=production webpack --progress",
+    "dev": "webpack-dev-server"
+  }
+}
