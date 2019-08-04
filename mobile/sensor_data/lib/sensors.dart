@@ -84,12 +84,18 @@ class _SensorsState extends State<Sensors> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          ...buildList(context, _acceleration, 'Acceleration'),
-          ...buildList(context, _gravity, 'Gravity'),
-          ...buildList(context, _magneticField, 'Magnetic Field'),
-          ...buildList(context, _rotationRate, 'Rotation Rate'),
-          ...buildList(context, _orientation, 'Orientation'),
-          ...buildList(context, {'pressure': _pressure}, 'Air Pressure'),
+          buildTitle(context, 'Acceleration'),
+          ...buildList(context, _acceleration),
+          buildTitle(context, 'Gravity'),
+          ...buildList(context, _gravity),
+          buildTitle(context, 'Magnetic Field'),
+          ...buildList(context, _magneticField),
+          buildTitle(context, 'Rotation Rate'),
+          ...buildList(context, _rotationRate),
+          buildTitle(context, 'Orientation'),
+          ...buildList(context, _orientation),
+          buildTitle(context, 'Air Pressure'),
+          ...buildList(context, {'pressure': _pressure}),
         ]
       )
     );

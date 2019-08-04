@@ -20,51 +20,53 @@ Container border(double inset) {
   );
 }
 
-List<Widget> buildList(BuildContext context, Map<String, dynamic> propertyMap, String title) {
-  return <Widget>[
-    PlatformWidget(
-      android: (_) => Container(
-        child: ListTile(
-          title: Text(
-            title,
-            style: Theme.of(context).textTheme.headline,
-          ),
+PlatformWidget buildTitle(BuildContext context, String title) {
+  return PlatformWidget(
+    android: (_) => Container(
+      child: ListTile(
+        title: Text(
+          title,
+          style: Theme.of(context).textTheme.headline,
         ),
       ),
-      ios: (_) => Container(
-        height: 55.0,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              Text(
-                title.toUpperCase(),
-                style: TextStyle(color: Color(0xFF6c6c71), fontSize: 13),
-              ),
-            ],
-          ),
-        )
-      ),
     ),
-  ] + propertyMap.keys.toList().asMap().map((index, String property) {
-    final labelStyle = Platform.isIOS ?
-      CupertinoTheme.of(context).textTheme.textStyle :
-      TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
+    ios: (_) => Container(
+      height: 55.0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            Text(
+              title.toUpperCase(),
+              style: TextStyle(color: Color(0xFF6c6c71), fontSize: 13),
+            ),
+          ],
+        ),
+      )
+    ),
+  );
+}
 
-    final valueStyle = Platform.isIOS ?
-      CupertinoTheme.of(context).textTheme.textStyle.apply(color: CupertinoColors.inactiveGray) :
-      TextStyle(fontSize: 16);
+List<Widget> buildList(BuildContext context, Map<String, dynamic> propertyMap) {
+  final labelStyle = Platform.isIOS ?
+    CupertinoTheme.of(context).textTheme.textStyle :
+    TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
 
-    final padding = Platform.isIOS ?
-      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0) :
-      const EdgeInsets.all(12);
+  final valueStyle = Platform.isIOS ?
+    CupertinoTheme.of(context).textTheme.textStyle.apply(color: CupertinoColors.inactiveGray) :
+    TextStyle(fontSize: 16);
 
-    final height = Platform.isIOS ? 44.0 : null;
+  final padding = Platform.isIOS ?
+    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0) :
+    const EdgeInsets.all(12);
 
-    final borderInset = Platform.isIOS ? 16.0 : 12.0;
+  final height = Platform.isIOS ? 44.0 : null;
 
+  final borderInset = Platform.isIOS ? 16.0 : 12.0;
+
+  return propertyMap.keys.toList().asMap().map((index, String property) {
     return MapEntry(index, Column(
       children: <Widget>[
         ...(index == 0 ? [border(0.0)] : []),

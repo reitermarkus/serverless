@@ -60,7 +60,7 @@ class _CpuInfoState extends State<CpuInfo> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
-        children: buildList(context, _cpuInfo, 'CPU')
+        children: buildList(context, _cpuInfo)
       )
     );
   }
