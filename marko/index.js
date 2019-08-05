@@ -1,3 +1,4 @@
-const conponent = require("./index.marko");
+const component = require('./index.marko')
 
-conponent.renderSync().appendTo(document.body);
+component.renderSync().appendTo(document.body)
+
