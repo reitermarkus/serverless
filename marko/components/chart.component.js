@@ -28,8 +28,9 @@ export default class {
   }
 
   onMount() {
-    var canvas = this.getEl("canvas")
-    var ctx = canvas.getContext('2d')
+    const canvas = this.getEl("canvas")
+    const ctx = canvas.getContext('2d')
+
     this.chart = new Chart(ctx, {
       type: this.state.type,
       data: this.state.data,
@@ -38,6 +39,10 @@ export default class {
   }
 
   onUpdate() {
+    this.chart.type = this.state.type
+    this.chart.data = this.state.data
+    this.chart.options = this.state.options
+
     this.chart.update()
   }
 }

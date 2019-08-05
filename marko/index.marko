@@ -1,14 +1,30 @@
+class {
+  onCreate() {
+    this.state = {
+      devices: [
+        {name: 'Raspberry Pi 1',   id: 'rpi1'    },
+        {name: 'Raspberry Pi 2',   id: 'rpi2'    },
+        {name: 'Raspberry Pi 3',   id: 'rpi3'    },
+        {name: 'Android Device 1', id: 'android1'},
+        {name: 'iOS Device 1',     id: 'ios1'    },
+      ],
+      currentDevice: 'rpi3',
+    }
+  }
+
+  handleDeviceChange(id) {
+    this.state.currentDevice = id
+  }
+}
+
 h1 -- Serverless UI
 
 div.main-container
   nav
-    ul.uk-list
-      li -- Item 1
-      li -- Item 2
-      li -- Item 3
+    device-list current=state.currentDevice devices=state.devices on-device-change('handleDeviceChange')
 
   div.content-container
-    chart type='bar' title='Chart Title' data={
+    chart type='bar' title=(state.currentDevice) data={
       labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
       datasets: [{
         label: '# of Votes',

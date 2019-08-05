@@ -1,0 +1,18 @@
+class {
+  onInput(input) {
+    this.state = {
+      current: input.current,
+      devices: input.devices,
+    }
+  }
+
+  changeDevice(id) {
+    this.state.current = id
+    this.emit('device-change', id)
+  }
+}
+
+ul class="uk-nav-primary uk-nav-parent-icon" uk-nav
+  for|device, i| of=state.devices
+    li key=device.id class=(state.current == device.id ? 'uk-active' : '')
+      a href="#${device.id}" on-click('changeDevice', device.id) -- ${device.name}
