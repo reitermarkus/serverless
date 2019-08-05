@@ -1,4 +1,8 @@
-const component = require('./index.marko')
+import UIkit from 'uikit'
+import Icons from 'uikit/dist/js/uikit-icons'
+import UI from './index.marko'
+import Style from './style.scss'
 
-component.renderSync().appendTo(document.body)
+UIkit.use(Icons)
 
+UI.renderSync().appendTo(document.body)

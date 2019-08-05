@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
-    "@marko/webpack": "^1.2.1",
     "chart.js": "^2.8.0",
-    "marko": "^4.18.10"
+    "marko": "^4.18.10",
+    "uikit": "^3.1.7"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
+    "@marko/webpack": "^1.2.1",
     "babel-loader": "^8.0.6",
     "babel-plugin-add-module-exports": "^1.0.2",
     "css-loader": "^3.1.0",
