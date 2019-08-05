@@ -13,6 +13,7 @@ module.exports = {
     overlay: true,
     stats: "minimal",
     contentBase: __dirname,
+    port: 8008,
     historyApiFallback: true
   } : undefined,
   resolve: {
