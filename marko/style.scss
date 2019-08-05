@@ -45,7 +45,7 @@ h1 {
 
   .content-container {
     flex: 0 0 auto;
-    width: 100%;
+    width: calc(100% - #{$nav-width});
     height: 100%;
   }
 }
