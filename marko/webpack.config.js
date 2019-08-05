@@ -24,6 +24,14 @@ module.exports = {
       {
         test: /\.marko$/,
         loader: "marko-loader"
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          "style-loader",
+          "css-loader",
+          "sass-loader"
+        ]
       }
     ]
   }

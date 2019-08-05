@@ -7,6 +7,10 @@
     "marko-loader": "^1.5.0"
   },
   "devDependencies": {
+    "css-loader": "^3.1.0",
+    "node-sass": "^4.12.0",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
     "webpack": "^4.39.1",
     "webpack-cli": "^3.3.6",
     "webpack-dev-server": "^3.7.2"
