@@ -1,3 +1,19 @@
+$red:    rgb(255,  99, 132);
+$blue:   rgb( 54, 162, 235);
+$yellow: rgb(255, 206,  86);
+$cyan:   rgb( 75, 192, 192);
+$violet: rgb(153, 102, 255);
+$orange: rgb(255, 159,  64);
+
+:export {
+  red: $red;
+  blue: $blue;
+  yellow: $yellow;
+  cyan: $cyan;
+  violet: $violet;
+  orange: $orange;
+}
+
 @import "uikit/src/scss/variables-theme.scss";
 @import "uikit/src/scss/mixins-theme.scss";
 @import "uikit/src/scss/uikit-theme.scss";
