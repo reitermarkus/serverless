@@ -4,6 +4,8 @@
     "title": "number",
     "data": "array",
     "width": "number",
-    "height": "number"
+    "height": "number",
+    "on-click": "function",
+    "on-hover": "function"
   }
 }

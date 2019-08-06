@@ -1,10 +1,42 @@
 import Chart from 'chart.js'
+import Color from 'color'
+
+const RED    = Color.rgb(255,  99, 132)
+const BLUE   = Color.rgb( 54, 162, 235)
+const YELLOW = Color.rgb(255, 206,  86)
+const CYAN   = Color.rgb( 75, 192, 192)
+const VIOLET = Color.rgb(153, 102, 255)
+const ORANGE = Color.rgb(255, 159,  64)
+
+const BASE_COLORS = [
+  RED,
+  BLUE  ,
+  YELLOW,
+  CYAN  ,
+  VIOLET,
+  ORANGE,
+]
+
+const BACKGROUND_COLORS = BASE_COLORS.map(c => c.alpha(0.3).string())
+
+const BACKGROUND_BORDER_COLORS = BASE_COLORS.map(c => c.string())
 
 export default class {
   onInput(input) {
     const title = input.title ? { title: { display: true, text: input.title } } : {}
 
+    let datasets = input.data.datasets
+
+    datasets.forEach(d => {
+      d.backgroundColor = d.data.map((_, i) => BACKGROUND_COLORS[i % BACKGROUND_COLORS.length])
+      d.borderColor = d.data.map((_, i) => BACKGROUND_BORDER_COLORS[i % BACKGROUND_BORDER_COLORS.length])
+      d.borderWidth = 1
+    })
+
     let options = input.options || {}
+
+    options.onClick = input.onClick
+    options.onHover = input.onHover
 
     // Start bar charts at 0.
     if (input.type == 'bar') {
