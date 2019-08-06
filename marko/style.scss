@@ -18,49 +18,61 @@ $orange: rgb(255, 159,  64);
 @import "uikit/src/scss/mixins-theme.scss";
 @import "uikit/src/scss/uikit-theme.scss";
 
-h1 {
-  padding-left: 0.2em;
-}
+$nav-width: 16em;
 
 .main-container {
-  $nav-width: 16em;
-  $mobile-bp: "screen and (max-width: 32em)";
   display: flex;
 
-  @media #{$mobile-bp} {
+  @media (max-width: $breakpoint-xsmall-max) {
     flex-wrap: wrap;
   }
 
-  nav {
-    padding-left: 1.2em;
-    flex: 0 0 $nav-width;
-
-    @media #{$mobile-bp} {
-      flex: auto;
-    }
-
-    ul {
-      @media #{$mobile-bp} {
-        display: flex;
-      }
-    }
-
-    li {
-      @media #{$mobile-bp} {
-        padding: 0.3em;
-        margin-top: 0 !important;
-      }
-
-      &:hover {
-        color: orange;
-        cursor: pointer;
-      }
-    }
-  }
-
-  .content-container {
-    flex: 0 0 auto;
-    width: calc(100% - #{$nav-width});
+  @media (min-width: $breakpoint-small) {
     height: 100%;
   }
+}
+
+.content-container {
+  width: 100%;
+
+  @media (min-width: $breakpoint-small) {
+    flex: 1 1 calc(100% - #{$nav-width});
+    height: 100%;
+
+    .uk-container {
+      height: 100%;
+    }
+  }
+}
+
+.sidebar {
+  flex: 1 1 $nav-width;
+  width: $nav-width;
+  box-sizing: border-box;
+
+  @media (max-width: $breakpoint-xsmall-max) {
+    flex: auto;
+    border-bottom: 1px solid change-color($blue, $alpha: 0.5);
+  }
+
+  @media (min-width: $breakpoint-small) {
+    height: 100%;
+    border-right: 1px solid change-color($blue, $alpha: 0.5);
+  }
+}
+
+
+header.uk-section {
+  border-bottom: 1px solid change-color($blue, $alpha: 0.5);
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
 }

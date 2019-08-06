@@ -8,8 +8,6 @@ const BACKGROUND_BORDER_COLORS = BASE_COLORS.map(c => c.string())
 
 export default class {
   onInput(input) {
-    const title = input.title ? { title: { display: true, text: input.title } } : {}
-
     let datasets = input.data.datasets
 
     datasets.forEach(d => {
@@ -22,6 +20,8 @@ export default class {
 
     options.onClick = input.onClick
     options.onHover = input.onHover
+    options.maintainAspectRatio = false
+    options.aspectRatio = 1.0
 
     // Start bar charts at 0.
     if (input.type == 'bar') {
@@ -48,10 +48,7 @@ export default class {
     this.state = {
       type: input.type,
       data: input.data,
-      options: {
-        ...title,
-        ...options,
-      }
+      options: options,
     }
   }
 

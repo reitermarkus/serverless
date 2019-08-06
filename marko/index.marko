@@ -47,17 +47,21 @@ class {
   }
 }
 
-h1 -- Serverless UI
+header.uk-section
+  div.uk-container.uk-container-expand
+    h1.uk-heading-medium -- Serverless UI
 
 div.main-container
-  nav
-    device-list current=state.currentDevice devices=state.devices on-device-change('handleDeviceChange')
+  nav.sidebar.uk-section
+    div.uk-container.uk-container-expand
+      device-list current=state.currentDevice devices=state.devices on-device-change('handleDeviceChange')
 
-  div.content-container
-    chart type=state.devices[state.currentDevice].type title=(state.devices[state.currentDevice].name) data={
-      labels: state.devices[state.currentDevice].labels,
-      datasets: [{
-        type: state.devices[state.currentDevice].type,
-        data: state.devices[state.currentDevice].data,
-      }]
-    } on-click=(event => console.log(event))
+  div.content-container.uk-section
+    div.uk-container.uk-container-expand
+      chart type=state.devices[state.currentDevice].type title=(state.devices[state.currentDevice].name) data={
+        labels: state.devices[state.currentDevice].labels,
+        datasets: [{
+          type: state.devices[state.currentDevice].type,
+          data: state.devices[state.currentDevice].data,
+        }]
+      }

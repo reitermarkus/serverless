@@ -1,2 +1,3 @@
-div.chart-container
-  canvas key='canvas' width=(input.width || '') height=(input.height || '')
+div.chart style='height: 100%; width: 100%; display: flex; flex-direction: column'
+  div.chart-container style='height: 100%; width: 100%; '
+    canvas key='canvas' width=(input.width || '') height=(input.height || '')
