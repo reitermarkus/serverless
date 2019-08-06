@@ -24,13 +24,15 @@ module.exports = {
       {
         test: /\.m?js$/,
         exclude: /node_modules/,
-        use: {
+        use: [{
           loader: 'babel-loader',
           options: {
             presets: [['@babel/env', { "modules": "commonjs" }]],
             plugins: ['add-module-exports'],
           },
-        },
+        }, {
+          loader: 'eslint-loader'
+        }]
       },
       {
         test: /\.marko$/,
