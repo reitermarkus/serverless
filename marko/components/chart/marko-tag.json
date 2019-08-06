@@ -1,0 +1,9 @@
+{
+  "attributes": {
+    "type": "string",
+    "title": "number",
+    "data": "array",
+    "width": "number",
+    "height": "number"
+  }
+}

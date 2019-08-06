@@ -1,0 +1,6 @@
+{
+  "attributes": {
+    "current": "number",
+    "devices": "array"
+  }
+}

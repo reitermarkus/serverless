@@ -2,13 +2,43 @@ class {
   onCreate() {
     this.state = {
       devices: [
-        {name: 'Raspberry Pi 1',   id: 'rpi1'    },
-        {name: 'Raspberry Pi 2',   id: 'rpi2'    },
-        {name: 'Raspberry Pi 3',   id: 'rpi3'    },
-        {name: 'Android Device 1', id: 'android1'},
-        {name: 'iOS Device 1',     id: 'ios1'    },
+        {
+          name: 'Raspberry Pi 1',
+          id: 'rpi1',
+          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+          data: [ 8,  2,  2, 44, 33, 26],
+          type: 'bar',
+        },
+        {
+          name: 'Raspberry Pi 2',
+          id: 'rpi2',
+          labels: ['Red', 'Blue', 'Yellow', 'Green'],
+          data: [32, 11,  7,  7],
+          type: 'bar',
+        },
+        {
+          name: 'Raspberry Pi 3',
+          id: 'rpi3',
+          labels: ['Red', 'Blue', 'Yellow'],
+          data: [ 3,  5,  2],
+          type: 'doughnut',
+        },
+        {
+          name: 'Android Device 1',
+          id: 'android1',
+          labels: ['Red', 'Blue'],
+          data: [47, 43],
+          type: 'bar',
+        },
+        {
+          name: 'iOS Device 1',
+          id: 'ios1',
+          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
+          data: [19, 28, 18, 21, 20],
+          type: 'pie',
+        },
       ],
-      currentDevice: 'rpi3',
+      currentDevice: 0,
     }
   }
 
@@ -24,11 +54,11 @@ div.main-container
     device-list current=state.currentDevice devices=state.devices on-device-change('handleDeviceChange')
 
   div.content-container
-    chart type='bar' title=(state.currentDevice) data={
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+    chart type=state.devices[state.currentDevice].type title=(state.devices[state.currentDevice].name) data={
+      labels: state.devices[state.currentDevice].labels,
       datasets: [{
-        label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3],
+        type: state.devices[state.currentDevice].type,
+        data: state.devices[state.currentDevice].data,
         backgroundColor: [
           'rgba(255, 99, 132, 0.2)',
           'rgba(54, 162, 235, 0.2)',
