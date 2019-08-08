@@ -2,7 +2,8 @@
   "attributes": {
     "type": "string",
     "title": "number",
-    "data": "array",
+    "data": "object",
+    "options": "object",
     "width": "number",
     "height": "number",
     "on-click": "function",

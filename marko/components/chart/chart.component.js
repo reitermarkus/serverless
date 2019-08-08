@@ -10,11 +10,19 @@ export default class {
   onInput(input) {
     let datasets = input.data.datasets
 
-    datasets.forEach(d => {
-      d.backgroundColor = d.data.map((_, i) => BACKGROUND_COLORS[i % BACKGROUND_COLORS.length])
-      d.borderColor = d.data.map((_, i) => BACKGROUND_BORDER_COLORS[i % BACKGROUND_BORDER_COLORS.length])
-      d.borderWidth = 1
-    })
+    if (datasets.length == 1 && input.type != 'line') {
+      datasets.forEach(d => {
+        d.backgroundColor = d.data.map((_, i) => BACKGROUND_COLORS[i % BACKGROUND_COLORS.length])
+        d.borderColor = d.data.map((_, i) => BACKGROUND_BORDER_COLORS[i % BACKGROUND_BORDER_COLORS.length])
+        d.borderWidth = 1
+      })
+    } else {
+      datasets.forEach((d, i) => {
+        d.backgroundColor = BACKGROUND_COLORS[i % BACKGROUND_COLORS.length]
+        d.borderColor = BACKGROUND_BORDER_COLORS[i % BACKGROUND_BORDER_COLORS.length]
+        d.borderWidth = 1
+      })
+    }
 
     let options = input.options || {}
 
@@ -75,7 +83,7 @@ export default class {
     }, {})
 
     this.chart.data.datasets = this.state.data.datasets.map(next => {
-      const { _meta } = indexedByLabel[next.label]
+      const { _meta } = indexedByLabel[next.label] || {}
       return {_meta: _meta, ...next}
     })
 
