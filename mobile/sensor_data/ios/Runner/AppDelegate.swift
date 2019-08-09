@@ -1,6 +1,7 @@
 import UIKit
 import Flutter
 import CoreMotion
+import os.log
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -13,8 +14,7 @@ import CoreMotion
 
     let sensors = Sensors()
 
-    sensorChannel.setMethodCallHandler {
-      [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
+    sensorChannel.setMethodCallHandler { (call, result) in
       if call.method == "getSensorInfo" {
         result(sensors.toDict().map {
           let jsonData = try! JSONSerialization.data(withJSONObject: $0, options: .prettyPrinted)
@@ -25,6 +25,14 @@ import CoreMotion
 
       result(FlutterMethodNotImplemented)
     }
+
+    let uuid = UIDevice.current.identifierForVendor!.uuidString
+    let deviceName = UIDevice.current.name
+
+    Kafka.post(topic: "register-device", records: [["value": [
+      "id": uuid,
+      "name": deviceName,
+    ]]])?.resume()
 
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)

@@ -74,47 +74,12 @@ class Sensors {
       }
     }
 
-
-    guard let host = UserDefaults.standard.string(forKey: "flutter.url") else {
-      os_log("No URL set, cancelling send.")
-      return
-    }
-
-    let url = URL(string: "\(host):8082/topics/sensor")!
-
-    let json: [String : Any] = [
-      "records": [[
-        "value": value,
-      ]]
-    ]
-
-    let jsonData = try! JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-    let jsonString = String(data: jsonData, encoding: .utf8)!
-
-    os_log("%s", "POST \(url)")
-    os_log("%s", "\(jsonString)")
-
-    var request = URLRequest(url: url)
-    request.setValue("application/vnd.kafka.json.v2+json", forHTTPHeaderField: "Content-Type")
-    request.httpMethod = "POST"
-
-    request.httpBody = jsonData
-
-    self.currentTask = URLSession.shared.dataTask(with: request) { (data, response, error) in
+    self.currentTask = Kafka.post(topic: "sensor", records: [["value": value]]) {
       self.currentTask = nil
       self.lastSend = Date()
-
-      if let error = error {
-        os_log("ERROR:")
-        os_log("%s", "\(error.localizedDescription)")
-      }
-
-      if let data = data.flatMap({ String(data: $0, encoding: .utf8) }) {
-        os_log("RESPONSE BODY:")
-        os_log("%s", data)
-      }
     }
-    self.currentTask!.resume()
+
+    self.currentTask?.resume()
   }
 
 
