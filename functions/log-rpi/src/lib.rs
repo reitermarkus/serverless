@@ -9,12 +9,17 @@ use serde_json::{self, json, Value};
 
 use openfaas;
 
-const SUPPORTED_DATA_TYPES: [&'static str; 5] = [
-  "pressure",
+const SUPPORTED_DATA_TYPES: [&'static str; 10] = [
+  "acceleration",
   "cpu_temperature",
-  "illuminance",
-  "temperature",
+  "gravity",
   "humidity",
+  "illuminance",
+  "magnetic_field",
+  "orientation",
+  "pressure",
+  "rotation_rate",
+  "temperature",
 ];
 
 pub async fn handle(method: Method, uri: Uri, headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {

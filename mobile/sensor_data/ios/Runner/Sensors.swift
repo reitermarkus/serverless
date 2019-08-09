@@ -62,7 +62,7 @@ class Sensors {
 
     guard self.currentTask == nil else { return }
 
-    guard let value = self.toDict() else { return }
+    guard let dict = self.toDict() else { return }
 
     var intervalMs = UserDefaults.standard.double(forKey: "flutter.interval")
     intervalMs = intervalMs == 0 ? 10000 : intervalMs
@@ -74,7 +74,37 @@ class Sensors {
       }
     }
 
-    self.currentTask = Kafka.post(topic: "sensor", records: [["value": value]]) {
+    let formatter = ISO8601DateFormatter()
+    formatter.formatOptions = .init(arrayLiteral: [.withInternetDateTime, .withFractionalSeconds])
+
+    let date = Date()
+    let dateString = formatter.string(from: date)
+    let uuid = UIDevice.current.identifierForVendor!.uuidString
+
+    let records: [[String : Any]] = dict.map {
+      let (key, value) = $0
+
+      if var nested = value as? [String : Any] {
+        nested["type"] = key
+        nested["time"] = dateString
+        nested["device_id"] = uuid
+
+        return [
+          "value": nested
+        ]
+      }
+
+      return [
+        "value":  [
+          "type": key,
+          key: value,
+          "time": dateString,
+          "device_id": uuid,
+        ]
+      ]
+    }
+
+    self.currentTask = Kafka.post(topic: "sensor", records: records) {
       self.currentTask = nil
       self.lastSend = Date()
     }
