@@ -216,7 +216,7 @@ fn register_device(kafka_client: &KafkaRestClient, name: &str) {
   let mac_address = get_mac_address().expect("Cannot retrieve MAC address").expect("No MAC address found").to_string();
   println!("MAC address: {}", mac_address);
 
-  kafka_client.post("register_device", &[json!({
+  kafka_client.post("register-device", &[json!({
     "value": {
       "id": mac_address,
       "name": name,
