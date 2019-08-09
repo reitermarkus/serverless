@@ -17,4 +17,5 @@ ads1x1x = "*"
 am2320 = { git = "https://github.com/reitermarkus/am2320.rs" }
 embedded-hal = "*"
 linux-embedded-hal = "*"
+mac_address = "1"
 nb = "*"

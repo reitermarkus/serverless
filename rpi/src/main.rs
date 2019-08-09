@@ -4,9 +4,9 @@ use std::time::{Duration, SystemTime};
 use std::str;
 use std::error::Error;
 use std::fmt;
-use std::collections::HashMap;
 
 use chrono::{DateTime, offset::Utc};
+use mac_address::get_mac_address;
 use reqwest::{Client, header::{CONTENT_TYPE, HeaderMap, HeaderValue}};
 use serde::Deserialize;
 use serde_json::{json, to_string_pretty, Value};
@@ -15,38 +15,64 @@ use systemstat::{System, Platform};
 mod bmp180;
 mod photoresistor;
 
-fn sys_stats() -> Result<Value, std::io::Error> {
-  let mut stats = HashMap::new();
+fn now() -> DateTime<Utc> {
+   DateTime::from(SystemTime::now())
+}
 
-  let time: DateTime<Utc> = DateTime::from(SystemTime::now());
-  stats.insert("time", json!(time));
+fn sys_stats() -> Result<Vec<Value>, std::io::Error> {
+  let mut stats = Vec::new();
 
   let sys = System::new();
 
   if let Ok(memory) = sys.memory() {
-    stats.insert("memory", json!({
-      "used": (memory.total - memory.free).to_string(true),
-      "free": memory.free.to_string(true)
+    stats.push(json!({
+      "value": {
+        "type": "memory",
+        "time": now(),
+        "used": (memory.total - memory.free).as_usize(),
+        "free": memory.free.as_usize(),
+      },
     }));
   }
-  if let Ok(uptime) = sys.uptime() {
-    stats.insert("uptime", json!({
-      "hours":   uptime.as_secs() / 3600,
-      "minutes": (uptime.as_secs() % 3600) / 60,
-      "seconds": (uptime.as_secs() % 3600) % 60,
-    }));
-  }
+
+  // if let Ok(uptime) = sys.uptime() {
+  //   stats.insert("uptime", json!({
+  //     "hours":   uptime.as_secs() / 3600,
+  //     "minutes": (uptime.as_secs() % 3600) / 60,
+  //     "seconds": (uptime.as_secs() % 3600) % 60,
+  //   }));
+  // }
+
   if let Ok(boot_time) = sys.boot_time() {
-    stats.insert("boot_time", json!(boot_time));
+    stats.push(json!({
+      "value": {
+        "type": "boot_time",
+        "time": boot_time,
+      },
+    }));
   }
+
   if let Ok(cpu_temp) = sys.cpu_temp() {
-    stats.insert("cpu_temp", json!(cpu_temp));
+    stats.push(json!({
+      "value": {
+        "type": "cpu_temperature",
+        "time": now(),
+        "cpu_temperature": cpu_temp,
+      },
+    }));
   }
+
   if let Ok(cpu_load_average) = sys.load_average() {
-    stats.insert("cpu_load_average", json!({
-      "one":     cpu_load_average.one,
-      "five":    cpu_load_average.five,
-      "fifteen": cpu_load_average.fifteen,
+    stats.push(json!({
+      "value": {
+        "type": "cpu_load_average",
+        "time": now(),
+        "cpu_load_average": {
+          "one":     cpu_load_average.one,
+          "five":    cpu_load_average.five,
+          "fifteen": cpu_load_average.fifteen,
+        },
+      },
     }));
   }
 
@@ -57,36 +83,73 @@ fn sys_stats() -> Result<Value, std::io::Error> {
     });
 
   if let Ok(cpu_load_aggregate) = cpu_load_aggregate {
-    stats.insert("cpu_load_aggregate", json!({
-      "user":      cpu_load_aggregate.user * 100.0,
-      "nice":      cpu_load_aggregate.nice * 100.0,
-      "system":    cpu_load_aggregate.system * 100.0,
-      "interrupt": cpu_load_aggregate.interrupt * 100.0,
-      "idle":      cpu_load_aggregate.idle * 100.0,
+    stats.push(json!({
+      "value": {
+        "type": "cpu_load_aggregate",
+        "time": now(),
+        "cpu_load_aggregate": {
+          "user":      cpu_load_aggregate.user * 100.0,
+          "nice":      cpu_load_aggregate.nice * 100.0,
+          "system":    cpu_load_aggregate.system * 100.0,
+          "interrupt": cpu_load_aggregate.interrupt * 100.0,
+          "idle":      cpu_load_aggregate.idle * 100.0,
+        },
+      },
     }));
   }
 
   if let Ok(pressure) = bmp180::pressure() {
-    stats.insert("pressure", json!(pressure));
+    stats.push(json!({
+      "value": {
+        "type": "pressure",
+        "time": now(),
+        "pressure": pressure,
+      },
+    }));
   }
 
   if let Ok(temperature) = bmp180::temperature() {
-    stats.insert("temperature", json!(temperature));
+    stats.push(json!({
+      "value": {
+        "type": "temperature",
+        "time": now(),
+        "temperature": temperature,
+      },
+    }));
   }
 
   if let Ok(illuminance) = photoresistor::lux() {
-    stats.insert("illuminance", json!(illuminance));
+    stats.push(json!({
+      "value": {
+        "type": "illuminance",
+        "time": now(),
+        "illuminance": illuminance,
+      },
+    }));
   }
 
   let i2c_dev = linux_embedded_hal::I2cdev::new(env::var("I2C_DEVICE").expect("I2C_DEVICE is not set")).unwrap();
   let mut am2320 = am2320::Am2320::new(i2c_dev, linux_embedded_hal::Delay);
 
   if let Ok(measurement) = am2320.read() {
-    stats.insert("temperature2", json!(measurement.temperature));
-    stats.insert("humidity", json!(measurement.humidity));
+    stats.push(json!({
+      "value": {
+        "type": "temperature",
+        "time": now(),
+        "temperature": measurement.temperature,
+      },
+    }));
+
+    stats.push(json!({
+      "value": {
+        "type": "humidity",
+        "time": now(),
+        "humidity": measurement.humidity,
+      },
+    }));
   }
 
-  Ok(json!(stats))
+  Ok(stats)
 }
 
 #[derive(Deserialize, Debug)]
@@ -125,7 +188,7 @@ impl KafkaRestClient {
     format!("http://{}:{}", self.host, self.port)
   }
 
-  pub fn post(&self, topic: &str, value: &Value) -> Result<Value, KafkaRestError> {
+  pub fn post(&self, topic: &str, records: &[Value]) -> Result<Value, KafkaRestError> {
     let mut headers = HeaderMap::new();
     headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/vnd.kafka.json.v2+json"));
 
@@ -134,7 +197,7 @@ impl KafkaRestClient {
     Client::new()
       .post(&format!("{}/topics/{}", self.url(), topic))
       .headers(headers)
-      .body(json!({"records": [{"value": value}]}).to_string())
+      .body(json!({"records": records}).to_string())
       .send()
       .map_err(map_err)
       .and_then(|mut res| {
@@ -149,6 +212,18 @@ impl KafkaRestClient {
   }
 }
 
+fn register_device(kafka_client: &KafkaRestClient, name: &str) {
+  let mac_address = get_mac_address().expect("Cannot retrieve MAC address").expect("No MAC address found").to_string();
+  println!("MAC address: {}", mac_address);
+
+  kafka_client.post("register_device", &[json!({
+    "value": {
+      "id": mac_address,
+      "name": name,
+    },
+  })]).expect("Failed to register device");
+}
+
 fn main() {
   let kafka_host = if cfg!(debug_assertions) {
     env::var("KAFKA_HOST").unwrap_or_else(|_| "localhost".to_string())
@@ -156,20 +231,22 @@ fn main() {
     env::var("KAFKA_HOST").expect("KAFKA_HOST is not set")
   };
   let kafka_port = if cfg!(debug_assertions) {
-    env::var("KAFKA_PORT").map(|s| s.parse::<usize>().expect("cannot parse KAFKA_PORT")).unwrap_or(8082)
+    env::var("KAFKA_PORT").map(|s| s.parse::<usize>().expect("Cannot parse KAFKA_PORT")).unwrap_or(8082)
   } else {
     env::var("KAFKA_PORT").expect("KAFKA_PORT is not set")
-      .parse::<usize>().expect("cannot parse KAFKA_PORT")
+      .parse::<usize>().expect("Cannot parse KAFKA_PORT")
   };
 
   let kafka_client = KafkaRestClient::new(kafka_host, kafka_port);
+
+  register_device(&kafka_client, "Raspberry Pi");
 
   loop {
     println!("KAFKA: {}", kafka_client.url());
 
     match sys_stats() {
       Ok(stats) => {
-        println!("INFO: {}", to_string_pretty(&stats).unwrap());
+        println!("INFO: {}", to_string_pretty(&json!(stats)).unwrap());
 
         match kafka_client.post("sensor", &stats) {
           Ok(json_response) => println!("RESPONSE: {}", to_string_pretty(&json_response).unwrap()),
