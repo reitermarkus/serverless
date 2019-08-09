@@ -16,12 +16,12 @@ use std::{
   error::Error,
   fs::{self, File},
   io::prelude::*,
-  process::{exit, Command, Stdio},
+  process::{exit, Command, ExitStatus, Stdio},
 };
 
 #[macro_use]
 extern crate clap;
-use clap::{App, Arg, SubCommand};
+use clap::{App, Arg, SubCommand, AppSettings};
 
 extern crate curl;
 use curl::easy::Easy;
@@ -69,32 +69,26 @@ fn main() -> Result<(), Box<Error>> {
                   .arg(Arg::with_name("no-auth")
                     .short("n")
                     .long("no-auth")
-                    .help("Deploys swarm without authentication"))
+                    .help("Deploys swarm without authentication")
+                  )
                   .arg(Arg::with_name("restart")
                     .short("r")
                     .long("restart")
                     .takes_value(true)
                     .min_values(1)
                     .multiple(true)
-                    .help("Restarts individual services"))
+                    .help("Restarts individual services")
+                  )
                   .subcommand(SubCommand::with_name("func")
-                    .about("Interacts with \"faas-cli\"")
-                    .arg(Arg::with_name("deploy")
-                      .short("d")
-                      .long("deploy")
-                      .help("Deploy a function")
-                      .takes_value(true)
-                      .min_values(1)
-                      .max_values(1)
-                      .multiple(true))
-                    .arg(Arg::with_name("build")
-                      .short("b")
-                      .long("build")
-                      .help("Build a function")
-                      .takes_value(true)
-                      .min_values(1)
-                      .max_values(1)
-                      .multiple(true)))
+                    .setting(AppSettings::TrailingVarArg)
+                    .arg(Arg::with_name("restart")
+                      .short("r")
+                      .long("restart")
+                    )
+                    .arg(Arg::with_name("functions")
+                      .multiple(true)
+                    )
+                  )
                   .get_matches();
 
   if which("docker").is_err() {
@@ -169,13 +163,38 @@ fn main() -> Result<(), Box<Error>> {
   }
 
   if let Some(sub_matches) = matches.subcommand_matches("func") {
-    if sub_matches.is_present("build") {
-      Command::new("faas-cli").args(&["build", "-f", &value_t!(sub_matches, "build", String).unwrap()]).status().unwrap();
-      return Ok(())
-    } else if sub_matches.is_present("deploy") {
-      Command::new("faas-cli").args(&["deploy", "-f", &value_t!(sub_matches, "deploy", String).unwrap()]).status().unwrap();
-      return Ok(())
+    let functions = values_t!(sub_matches, "functions", String).unwrap();
+
+    let exit_on_error = |exit_status: ExitStatus| {
+      if !exit_status.success() {
+        exit(exit_status.code().unwrap_or(1));
+      }
+    };
+
+    for function in functions {
+      let yml = format!("{}.yml", function);
+
+      exit_on_error(Command::new("faas-cli")
+        .current_dir("functions")
+        .args(&["build", "-f", &yml, &function])
+        .status().unwrap());
+
+      if sub_matches.is_present("restart") {
+        println!("Restarting function '{}' …", function);
+
+        Command::new("faas-cli")
+          .current_dir("functions")
+          .args(&["remove", "-f", &yml, &function])
+          .status().unwrap();
+      }
+
+      exit_on_error(Command::new("faas-cli")
+        .current_dir("functions")
+        .args(&["deploy", "-f", &yml, &function])
+        .status().unwrap());
     }
+
+    return Ok(())
   }
 
   let user = "admin";
