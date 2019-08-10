@@ -4,7 +4,6 @@ use std::collections::HashMap;
 use std::error::Error;
 
 use http::{HeaderMap, Method, Uri, StatusCode};
-use serde_derive::{Deserialize, Serialize};
 use serde_json::{self, json, Value};
 
 use openfaas;
@@ -22,7 +21,7 @@ const SUPPORTED_DATA_TYPES: [&'static str; 10] = [
   "temperature",
 ];
 
-pub async fn handle(method: Method, uri: Uri, headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
+pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
   if method != Method::POST {
     return Ok((StatusCode::METHOD_NOT_ALLOWED, format!("Method '{}' is not allowed.", method)))
   }

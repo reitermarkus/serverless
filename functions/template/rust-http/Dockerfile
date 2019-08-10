@@ -1,22 +1,41 @@
-FROM openfaas/of-watchdog:0.5.3 as watchdog
+FROM openfaas/of-watchdog:0.5.4 as watchdog
 
 FROM rustlang/rust:nightly-slim as builder
 
 WORKDIR /home/app
 
 RUN mkdir -p function/src
-RUN echo 'pub fn handle(_: http::Method, _: http::Uri, _: http::HeaderMap, _: String) -> Result<(http::StatusCode, String), Box<std::error::Error + Send + '"'"'static>> { Ok((http::StatusCode::OK, "".to_string())) }' > function/src/lib.rs
+RUN { \
+  echo '[package]'; \
+  echo 'name = "handler"'; \
+  echo 'version = "0.1.0"'; \
+  echo 'edition = "2018"'; \
+  echo ''; \
+  echo '[dependencies]'; \
+  echo 'http = "*"'; \
+  echo 'openfaas = { path = "../openfaas" }'; \
+} > function/Cargo.toml
+RUN { \
+  echo '#![feature(async_await)]'; \
+  echo ''; \
+  echo 'pub async fn handle(_: http::Method, _: http::Uri, _: http::HeaderMap, _: String) -> Result<(http::StatusCode, String), Box<dyn std::error::Error + Send>> {'; \
+  echo '  Ok((http::StatusCode::OK, "".to_string()))'; \
+  echo '}'; \
+} > function/src/lib.rs
 
 COPY openfaas openfaas
 COPY main main
 
+# Pre-cache template dependencies.
+RUN cargo build --release --manifest-path main/Cargo.toml
+
+# Pre-cache function dependencies using dummy implementation.
 COPY function/Cargo.toml function/Cargo.toml
+RUN cargo build --release --manifest-path main/Cargo.toml
 
-# Fetch dependencies.
-RUN cargo fetch --manifest-path main/Cargo.toml
-
-COPY . .
-
+# Compile function function using actual implementation.
+RUN rm -r function
+COPY function function
 RUN cargo build --release --manifest-path main/Cargo.toml
 
 FROM debian:stretch-slim as ship
