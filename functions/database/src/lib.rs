@@ -25,7 +25,7 @@ lazy_static! {
 struct MongoArgs {
   collection: String,
   action: String,
-  doc: Document,
+  doc: Option<Document>,
 }
 
 pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
@@ -42,9 +42,16 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
   let database = client.db(&MONGO_DB);
   let collection = database.collection(&args.collection);
 
+  let doc = args.doc.take();
+
   match args.action.as_ref() {
     "insert" => {
-      if let Some(time) = args.doc.get_mut("time") {
+      let mut doc = match doc {
+        Some(doc) => doc,
+        None => return Ok((StatusCode::BAD_REQUEST, "No document found.".to_string())),
+      };
+
+      if let Some(time) = doc.get_mut("time") {
         if let Some(s) = time.as_str() {
           if let Ok(date) = DateTime::<Utc>::from_str(s) {
             *time = date.into()
@@ -52,31 +59,56 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
         }
       }
 
-      return match collection.insert_one(args.doc.clone(), None) {
-        Ok(result) => Ok((StatusCode::CREATED, format!("Inserted {:?} into collection '{}' in database '{}': {:?}.", args.doc, args.collection, *MONGO_DB, result))),
+      return match collection.insert_one(doc.clone(), None) {
+        Ok(result) => Ok((StatusCode::CREATED, format!("Inserted {:?} into collection '{}' in database '{}': {:?}.", doc, args.collection, *MONGO_DB, result))),
         Err(err) => Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
       }
     },
     "insert_or_replace" => {
-      let id: String = match args.doc.get("_id").and_then(|id| id.as_str()) {
+      let doc = match doc {
+        Some(doc) => doc,
+        None => return Ok((StatusCode::BAD_REQUEST, "No document found.".to_string())),
+      };
+
+      let id: String = match doc.get("_id").and_then(|id| id.as_str()) {
         Some(id) => id.to_string(),
         _ => return Ok((StatusCode::BAD_REQUEST, "No ID found.".to_string())),
       };
 
       let filter = doc! { "_id": id };
 
-      match collection.replace_one(filter, args.doc.clone(), None) {
+      match collection.replace_one(filter, doc.clone(), None) {
         Ok(ref update_result) if update_result.modified_count == 1 => {
           Ok((StatusCode::CREATED, "Replaced.".to_string()))
         },
         Ok(ref update_result) if update_result.matched_count == 1 && update_result.modified_count == 0 => {
           Ok((StatusCode::CREATED, "No change.".to_string()))
         },
-        Ok(_) => match collection.insert_one(args.doc, None) {
+        Ok(_) => match collection.insert_one(doc, None) {
           Ok(_) => Ok((StatusCode::CREATED, "Inserted.".to_string())),
           Err(err) => Err(Box::new(err) as _),
         },
         Err(err) => Err(Box::new(err) as _),
+      }
+    },
+    "find" => {
+      match collection.find(None, None) {
+        Ok(mut cursor) => {
+          let mut items = Vec::new();
+
+          while match cursor.has_next() {
+            Ok(b) => b,
+            Err(err) => return Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
+          } {
+            match cursor.drain_current_batch() {
+              Ok(batch) => items.extend(batch),
+              Err(err) => return Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
+            };
+          }
+
+          Ok((StatusCode::OK, serde_json::to_string(&items).unwrap()))
+        },
+        Err(err) => Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
       }
     },
     method => Ok((StatusCode::METHOD_NOT_ALLOWED, format!("Action '{}' is not allowed.", method)))
