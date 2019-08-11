@@ -100,7 +100,11 @@ fn main() -> Result<(), Box<Error>> {
     if cfg!(target_os = "macos") {
       Command::new("brew").args(&["install", "faas-cli"]).status().unwrap();
     } else if cfg!(target_os = "windows") {
-      Command::new("choco").args(&["install", "faas-cli", "-y"]).status().unwrap();
+      if which("scoop").is_ok() {
+        Command::new("choco").args(&["install", "faas-cli", "-y"]).status().unwrap();
+      } else if which("choco").is_ok() {
+        Command::new("scoop").args(&["install", "faas-cli"]).status().unwrap();
+      }
     } else {
       let mut easy = Easy::new();
       easy.url("https://cli.openfaas.com")?;
