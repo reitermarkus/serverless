@@ -25,6 +25,7 @@ RUN { \
 
 COPY openfaas openfaas
 COPY main main
+COPY Cargo.toml Cargo.toml
 
 # Pre-cache template dependencies.
 RUN cargo build --release --manifest-path main/Cargo.toml
@@ -58,7 +59,7 @@ RUN chown app:app -R /home/app
 USER app
 
 WORKDIR /home/app
-COPY --from=builder /home/app/main/target/release/main /home/app/
+COPY --from=builder /home/app/target/release/main /home/app/
 
 ENV function_process=./main
 EXPOSE 8080

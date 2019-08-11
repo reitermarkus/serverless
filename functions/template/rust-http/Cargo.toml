@@ -1,0 +1,11 @@
+[workspace]
+
+members = [
+  "function",
+  "main",
+  "openfaas"
+]
+
+# https://github.com/hyperium/hyper/pull/1895
+[patch."https://github.com/hyperium/hyper"]
+hyper = { git = "https://github.com/hadashiA/hyper", rev = "48ff03bb97af43d507d3ac99a4b7a1ff4b9e64cf" }

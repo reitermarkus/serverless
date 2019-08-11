@@ -5,8 +5,5 @@ authors = ["Markus Reiter <me@reitermark.us>"]
 edition = "2018"
 
 [dependencies]
-futures-preview = { version = "0.3.0-alpha.17" }
+futures-preview = "0.3.0-alpha.17"
 hyper = { git = "https://github.com/hyperium/hyper" }
-
-[patch."https://github.com/hyperium/hyper"]
-hyper = { git = "https://github.com/hyperium/hyper.git", rev = "a543c8eef2046999b54978cfc91be2663b743b23" }
