@@ -21,6 +21,9 @@ export default {
     stats: 'minimal',
     contentBase: __dirname,
     port: 8008,
+    proxy: {
+      '/function': 'http://localhost:8080'
+    },
     historyApiFallback: true,
   },
   resolve: {

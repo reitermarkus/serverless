@@ -1,9 +1,16 @@
-import { DEVICES } from './samples'
+import { DEVICES, DEVICE_DATA } from './samples'
+import axios from 'axios'
 
 class {
-  onCreate() {
+  async onCreate() {
     this.state = {
-      devices: DEVICES,
+      devices: [],
+    }
+
+    const {data: devices} = await axios.get('/function/devices')
+
+    this.state = {
+      devices: [...DEVICES, ...devices],
       currentDevice: 0,
     }
   }
@@ -21,11 +28,22 @@ header.uk-section
 div.main-container
   nav.sidebar.uk-section
     div.uk-container.uk-container-expand
-      device-list current=state.currentDevice devices=state.devices on-device-change('handleDeviceChange')
+      if(state.currentDevice != null)
+        device-list current=state.currentDevice devices=state.devices on-device-change('handleDeviceChange')
+      else
+        <div uk-spinner></div>
 
   div.content-container.uk-section
     div.uk-container.uk-container-expand
-      chart type=state.devices[state.currentDevice].type title=(state.devices[state.currentDevice].name) data={
-        labels: state.devices[state.currentDevice].labels,
-        datasets: state.devices[state.currentDevice].datasets,
-      } options=state.devices[state.currentDevice].options
+      if(state.currentDevice != null)
+        $ const device = state.devices[state.currentDevice]
+        $ const deviceData = DEVICE_DATA[device.id]
+        if(deviceData)
+          chart type=deviceData.type title=(state.devices[state.currentDevice].name) data={
+            labels: deviceData.labels,
+            datasets: deviceData.datasets,
+          } options=deviceData.options
+        else
+          -- No data available for ${device.name}.
+      else
+        -- <div uk-spinner></div>

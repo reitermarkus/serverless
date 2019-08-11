@@ -1,11 +1,10 @@
 #![feature(async_await)]
 
-use std::collections::HashMap;
 use std::error::Error;
 
 use http::{HeaderMap, Method, Uri, StatusCode};
 use serde::{Deserialize, Serialize};
-use serde_json::{self, json, Value};
+use serde_json::{self, json};
 
 use openfaas;
 
