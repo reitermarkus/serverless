@@ -21,4 +21,6 @@
 faas
 build
 
+deploy_rs_docker
+
 node_modules
