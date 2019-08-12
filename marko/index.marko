@@ -5,20 +5,38 @@ class {
   async onCreate() {
     this.state = {
       devices: [],
+      message: ''
     }
 
-    const {data: devices} = await axios.get('/function/devices')
+    let devices
 
-    this.state = {
-      devices: [...DEVICES, ...devices],
-      currentDevice: 0,
+    try {
+      const {data: devices} = await axios.get('/function/devices')
+
+      this.state = {
+        devices: [...DEVICES, ...devices],
+        currentDevice: 0,
+      }
+    } catch(_) {
+      this.state = {
+        message: 'Cannot fetch devices.'
+      }
     }
   }
 
   handleDeviceChange(id) {
     this.state.currentDevice = id
   }
+
+  dismiss() {
+    this.state.message = ''
+  }
 }
+
+if(state.message)
+  div.uk-alert.uk-alert-danger
+    a.uk-alert-close uk-close on-click('dismiss')
+    p -- ${state.message}
 
 header.uk-section
   div.uk-container.uk-container-expand
