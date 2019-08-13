@@ -1,0 +1,35 @@
+% !TEX TS-program = xelatex
+%
+\documentclass{article}
+\usepackage[T1]{fontenc}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+\usepackage{xcolor}
+\usepackage{listings}
+
+\lstset{basicstyle=\ttfamily,
+  breaklines = true,
+  showstringspaces = false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue}
+}
+
+\title{IoT Data Analytics using Serverless Computing - Mobile}
+
+\author{Markus Reiter, Michael Kaltschmid}
+\date{}
+
+\begin{document}
+  \maketitle
+  Another one of our tasks was to create a mobile application and fetch data from the respective device. To approach this topic we first did some research on current possibilities on creating cross platform mobile applications and the general feasibility of the task on hand. It became quite appearant early on that the desired design for the application is not possible on \textit{iOS}. \\
+  The idea for the design of the app is actually rather simple. Get data from the device, no mather if the application is in foreground, background or the screen is off and the device subsequently basically being in standby.
+  On \textit{Android} this can be realized easily with a so called \textit{ForegroundService}. On \textit{iOS} going for the same approach is difficult because of its restrictions on background task. While obviously applications like music players can run in the background on that platform, achieving the same for a highly battery intensive app like the one we are developing, is more or less impossible. \\
+  Mainly for that reason we actually chose to go for a cross platform mobile application, so we can have a fully supported \textit{Android} version and also a \textit{iOS} version on the side. \\
+  Finding the ideal tool for our job of creating a application supporting both \textit{iOS} and \textit{Android} seemed at first pretty easy. We chose to use \textit{React Native} as we both already have experience with \textit{React} itself and the approach to \textit{UI design} seemed equally elegant. \\
+  Getting started with \textit{React Native} was rather fast and effortless, the same however could not be said anymore once we progressed further with the project. At first things were looking good as the UI did properly respond to data from sensors / cpu but as we added more and more data for display, the UI got more and more sluggish to the point that it could not be considered usable anymore. Unfortunately this was not the only problem. \\
+  By nature the application relies heavily on \textit{native code}. The main culprit for this is the \textit{ForegroundService} on \textit{Android}. \textit{React Native} has a so called \textit{bridge} for communication between \textit{native code} and the \textit{UI}. Our application uses that bridge heavily for retrieving information from the service and also to push data to the service. \\
+  Once we fully implemented the settings view and were basically finished with the application, the app started to crash constantly on \textit{Android}. Unfortunately the tooling of \textit{React Native} really does not help with debugging fatal crashes. So we had to make a conscious decision whether we want to continue with \textit{React Native} or start over with something else entirely.
+
+\end{document}
