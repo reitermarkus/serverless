@@ -44,7 +44,6 @@ export default {
           {
             loader: 'babel-loader',
           },
-          'eslint-loader',
         ]
       },
       {
