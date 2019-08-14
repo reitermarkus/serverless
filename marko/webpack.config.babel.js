@@ -16,10 +16,13 @@ export default {
     path: __dirname,
     filename: 'static/bundle.js',
   },
+  devtool: PRODUCTION ? undefined : 'source-map',
   devServer: PRODUCTION ? undefined : {
     overlay: true,
     stats: 'minimal',
     contentBase: __dirname,
+    disableHostCheck: true,
+    host: '0.0.0.0',
     port: 8008,
     proxy: {
       '/function': 'http://localhost:8080'
