@@ -1,42 +1,4 @@
-import { DEVICES, DEVICE_DATA } from './samples'
-import axios from 'axios'
-
-class {
-  async onCreate() {
-    this.state = {
-      devices: [],
-      message: ''
-    }
-
-    let devices
-
-    try {
-      const {data: devices} = await axios.get('/function/devices')
-
-      this.state = {
-        devices: [...DEVICES, ...devices],
-        currentDevice: 0,
-      }
-    } catch(_) {
-      this.state = {
-        message: 'Cannot fetch devices.'
-      }
-    }
-  }
-
-  handleDeviceChange(id) {
-    this.state.currentDevice = id
-  }
-
-  dismiss() {
-    this.state.message = ''
-  }
-}
-
-if(state.message)
-  div.uk-alert.uk-alert-danger
-    a.uk-alert-close uk-close on-click('dismiss')
-    p -- ${state.message}
+import { DEVICE_DATA } from './samples'
 
 header.uk-section
   div.uk-container.uk-container-expand
