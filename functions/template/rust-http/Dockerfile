@@ -37,6 +37,10 @@ RUN cargo build --release --manifest-path main/Cargo.toml
 # Compile function function using actual implementation.
 RUN rm -r function
 COPY function function
+
+RUN rm target/release/main*
+RUN rm target/release/deps/libhandler*
+
 RUN cargo build --release --manifest-path main/Cargo.toml
 
 FROM debian:stretch-slim as ship
