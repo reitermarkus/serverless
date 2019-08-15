@@ -33,7 +33,7 @@ class SensorServiceModule() {
     context.stopService(intent)
   }
 
-  fun startService(ip: String, interval: Int, context: Context, cb : (JSONObject) -> Unit) : Pair<Boolean, String> {
+  fun startService(ip: String, interval: Int, context: Context) : Pair<Boolean, String> {
     url = ip
     updateInterval = interval
 
@@ -43,7 +43,7 @@ class SensorServiceModule() {
       intent.setClass(context, SensorService::class.java)
       context.stopService(intent)
       context.startService(intent)
-      networkLoop(context, cb)
+      networkLoop(context)
       Log.d(FLUTTER_CLASS, "startService, successfull")
 
       return Pair(true, "")
@@ -68,7 +68,7 @@ class SensorServiceModule() {
     return Pair(true, "")
   }
 
-  private fun networkLoop(context: Context, cb : (JSONObject) -> Unit) {
+  private fun networkLoop(context: Context) {
     val handler = Handler()
     val counter = AtomicInteger(0)
 
@@ -90,8 +90,6 @@ class SensorServiceModule() {
         recordsArray.put(records)
 
         jsonBody.put("records", recordsArray)
-
-        cb(jsonBody)
 
         if (counter.addAndGet(1) == (updateInterval / 500)) {
           NetworkTask.getInstance(context).sendRequest(jsonBody, url)

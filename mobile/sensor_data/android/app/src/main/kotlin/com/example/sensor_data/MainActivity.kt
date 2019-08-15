@@ -38,15 +38,12 @@ class MainActivity: FlutterActivity() {
     }
 
     MethodChannel(flutterView, SERVICE_CHANNEL).setMethodCallHandler { call, result ->
-      val channel = BasicMessageChannel<String>(flutterView, "sensor", StringCodec.INSTANCE)
-
       if (call.method.equals("startService")) {
         val url : String? = call.argument("url")
         val interval : Int? = call.argument("interval")
 
-        val res = sensorServiceModule.startService(url!!, interval!!, getApplicationContext(), {
-          jBody -> channel.send(jBody.toString())
-        })
+        val res = sensorServiceModule.startService(url!!, interval!!, getApplicationContext())
+
         if (res.first) {
           result.success("successfully started service.")
         } else {

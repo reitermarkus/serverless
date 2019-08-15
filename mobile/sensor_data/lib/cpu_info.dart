@@ -17,43 +17,40 @@ class CpuInfo extends StatefulWidget {
 
 class _CpuInfoState extends State<CpuInfo> {
   Map<String, dynamic> _cpuInfo = <String, dynamic>{};
-  static const _messageChannel = BasicMessageChannel<String>('sensor', StringCodec());
   static const _platform = const MethodChannel('sensor_data.flutter.dev/cpu_info');
+  Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+
+    _timer = Timer.periodic(Duration(milliseconds: 500), (timer) async {
+      await updateState();
+    });
+
+    updateState();
   }
 
-  Future<void> initPlatformState() async {
-    Map<String, dynamic> _cpuInfoDecode = <String, dynamic>{};
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
-    void setCpuInfo(Map<String, dynamic> cpuDecode) {
-      _cpuInfoDecode.clear();
-      _cpuInfoDecode.putIfAbsent('cores', () => cpuDecode['cores']);
-      cpuDecode['frequency'].forEach((k, v) => _cpuInfoDecode.putIfAbsent(k, () => v));
+  void setCpuInfo(Map<String, dynamic> cpuInfo) {
+    if (mounted && cpuInfo.isNotEmpty) {
+      Map<String, dynamic> _cpuInfoDecode = <String, dynamic>{};
+      _cpuInfoDecode.putIfAbsent('cores', () => cpuInfo['cores']);
+      cpuInfo['frequency'].forEach((k, v) => _cpuInfoDecode.putIfAbsent(k, () => v));
 
-      if (mounted) {
-        setState(() {
-          _cpuInfo = _cpuInfoDecode;
-        });
-      }
-    }
-
-    if (Platform.isAndroid) {
-      setCpuInfo(jsonDecode(await _platform.invokeMethod('getCpuInfo')));
-
-      _messageChannel.setMessageHandler((String sensorData) async {
-        Map<String, dynamic> sensorDecode = jsonDecode(sensorData);
-        sensorDecode = sensorDecode['records'][0]['value'];
-        setCpuInfo(sensorDecode['cpu']);
-
-        return sensorData;
+      setState(() {
+        _cpuInfo = _cpuInfoDecode;
       });
     }
+  }
 
-    if (!mounted) return;
+  Future<void> updateState() async {
+    setCpuInfo(jsonDecode(await _platform.invokeMethod('getCpuInfo')));
   }
 
   @override
