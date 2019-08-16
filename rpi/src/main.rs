@@ -26,14 +26,12 @@ fn sys_stats() -> Result<Vec<Value>, std::io::Error> {
 
   if let Ok(memory) = sys.memory() {
     stats.push(json!({
+      "type": "memory",
+      "time": now(),
       "value": {
-        "type": "memory",
-        "time": now(),
-        "value": {
-          "used": (memory.total - memory.free).as_usize(),
-          "free": memory.free.as_usize(),
-        }
-      },
+        "used": (memory.total - memory.free).as_usize(),
+        "free": memory.free.as_usize(),
+      }
     }));
   }
 
@@ -47,33 +45,27 @@ fn sys_stats() -> Result<Vec<Value>, std::io::Error> {
 
   if let Ok(boot_time) = sys.boot_time() {
     stats.push(json!({
-      "value": {
-        "type": "boot_time",
-        "time": boot_time,
-      },
+      "type": "boot_time",
+      "time": boot_time,
     }));
   }
 
   if let Ok(cpu_temp) = sys.cpu_temp() {
     stats.push(json!({
-      "value": {
-        "type": "cpu_temperature",
-        "time": now(),
-        "value": cpu_temp,
-      },
+      "type": "cpu_temperature",
+      "time": now(),
+      "value": cpu_temp,
     }));
   }
 
   if let Ok(cpu_load_average) = sys.load_average() {
     stats.push(json!({
+      "type": "cpu_load_average",
+      "time": now(),
       "value": {
-        "type": "cpu_load_average",
-        "time": now(),
-        "value": {
-          "one":     cpu_load_average.one,
-          "five":    cpu_load_average.five,
-          "fifteen": cpu_load_average.fifteen,
-        },
+        "one":     cpu_load_average.one,
+        "five":    cpu_load_average.five,
+        "fifteen": cpu_load_average.fifteen,
       },
     }));
   }
@@ -86,47 +78,39 @@ fn sys_stats() -> Result<Vec<Value>, std::io::Error> {
 
   if let Ok(cpu_load_aggregate) = cpu_load_aggregate {
     stats.push(json!({
+      "type": "cpu_load_aggregate",
+      "time": now(),
       "value": {
-        "type": "cpu_load_aggregate",
-        "time": now(),
-        "value": {
-          "user":      cpu_load_aggregate.user * 100.0,
-          "nice":      cpu_load_aggregate.nice * 100.0,
-          "system":    cpu_load_aggregate.system * 100.0,
-          "interrupt": cpu_load_aggregate.interrupt * 100.0,
-          "idle":      cpu_load_aggregate.idle * 100.0,
-        },
+        "user":      cpu_load_aggregate.user * 100.0,
+        "nice":      cpu_load_aggregate.nice * 100.0,
+        "system":    cpu_load_aggregate.system * 100.0,
+        "interrupt": cpu_load_aggregate.interrupt * 100.0,
+        "idle":      cpu_load_aggregate.idle * 100.0,
       },
     }));
   }
 
   if let Ok(pressure) = bmp180::pressure() {
     stats.push(json!({
-      "value": {
-        "type": "pressure",
-        "time": now(),
-        "value": pressure,
-      },
+      "type": "pressure",
+      "time": now(),
+      "value": pressure,
     }));
   }
 
   if let Ok(temperature) = bmp180::temperature() {
     stats.push(json!({
-      "value": {
-        "type": "temperature",
-        "time": now(),
-        "value": temperature,
-      },
+      "type": "temperature",
+      "time": now(),
+      "value": temperature,
     }));
   }
 
   if let Ok(illuminance) = photoresistor::lux() {
     stats.push(json!({
-      "value": {
-        "type": "illuminance",
-        "time": now(),
-        "value": illuminance,
-      },
+      "type": "illuminance",
+      "time": now(),
+      "value": illuminance,
     }));
   }
 
@@ -135,19 +119,15 @@ fn sys_stats() -> Result<Vec<Value>, std::io::Error> {
 
   if let Ok(measurement) = am2320.read() {
     stats.push(json!({
-      "value": {
-        "type": "temperature",
-        "time": now(),
-        "value": measurement.temperature,
-      },
+      "type": "temperature",
+      "time": now(),
+      "value": measurement.temperature,
     }));
 
     stats.push(json!({
-      "value": {
-        "type": "humidity",
-        "time": now(),
-        "value": measurement.humidity,
-      },
+      "type": "humidity",
+      "time": now(),
+      "value": measurement.humidity,
     }));
   }
 
@@ -214,7 +194,7 @@ impl KafkaRestClient {
   }
 }
 
-fn register_device(kafka_client: &KafkaRestClient, name: &str) {
+fn register_device(kafka_client: &KafkaRestClient, name: &str) -> String {
   let mac_address = get_mac_address().expect("Cannot retrieve MAC address").expect("No MAC address found").to_string();
   println!("MAC address: {}", mac_address);
 
@@ -224,6 +204,8 @@ fn register_device(kafka_client: &KafkaRestClient, name: &str) {
       "name": name,
     },
   })]).expect("Failed to register device");
+
+  mac_address
 }
 
 fn main() {
@@ -241,16 +223,22 @@ fn main() {
 
   let kafka_client = KafkaRestClient::new(kafka_host, kafka_port);
 
-  register_device(&kafka_client, "Raspberry Pi");
+  let device_id = register_device(&kafka_client, "Raspberry Pi");
 
   loop {
     println!("KAFKA: {}", kafka_client.url());
 
     match sys_stats() {
-      Ok(stats) => {
+      Ok(mut stats) => {
+        for v in &mut stats {
+          v.as_object_mut().unwrap().insert("device_id".into(), json!(device_id));
+        }
+
         println!("INFO: {}", to_string_pretty(&json!(stats)).unwrap());
 
-        match kafka_client.post("sensor", &stats) {
+        let records = stats.into_iter().map(|s| json!({"value": s})).collect::<Vec<_>>();
+
+        match kafka_client.post("sensor", &records) {
           Ok(json_response) => println!("RESPONSE: {}", to_string_pretty(&json_response).unwrap()),
           Err(err) => eprintln!("ERROR: {}", err.to_string()),
         }
