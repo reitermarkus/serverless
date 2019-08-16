@@ -7,9 +7,8 @@ use std::str::FromStr;
 use chrono::{DateTime, offset::Utc};
 use http::{HeaderMap, Method, Uri, StatusCode};
 use lazy_static::lazy_static;
-use mongodb::{doc, bson, Document, Bson, Client, ThreadedClient, db::ThreadedDatabase};
+use mongodb::{doc, bson, Document, Client, ThreadedClient, db::ThreadedDatabase};
 use serde_derive::Deserialize;
-use serde_json::{self, Value};
 
 use openfaas;
 
@@ -26,6 +25,7 @@ struct MongoArgs {
   collection: String,
   action: String,
   doc: Option<Document>,
+  filter: Option<Document>,
 }
 
 pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
@@ -92,7 +92,7 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
       }
     },
     "find" => {
-      match collection.find(None, None) {
+      match collection.find(args.filter, None) {
         Ok(mut cursor) => {
           let mut items = Vec::new();
 

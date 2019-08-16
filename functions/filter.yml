@@ -1,0 +1,12 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+functions:
+  filter:
+    lang: rust-http
+    handler: ./filter
+    image: filter:latest
+    environment:
+      write_debug: 'true'
+      gateway_url: http://gateway:8080
