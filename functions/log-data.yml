@@ -3,10 +3,10 @@ provider:
   name: openfaas
   gateway: http://127.0.0.1:8080
 functions:
-  log-rpi:
+  log-data:
     lang: rust-http
-    handler: ./log-rpi
-    image: log-rpi:latest
+    handler: ./log-data
+    image: log-data:latest
     annotations:
       topic: sensor
     environment:
