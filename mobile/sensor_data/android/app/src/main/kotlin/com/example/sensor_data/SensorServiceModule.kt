@@ -1,7 +1,8 @@
 package com.sensor_data
 
 import java.util.HashMap
-import java.util.concurrent.atomic.AtomicInteger;
+import java.text.SimpleDateFormat
+import java.util.Date
 
 import android.util.Log
 import android.content.Intent
@@ -9,6 +10,7 @@ import android.app.PendingIntent
 import android.graphics.BitmapFactory
 import android.hardware.SensorManager
 import android.os.Handler
+import android.provider.Settings
 import android.content.Context
 
 import org.json.JSONObject
@@ -70,35 +72,61 @@ class SensorServiceModule() {
 
   private fun networkLoop(context: Context) {
     val handler = Handler()
-    val counter = AtomicInteger(0)
+    val sensors = Sensors.getInstance(context)
 
     handler.postDelayed(object : Runnable {
       override fun run() {
-        val jsonBody = JSONObject()
+        val sensorsObj = sensors.asJson()
+
         val records = JSONObject()
-        val recordsArray = JSONArray();
-        val jsonDeviceInfo = JSONObject()
+        val recordsArray = JSONArray()
 
-        jsonDeviceInfo.put("manufacturer", android.os.Build.MANUFACTURER)
-        jsonDeviceInfo.put("os", "Android " + android.os.Build.VERSION.RELEASE)
-        jsonDeviceInfo.put("cpu", CpuInfo.asJson())
-        jsonDeviceInfo.put("sensors", Sensors.getInstance(context).asJson())
+        val cpuOuter = JSONObject()
+        val cpu = JSONObject()
 
-        records.put("key", android.os.Build.MODEL)
-        records.put("value", jsonDeviceInfo)
+        cpu.put("type", "CPU")
+        cpu.put("value", CpuInfo.asJson())
+        cpu.put("device_id", Settings.Secure.getString(context.getContentResolver(),
+                    Settings.Secure.ANDROID_ID))
 
-        recordsArray.put(records)
+        val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
-        jsonBody.put("records", recordsArray)
+        cpu.put("time", date.format(Date()))
 
-        if (counter.addAndGet(1) == (updateInterval / 500)) {
-          NetworkTask.getInstance(context).sendRequest(jsonBody, url)
-          counter.set(0)
+        cpuOuter.put("value", cpu)
+        recordsArray.put(cpuOuter)
+
+        val keys = sensorsObj.names()
+
+        for (i in 0 until keys.length())
+        {
+          val recordOuter = JSONObject()
+          val record = JSONObject()
+
+          val type = keys.getString(i)
+
+          record.put("type", type)
+          record.put("value", sensorsObj[type])
+          record.put("device_id", Settings.Secure.getString(context.getContentResolver(),
+                     Settings.Secure.ANDROID_ID))
+
+
+          record.put("time", date.format(Date()))
+
+          recordOuter.put("value", record)
+
+          recordsArray.put(recordOuter)
         }
 
-        handler.postDelayed(this, 500)
+        records.put("records", recordsArray)
+
+        Log.d("JSON", records.toString())
+
+        NetworkTask.getInstance(context).sendRequest(records, url)
+
+        handler.postDelayed(this, updateInterval.toLong())
       }
-    }, 3000)
+    }, 1500)
   }
 
   companion object {
