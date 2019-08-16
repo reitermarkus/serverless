@@ -32,10 +32,9 @@ class NetworkTask()  {
     }
   }
 
-  fun sendRequest(jsonBody: JSONObject, ip: String) {
-    val normalizedIp = ip.replace("\"", "")
+  fun sendRequest(jsonBody: JSONObject, topic: String, ip: String) {
+    val url = "$ip:8082/topics/$topic"
 
-    val url = "$normalizedIp:8082/topics/sensor"
     Log.d("NetworkTask", "sending request to $url.")
 
     val stringRequest = object : StringRequest(Request.Method.POST, url,

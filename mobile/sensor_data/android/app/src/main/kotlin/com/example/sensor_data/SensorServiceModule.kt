@@ -74,6 +74,25 @@ class SensorServiceModule() {
     val handler = Handler()
     val sensors = Sensors.getInstance(context)
 
+    val registerDevRecords = JSONObject()
+    val registerDevRecordsArray = JSONArray()
+
+    val registerDevOuter = JSONObject()
+    val registerDev = JSONObject()
+
+    val id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID)
+
+    registerDev.put("id", id)
+    registerDev.put("name", Settings.Secure.getString(context.getContentResolver(), "bluetooth_name"))
+
+    registerDevOuter.put("value", registerDev)
+    registerDevRecordsArray.put(registerDevOuter)
+    registerDevRecords.put("records", registerDevRecordsArray)
+
+    Log.d("REGISTER", registerDevRecords.toString())
+
+    NetworkTask.getInstance(context).sendRequest(registerDevRecords, "register-device", url)
+
     handler.postDelayed(object : Runnable {
       override fun run() {
         val sensorsObj = sensors.asJson()
@@ -86,8 +105,7 @@ class SensorServiceModule() {
 
         cpu.put("type", "CPU")
         cpu.put("value", CpuInfo.asJson())
-        cpu.put("device_id", Settings.Secure.getString(context.getContentResolver(),
-                    Settings.Secure.ANDROID_ID))
+        cpu.put("device_id", id)
 
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
@@ -98,8 +116,7 @@ class SensorServiceModule() {
 
         val keys = sensorsObj.names()
 
-        for (i in 0 until keys.length())
-        {
+        for (i in 0 until keys.length()) {
           val recordOuter = JSONObject()
           val record = JSONObject()
 
@@ -107,9 +124,7 @@ class SensorServiceModule() {
 
           record.put("type", type)
           record.put("value", sensorsObj[type])
-          record.put("device_id", Settings.Secure.getString(context.getContentResolver(),
-                     Settings.Secure.ANDROID_ID))
-
+          record.put("device_id", id)
 
           record.put("time", date.format(Date()))
 
@@ -120,9 +135,9 @@ class SensorServiceModule() {
 
         records.put("records", recordsArray)
 
-        Log.d("JSON", records.toString())
+        Log.d("DATA", records.toString())
 
-        NetworkTask.getInstance(context).sendRequest(records, url)
+        NetworkTask.getInstance(context).sendRequest(records, "sensor", url)
 
         handler.postDelayed(this, updateInterval.toLong())
       }
