@@ -83,7 +83,11 @@ class SensorServiceModule() {
     val id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID)
 
     registerDev.put("id", id)
-    registerDev.put("name", Settings.Secure.getString(context.getContentResolver(), "bluetooth_name"))
+
+    val bluetoothName = Settings.Secure.getString(context.getContentResolver(), "bluetooth_name")
+    val deviceName = if (bluetoothName == null || bluetoothName.isEmpty()) android.os.Build.MODEL else bluetoothName
+
+    registerDev.put("name", deviceName)
 
     registerDevOuter.put("value", registerDev)
     registerDevRecordsArray.put(registerDevOuter)
