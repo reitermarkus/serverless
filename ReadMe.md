@@ -45,12 +45,7 @@ to see if Kafka Connector received the line.
 To test a function, i.e. `function-name`, first deploy the swarm, then run
 
 ```bash
-cd functions
-faas build -f function-name.yml
-faas deploy -f function-name.yml
-sleep 5
-printf TEST | faas invoke function-name
-faas remove -f function-name.yml
+./deploy.rs func function-name
 ```
 
 ## Mobile App
