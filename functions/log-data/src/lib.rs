@@ -8,7 +8,10 @@ use serde_json::{self, json, Value};
 
 use openfaas;
 
-const SUPPORTED_DATA_TYPES: [&'static str; 10] = [
+const SUPPORTED_DATA_TYPES: [&'static str; 15] = [
+  "CPU",
+  "proximity",
+  "magnetic_field_uncilbrated",
   "acceleration",
   "cpu_temperature",
   "gravity",
@@ -17,7 +20,9 @@ const SUPPORTED_DATA_TYPES: [&'static str; 10] = [
   "magnetic_field",
   "orientation",
   "pressure",
+  "rotation",
   "rotation_rate",
+  "rotation_rate_uncalibrated",
   "temperature",
 ];
 
