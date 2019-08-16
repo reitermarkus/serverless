@@ -29,8 +29,10 @@ fn sys_stats() -> Result<Vec<Value>, std::io::Error> {
       "value": {
         "type": "memory",
         "time": now(),
-        "used": (memory.total - memory.free).as_usize(),
-        "free": memory.free.as_usize(),
+        "value": {
+          "used": (memory.total - memory.free).as_usize(),
+          "free": memory.free.as_usize(),
+        }
       },
     }));
   }
@@ -57,7 +59,7 @@ fn sys_stats() -> Result<Vec<Value>, std::io::Error> {
       "value": {
         "type": "cpu_temperature",
         "time": now(),
-        "cpu_temperature": cpu_temp,
+        "value": cpu_temp,
       },
     }));
   }
@@ -67,7 +69,7 @@ fn sys_stats() -> Result<Vec<Value>, std::io::Error> {
       "value": {
         "type": "cpu_load_average",
         "time": now(),
-        "cpu_load_average": {
+        "value": {
           "one":     cpu_load_average.one,
           "five":    cpu_load_average.five,
           "fifteen": cpu_load_average.fifteen,
@@ -87,7 +89,7 @@ fn sys_stats() -> Result<Vec<Value>, std::io::Error> {
       "value": {
         "type": "cpu_load_aggregate",
         "time": now(),
-        "cpu_load_aggregate": {
+        "value": {
           "user":      cpu_load_aggregate.user * 100.0,
           "nice":      cpu_load_aggregate.nice * 100.0,
           "system":    cpu_load_aggregate.system * 100.0,
@@ -103,7 +105,7 @@ fn sys_stats() -> Result<Vec<Value>, std::io::Error> {
       "value": {
         "type": "pressure",
         "time": now(),
-        "pressure": pressure,
+        "value": pressure,
       },
     }));
   }
@@ -113,7 +115,7 @@ fn sys_stats() -> Result<Vec<Value>, std::io::Error> {
       "value": {
         "type": "temperature",
         "time": now(),
-        "temperature": temperature,
+        "value": temperature,
       },
     }));
   }
@@ -123,7 +125,7 @@ fn sys_stats() -> Result<Vec<Value>, std::io::Error> {
       "value": {
         "type": "illuminance",
         "time": now(),
-        "illuminance": illuminance,
+        "value": illuminance,
       },
     }));
   }
@@ -136,7 +138,7 @@ fn sys_stats() -> Result<Vec<Value>, std::io::Error> {
       "value": {
         "type": "temperature",
         "time": now(),
-        "temperature": measurement.temperature,
+        "value": measurement.temperature,
       },
     }));
 
@@ -144,7 +146,7 @@ fn sys_stats() -> Result<Vec<Value>, std::io::Error> {
       "value": {
         "type": "humidity",
         "time": now(),
-        "humidity": measurement.humidity,
+        "value": measurement.humidity,
       },
     }));
   }

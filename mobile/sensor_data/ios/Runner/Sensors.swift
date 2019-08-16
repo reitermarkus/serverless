@@ -84,20 +84,10 @@ class Sensors {
     let records: [[String : Any]] = dict.map {
       let (key, value) = $0
 
-      if var nested = value as? [String : Any] {
-        nested["type"] = key
-        nested["time"] = dateString
-        nested["device_id"] = uuid
-
-        return [
-          "value": nested
-        ]
-      }
-
       return [
         "value":  [
           "type": key,
-          key: value,
+          "value": value,
           "time": dateString,
           "device_id": uuid,
         ]
