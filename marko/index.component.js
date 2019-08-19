@@ -18,6 +18,8 @@ export default class {
     try {
       const {data: devices} = await axios.get('/function/devices')
 
+      console.log(devices)
+
       this.state = {
         devices: [...DEVICES, ...devices],
         currentDevice: 0,
@@ -40,7 +42,20 @@ export default class {
     }
   }
 
-  handleDeviceChange(id) {
+  async handleDeviceChange(id) {
     this.state.currentDevice = id
+
+    const device = this.state.devices[id]
+
+    const data = await Promise.all(device.data_types.map(async d => {
+      const { data } = await axios.post('/function/filter', {
+        'device_id': device.id,
+        'collection': d,
+      })
+
+      return data
+    }))
+
+    console.log(data)
   }
 }

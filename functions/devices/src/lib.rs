@@ -13,6 +13,7 @@ struct Device {
   #[serde(alias = "_id")]
   id: String,
   name: String,
+  data_types: Vec<String>,
 }
 
 pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, _body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {

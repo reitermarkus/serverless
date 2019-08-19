@@ -7,7 +7,7 @@ use std::str::FromStr;
 use chrono::{DateTime, offset::Utc};
 use http::{HeaderMap, Method, Uri, StatusCode};
 use lazy_static::lazy_static;
-use mongodb::{doc, bson, Document, Client, ThreadedClient, db::ThreadedDatabase};
+use mongodb::{doc, bson, Document, Client, ThreadedClient, db::ThreadedDatabase, coll::options::UpdateOptions};
 use serde_derive::Deserialize;
 
 use openfaas;
@@ -21,15 +21,25 @@ lazy_static! {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(tag = "action", rename_all = "snake_case")]
+enum Action {
+  Update { query: Document, update: Document },
+  Insert { doc: Document },
+  InsertOrUpdate { doc: Document },
+  Find { filter: Option<Document> },
+}
+
+#[derive(Debug, Deserialize)]
 struct MongoArgs {
   collection: String,
-  action: String,
-  doc: Option<Document>,
-  filter: Option<Document>,
+  #[serde(flatten)]
+  action: Action,
 }
 
 pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
-  let mut args = match serde_json::from_str::<MongoArgs>(&body) {
+  use Action::*;
+
+  let args = match serde_json::from_str::<MongoArgs>(&body) {
     Ok(json) => json,
     Err(err) => return Err(Box::new(err) as _),
   };
@@ -42,15 +52,8 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
   let database = client.db(&MONGO_DB);
   let collection = database.collection(&args.collection);
 
-  let doc = args.doc.take();
-
-  match args.action.as_ref() {
-    "insert" => {
-      let mut doc = match doc {
-        Some(doc) => doc,
-        None => return Ok((StatusCode::BAD_REQUEST, "No document found.".to_string())),
-      };
-
+  match args.action {
+    Insert { mut doc } => {
       if let Some(time) = doc.get_mut("time") {
         if let Some(s) = time.as_str() {
           if let Ok(date) = DateTime::<Utc>::from_str(s) {
@@ -64,12 +67,7 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
         Err(err) => Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
       }
     },
-    "insert_or_replace" => {
-      let doc = match doc {
-        Some(doc) => doc,
-        None => return Ok((StatusCode::BAD_REQUEST, "No document found.".to_string())),
-      };
-
+    InsertOrUpdate { doc } => {
       let id: String = match doc.get("_id").and_then(|id| id.as_str()) {
         Some(id) => id.to_string(),
         _ => return Ok((StatusCode::BAD_REQUEST, "No ID found.".to_string())),
@@ -77,22 +75,16 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
 
       let filter = doc! { "_id": id };
 
-      match collection.replace_one(filter, doc.clone(), None) {
-        Ok(ref update_result) if update_result.modified_count == 1 => {
-          Ok((StatusCode::CREATED, "Replaced.".to_string()))
-        },
-        Ok(ref update_result) if update_result.matched_count == 1 && update_result.modified_count == 0 => {
-          Ok((StatusCode::CREATED, "No change.".to_string()))
-        },
-        Ok(_) => match collection.insert_one(doc, None) {
-          Ok(_) => Ok((StatusCode::CREATED, "Inserted.".to_string())),
-          Err(err) => Err(Box::new(err) as _),
-        },
+      let mut update_options = UpdateOptions::new();
+      update_options.upsert = Some(true);
+
+      match collection.update_one(filter, doc! { "$set": doc.clone() }, Some(update_options)) {
+        Ok(_) => Ok((StatusCode::CREATED, "Updated.".to_string())),
         Err(err) => Err(Box::new(err) as _),
       }
     },
-    "find" => {
-      match collection.find(args.filter, None) {
+    Find { filter } => {
+      match collection.find(filter, None) {
         Ok(mut cursor) => {
           let mut items = Vec::new();
 
@@ -111,6 +103,11 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
         Err(err) => Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
       }
     },
-    method => Ok((StatusCode::METHOD_NOT_ALLOWED, format!("Action '{}' is not allowed.", method)))
+    Update { query, update } => {
+      match collection.update_one(query, update, None) {
+        Ok(_) => Ok((StatusCode::CREATED, "Inserted.".to_string())),
+        Err(err) => Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
+      }
+    },
   }
 }

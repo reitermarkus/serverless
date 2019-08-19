@@ -27,7 +27,7 @@ pub async fn handle(method: Method, uri: Uri, headers: HeaderMap, body: String) 
 
   dbg!(openfaas::call("database", json!({
     "collection": "devices",
-    "action": "insert_or_replace",
+    "action": "insert_or_update",
     "doc": {
       "_id": device.id,
       "name": device.name,

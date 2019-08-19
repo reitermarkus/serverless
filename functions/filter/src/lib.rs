@@ -15,7 +15,7 @@ struct Args {
 }
 
 pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
-  if method != Method::GET {
+  if method != Method::POST {
     return Ok((StatusCode::METHOD_NOT_ALLOWED, format!("Method '{}' is not allowed.", method)))
   }
 
