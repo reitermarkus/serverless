@@ -1,4 +1,4 @@
-FROM openfaas/of-watchdog:0.5.4 as watchdog
+FROM openfaas/of-watchdog:0.5.5 as watchdog
 
 FROM rustlang/rust:nightly-slim as builder
 
@@ -16,8 +16,6 @@ RUN { \
   echo 'openfaas = { path = "../openfaas" }'; \
 } > function/Cargo.toml
 RUN { \
-  echo '#![feature(async_await)]'; \
-  echo ''; \
   echo 'pub async fn handle(_: http::Method, _: http::Uri, _: http::HeaderMap, _: String) -> Result<(http::StatusCode, String), Box<dyn std::error::Error + Send>> {'; \
   echo '  Ok((http::StatusCode::OK, "".to_string()))'; \
   echo '}'; \

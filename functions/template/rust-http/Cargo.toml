@@ -5,5 +5,3 @@ members = [
   "main",
   "openfaas"
 ]
-
-hyper = { git = "https://github.com/hyperium/hyper" }

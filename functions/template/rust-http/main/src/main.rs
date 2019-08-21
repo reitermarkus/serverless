@@ -1,5 +1,3 @@
-#![feature(async_await)]
-
 use futures::TryStreamExt;
 use hyper::{Body, Server, Request, Response, StatusCode, service::{make_service_fn, service_fn}};
 
