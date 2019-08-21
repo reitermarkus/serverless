@@ -7,7 +7,7 @@ use std::str::FromStr;
 use chrono::{DateTime, offset::Utc};
 use http::{HeaderMap, Method, Uri, StatusCode};
 use lazy_static::lazy_static;
-use mongodb::{doc, bson, Document, Client, ThreadedClient, db::ThreadedDatabase, coll::options::UpdateOptions};
+use mongodb::{doc, bson, Bson, Document, Client, ThreadedClient, db::ThreadedDatabase, coll::options::UpdateOptions};
 use serde_derive::Deserialize;
 
 use openfaas;
@@ -34,6 +34,22 @@ struct MongoArgs {
   collection: String,
   #[serde(flatten)]
   action: Action,
+}
+
+fn simplify_bson(bson: Bson) -> Bson {
+  use Bson::*;
+
+  match bson {
+    Array(vec) => Array(vec.into_iter().map(simplify_bson).collect()),
+    Document(doc) => {
+      Document(doc.iter()
+        .map(|(key, value)| (key.to_owned(), simplify_bson(value.to_owned())))
+        .collect())
+    },
+    ObjectId(id) => String(id.to_hex()),
+    UtcDatetime(datetime) => String(datetime.to_rfc3339()),
+    bson => bson,
+  }
 }
 
 pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
@@ -93,7 +109,7 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
             Err(err) => return Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
           } {
             match cursor.drain_current_batch() {
-              Ok(batch) => items.extend(batch),
+              Ok(batch) => items.extend(batch.into_iter().map(|doc| simplify_bson(doc.into()))),
               Err(err) => return Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
             };
           }
