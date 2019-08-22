@@ -64,7 +64,7 @@ macro_rules! curl_download {
   }}
 }
 
-fn main() -> Result<(), Box<Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
   let matches = App::new("Deploy")
                   .arg(Arg::with_name("no-auth")
                     .short("n")
@@ -233,7 +233,7 @@ fn main() -> Result<(), Box<Error>> {
   fs::create_dir_all("faas/prometheus")?;
   fs::copy("deploy.yml", "faas/deploy.yml")?;
 
-  let database_dir = format!("{}/faas/db-data", env::current_dir()?.display());
+  let database_dir = env::current_dir()?.join("faas").join("db-data");
   fs::create_dir_all(&database_dir)?;
   env::set_var("DATABASE_DIR", database_dir);
 
