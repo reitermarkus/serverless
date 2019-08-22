@@ -1,5 +1,3 @@
-import { DEVICE_DATA } from './samples'
-
 header.uk-section
   div.uk-container.uk-container-expand
     h1.uk-heading-medium -- Serverless UI
@@ -17,7 +15,7 @@ div.main-container
     div.uk-container.uk-container-expand
       if(state.currentDevice != null)
         $ const device = state.devices[state.currentDevice]
-        $ const deviceData = DEVICE_DATA[device.id]
+        $ const deviceData = state.deviceData[device.id]
         if(deviceData)
           chart type=deviceData.type title=(state.devices[state.currentDevice].name) data={
             labels: deviceData.labels,

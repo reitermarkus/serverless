@@ -1,4 +1,4 @@
-import { DEVICES } from './samples'
+import { DEVICES, DEVICE_DATA } from './samples'
 import axios from 'axios'
 import UIkit from 'uikit'
 
@@ -6,6 +6,7 @@ export default class {
   onCreate() {
     this.state = {
       devices: [],
+      deviceData: {},
     }
 
     this.connected = null
@@ -22,6 +23,7 @@ export default class {
 
       this.state = {
         devices: [...DEVICES, ...devices],
+        deviceData: DEVICE_DATA,
         currentDevice: 0,
       }
 
@@ -47,15 +49,26 @@ export default class {
 
     const device = this.state.devices[id]
 
-    const data = await Promise.all(device.data_types.map(async d => {
+    const data = await Promise.all(device.data_types.map(async dataType => {
       const { data } = await axios.post('/function/filter', {
         'device_id': device.id,
-        'collection': d,
+        'collection': dataType,
       })
 
-      return data
+      return {
+        label: dataType,
+        data: data.map(({ value, time }) => ({ x: new Date(time), y: value })),
+      }
     }))
 
-    console.log(data)
+    this.state.deviceData[device.id] = {
+      datasets: data.map(data => ({
+        ...data,
+        fill: false,
+      })),
+      type: 'line',
+      options: {scales: {xAxes: [{type: 'time'}]}},
+    }
+    this.setStateDirty('deviceData')
   }
 }
