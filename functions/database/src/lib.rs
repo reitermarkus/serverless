@@ -34,18 +34,19 @@ struct MongoArgs {
   action: Action,
 }
 
-fn simplify_bson(bson: Bson) -> Bson {
+fn simplify_bson(bson: Bson, round: bool) -> Bson {
   use Bson::*;
 
   match bson {
-    Array(vec) => Array(vec.into_iter().map(simplify_bson).collect()),
+    Array(vec) => Array(vec.into_iter().map(|b| simplify_bson(b, round)).collect()),
     Document(doc) => {
       Document(doc.iter()
-        .map(|(key, value)| (key.to_owned(), simplify_bson(value.to_owned())))
+        .map(|(key, value)| (key.to_owned(), simplify_bson(value.to_owned(), round)))
         .collect())
     },
     ObjectId(id) => String(id.to_hex()),
     UtcDatetime(datetime) => String(datetime.to_rfc3339()),
+    FloatingPoint(v) => FloatingPoint(if round { v.round() } else { v }),
     bson => bson,
   }
 }
@@ -98,7 +99,13 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
       }
     },
     Find { filter } => {
-      match collection.find(filter, None) {
+      let mut pipeline = Vec::new();
+
+      if let Some(filter) = filter {
+        pipeline.push(doc! { "$match": filter });
+      }
+
+      match collection.aggregate(pipeline, None) {
         Ok(mut cursor) => {
           let mut items = Vec::new();
 
@@ -107,10 +114,12 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
             Err(err) => return Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
           } {
             match cursor.drain_current_batch() {
-              Ok(batch) => items.extend(batch.into_iter().map(|doc| simplify_bson(doc.into()))),
+              Ok(batch) => items.extend(batch.into_iter().map(|doc| simplify_bson(doc.into(), true))),
               Err(err) => return Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
             };
           }
+
+          items = filter_data(items);
 
           Ok((StatusCode::OK, serde_json::to_string(&items).unwrap()))
         },
@@ -123,5 +132,21 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
         Err(err) => Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
       }
     },
+  }
+}
+
+fn filter_data(documents: Vec<Bson>) -> Vec<Bson> {
+  documents
+    .iter()
+    .enumerate()
+    .filter(|(i, c)| documents.get(i - 1).map(|p| !value_eq(&p, &c)).unwrap_or(true))
+    .map(|(_, v)| v.clone())
+    .collect()
+}
+
+fn value_eq(d1: &Bson, d2: &Bson) -> bool {
+  match (d1.as_document().and_then(|d| d.get("value")), d2.as_document().and_then(|d| d.get("value"))) {
+    (Some(v1), Some(v2)) => v1 == v2,
+    _ => false,
   }
 }
