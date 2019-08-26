@@ -1,14 +1,14 @@
-#!/usr/bin/env run-cargo-script
+#!/usr/bin/env cargo eval --
 
 //! ```cargo
 //! [dependencies]
-//! clap = "~2.32.0"
-//! rand = "~0.5.0"
-//! curl = "~0.4.19"
-//! which = "2.0.0"
-//! hostname = "*"
-//! dockworker = { git = "git://github.com/reitermarkus/dockworker.git" }
+//! clap = "2.33"
+//! rand = "0.5"
+//! curl = "0.4"
+//! which = "2"
+//! hostname = "0.1"
 //! failure = "0.1"
+//! dockworker = { git = "https://github.com/reitermarkus/dockworker" }
 //! ```
 
 use std::{
@@ -19,26 +19,18 @@ use std::{
   process::{exit, Command, ExitStatus, Stdio},
 };
 
-#[macro_use]
-extern crate clap;
-use clap::{App, Arg, SubCommand, AppSettings};
+use clap::{App, Arg, SubCommand, AppSettings, values_t};
 
-extern crate curl;
 use curl::easy::Easy;
 
-extern crate dockworker;
 use dockworker::{Docker, models::UpdateStatus};
 
-extern crate failure;
 use failure::ResultExt;
 
-extern crate rand;
 use rand::{distributions::Alphanumeric, prelude::*};
 
-extern crate which;
 use which::which;
 
-extern crate hostname;
 use hostname::get_hostname;
 
 macro_rules! curl_download {
