@@ -44,6 +44,35 @@ export default class {
     }
   }
 
+  async updateInterval(start, end) {
+    const device = this.state.devices[this.state.currentDevice]
+
+    const data = await Promise.all(device.data_types.map(async dataType => {
+      const { data } = await axios.post('/function/filter', {
+        'device_id': device.id,
+        'collection': dataType,
+        'begin': start,
+        'end': end
+      })
+
+      return {
+        label: dataType,
+        data: data.map(({ value, time }) => ({ x: new Date(time), y: value })),
+      }
+    }))
+
+    this.state.deviceData[device.id] = {
+      datasets: data.map(data => ({
+        ...data,
+        fill: false,
+      })),
+      type: 'line',
+      options: { scales: { xAxes: [{ type: 'time' }] } },
+    }
+
+    this.setStateDirty('deviceData')
+  }
+
   async handleDeviceChange(id) {
     this.state.currentDevice = id
 
@@ -69,6 +98,7 @@ export default class {
       type: 'line',
       options: {scales: {xAxes: [{type: 'time'}]}},
     }
+
     this.setStateDirty('deviceData')
   }
 }

@@ -17,6 +17,7 @@ div.main-container
         $ const device = state.devices[state.currentDevice]
         $ const deviceData = state.deviceData[device.id]
         if(deviceData)
+          slider on-update-interval('updateInterval')
           chart type=deviceData.type title=(state.devices[state.currentDevice].name) data={
             labels: deviceData.labels,
             datasets: deviceData.datasets,
