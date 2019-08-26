@@ -51,8 +51,8 @@ export default class {
       const { data } = await axios.post('/function/filter', {
         'device_id': device.id,
         'collection': dataType,
-        'begin': start,
-        'end': end
+        'begin': start.toISOString(),
+        'end': end.toISOString(),
       })
 
       return {
