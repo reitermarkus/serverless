@@ -24,7 +24,8 @@ enum Action {
   Update { query: Document, update: Document },
   Insert { doc: Document },
   InsertOrUpdate { doc: Document },
-  Find { filter: Option<Document> },
+  Find,
+  Aggregate { pipeline: Vec<Document> },
 }
 
 #[derive(Debug, Deserialize)]
@@ -34,21 +35,48 @@ struct MongoArgs {
   action: Action,
 }
 
+trait BsonExt {
+  fn map(self, f: &dyn Fn(Bson) -> Bson) -> Bson;
+}
+
+impl BsonExt for Bson {
+  fn map(self, f: &dyn Fn(Bson) -> Bson) -> Bson {
+    use Bson::*;
+
+    match self {
+      Array(vec) => Array(vec.into_iter().map(|b| b.map(f)).collect()),
+      Document(doc) => {
+        Document(doc.into_iter()
+          .map(|(key, value)| (key.to_owned(), value.to_owned().map(f)))
+          .collect())
+      },
+      v => f(v),
+    }
+  }
+}
+
 fn simplify_bson(bson: Bson, round: bool) -> Bson {
   use Bson::*;
 
-  match bson {
-    Array(vec) => Array(vec.into_iter().map(|b| simplify_bson(b, round)).collect()),
-    Document(doc) => {
-      Document(doc.iter()
-        .map(|(key, value)| (key.to_owned(), simplify_bson(value.to_owned(), round)))
-        .collect())
-    },
+  bson.map(&|v| match v {
     ObjectId(id) => String(id.to_hex()),
     UtcDatetime(datetime) => String(datetime.to_rfc3339()),
     FloatingPoint(v) => FloatingPoint(if round { v.round() } else { v }),
     bson => bson,
-  }
+  })
+}
+
+fn json_to_bson(bson: Bson) -> Bson {
+  use Bson::*;
+
+  bson.map(&|v| match v {
+    String(s) => if let Ok(datetime) = s.parse::<DateTime<Utc>>() {
+      UtcDatetime(datetime)
+    } else {
+      String(s)
+    },
+    bson => bson,
+  })
 }
 
 pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
@@ -98,29 +126,30 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
         Err(err) => Err(Box::new(err) as _),
       }
     },
-    Find { filter } => {
-      let mut pipeline = Vec::new();
+    Find => {
+      let items = collection.find(None, None).and_then(|cursor| {
+        cursor.into_iter().collect::<Result<Vec<_>, _>>()
+      });
 
-      if let Some(filter) = filter {
-        pipeline.push(doc! { "$match": filter });
+      match items {
+        Ok(items) => Ok((StatusCode::OK, serde_json::to_string(&items).unwrap())),
+        Err(err) => Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
       }
+    },
+    Aggregate { pipeline } => {
+      let pipeline = pipeline.into_iter()
+        .map(|doc| json_to_bson(doc.into()).as_document().unwrap().to_owned())
+        .collect::<Vec<_>>();
 
-      match collection.aggregate(pipeline, None) {
-        Ok(mut cursor) => {
-          let mut items = Vec::new();
+      let round = pipeline.len() < 2;
 
-          while match cursor.has_next() {
-            Ok(b) => b,
-            Err(err) => return Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
-          } {
-            match cursor.drain_current_batch() {
-              Ok(batch) => items.extend(batch.into_iter().map(|doc| simplify_bson(doc.into(), true))),
-              Err(err) => return Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
-            };
-          }
+      let items = collection.aggregate(pipeline, None).and_then(|cursor| {
+        cursor.map(|res| res.map(|doc| simplify_bson(doc.into(), round))).collect::<Result<Vec<_>, _>>()
+      });
 
-          items = filter_data(items);
-
+      match items {
+        Ok(items) => {
+          let items = filter_data(items);
           Ok((StatusCode::OK, serde_json::to_string(&items).unwrap()))
         },
         Err(err) => Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
