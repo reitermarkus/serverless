@@ -29,6 +29,10 @@ module.exports = {
     ],
     'no-var': [
       'error'
+    ],
+    'eqeqeq': [
+      'error',
+      'smart'
     ]
   }
 }

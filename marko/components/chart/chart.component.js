@@ -10,7 +10,7 @@ export default class {
   onInput(input) {
     let datasets = input.data.datasets
 
-    if (datasets.length == 1 && input.type != 'line') {
+    if (datasets.length === 1 && input.type !== 'line') {
       datasets.forEach(d => {
         d.backgroundColor = d.data.map((_, i) => BACKGROUND_COLORS[i % BACKGROUND_COLORS.length])
         d.borderColor = d.data.map((_, i) => BACKGROUND_BORDER_COLORS[i % BACKGROUND_BORDER_COLORS.length])
@@ -32,7 +32,7 @@ export default class {
     options.aspectRatio = 1.0
 
     // Start bar charts at 0.
-    if (input.type == 'bar') {
+    if (input.type === 'bar') {
       options = Chart.helpers.merge(options, {
         scales: {
           yAxes: [{
