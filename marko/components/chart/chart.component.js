@@ -78,14 +78,12 @@ export default class {
     this.chart.options = this.state.options
     this.chart.data.labels = this.state.data.labels
 
-    let datasets = this.chart.data.datasets
-
-    let indexedByLabel = datasets.reduce((map, d) => {
+    let indexedByLabel = this.chart.data.datasets.reduce((map, d) => {
       map[d.label] = d
       return map
     }, {})
 
-    this.chart.data.datasets = datasets.map(next => {
+    this.chart.data.datasets = this.state.data.datasets.map(next => {
       const { _meta } = indexedByLabel[next.label] || {}
       return {_meta: _meta, ...next}
     })
