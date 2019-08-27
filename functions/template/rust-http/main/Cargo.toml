@@ -5,7 +5,7 @@ authors = ["Markus Reiter <me@reitermark.us>"]
 edition = "2018"
 
 [dependencies]
-futures-preview = "0.3.0-alpha.17"
+futures-preview = "0.3.0-alpha.18"
 handler = { path = "../function" }
 hyper = { git = "https://github.com/hyperium/hyper", features = ["runtime"] }
 tokio = "0.2.0-alpha.1"
