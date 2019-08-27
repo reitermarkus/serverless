@@ -9,17 +9,18 @@ const BACKGROUND_BORDER_COLORS = BASE_COLORS.map(c => c.string())
 export default class {
   onInput(input) {
     let datasets = input.data.datasets
+    const idx = input.idx || 0
 
     if (datasets.length === 1 && input.type !== 'line') {
       datasets.forEach(d => {
-        d.backgroundColor = d.data.map((_, i) => BACKGROUND_COLORS[i % BACKGROUND_COLORS.length])
-        d.borderColor = d.data.map((_, i) => BACKGROUND_BORDER_COLORS[i % BACKGROUND_BORDER_COLORS.length])
+        d.backgroundColor = d.data.map(BACKGROUND_COLORS[idx % BACKGROUND_COLORS.length])
+        d.borderColor = d.data.map(BACKGROUND_BORDER_COLORS[idx % BACKGROUND_BORDER_COLORS.length])
         d.borderWidth = 1
       })
     } else {
-      datasets.forEach((d, i) => {
-        d.backgroundColor = BACKGROUND_COLORS[i % BACKGROUND_COLORS.length]
-        d.borderColor = BACKGROUND_BORDER_COLORS[i % BACKGROUND_BORDER_COLORS.length]
+      datasets.forEach(d => {
+        d.backgroundColor = BACKGROUND_COLORS[idx % BACKGROUND_COLORS.length]
+        d.borderColor = BACKGROUND_BORDER_COLORS[idx % BACKGROUND_BORDER_COLORS.length]
         d.borderWidth = 1
       })
     }
@@ -45,7 +46,7 @@ export default class {
     }
 
     // Don't show legend if no labels are set.
-    if (input.data.datasets.every((dataset) => dataset.label == null)) {
+    if (datasets.every((dataset) => dataset.label == null)) {
       options = Chart.helpers.merge(options, {
         legend: {
           display: false,
@@ -77,12 +78,14 @@ export default class {
     this.chart.options = this.state.options
     this.chart.data.labels = this.state.data.labels
 
-    let indexedByLabel = this.chart.data.datasets.reduce((map, d) => {
+    let datasets = this.chart.data.datasets
+
+    let indexedByLabel = datasets.reduce((map, d) => {
       map[d.label] = d
       return map
     }, {})
 
-    this.chart.data.datasets = this.state.data.datasets.map(next => {
+    this.chart.data.datasets = datasets.map(next => {
       const { _meta } = indexedByLabel[next.label] || {}
       return {_meta: _meta, ...next}
     })

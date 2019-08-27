@@ -18,10 +18,10 @@ div.main-container
         $ const deviceData = state.deviceData[device.id]
         if(deviceData)
           slider on-update-interval('updateInterval')
-          chart type=deviceData.type title=(state.devices[state.currentDevice].name) data={
-            labels: deviceData.labels,
-            datasets: deviceData.datasets,
-          } options=deviceData.options
+          for|device, index| of=deviceData
+            chart type=device.chartType title=(state.devices[state.currentDevice].name) data={
+              datasets: device.chart.datasets,
+            } options=device.chart.options idx=index
         else
           -- No data available for ${device.name}.
       else

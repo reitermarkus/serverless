@@ -61,14 +61,21 @@ export default class {
       }
     }))
 
-    this.state.deviceData[device.id] = {
-      datasets: data.map(data => ({
-        ...data,
-        fill: false,
-      })),
-      type: 'line',
-      options: { scales: { xAxes: [{ type: 'time' }] } },
-    }
+    const charts = data.filter(d => d.data.length > 0).map(d => {
+      return {
+        chartType: 'line',
+        chart: {
+          datasets: [{
+            ...d,
+            fill: false
+          }],
+          type: 'line',
+          options: { scales: { xAxes: [{ type: 'time' }] } },
+        }
+      }
+    })
+
+    this.state.deviceData[device.id] = charts
 
     this.setStateDirty('deviceData')
   }
@@ -90,14 +97,21 @@ export default class {
       }
     }))
 
-    this.state.deviceData[device.id] = {
-      datasets: data.map(data => ({
-        ...data,
-        fill: false,
-      })),
-      type: 'line',
-      options: {scales: {xAxes: [{type: 'time'}]}},
-    }
+    const charts = data.filter(d => d.data.length > 0).map(d => {
+      return {
+        chartType: 'line',
+        chart: {
+          datasets: [{
+            ...d,
+            fill: false
+          }],
+          type: 'line',
+          options: { scales: { xAxes: [{ type: 'time' }] } },
+        }
+      }
+    })
+
+    this.state.deviceData[device.id] = charts
 
     this.setStateDirty('deviceData')
   }

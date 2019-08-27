@@ -1,6 +1,7 @@
 {
   "attributes": {
     "type": "string",
+    "idx": "number",
     "title": "number",
     "data": "object",
     "options": "object",
