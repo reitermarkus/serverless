@@ -47,7 +47,7 @@ export default class {
   async updateInterval(start, end) {
     const device = this.state.devices[this.state.currentDevice]
 
-    const data = await Promise.all(device.data_types.map(async dataType => {
+    const datasetsArray = await Promise.all(device.data_types.map(async dataType => {
       const { data } = await axios.post('/function/filter', {
         'device_id': device.id,
         'collection': dataType,
@@ -55,20 +55,26 @@ export default class {
         'end': end.toISOString(),
       })
 
-      return {
-        label: dataType,
-        data: data.map(({ value, time }) => ({ x: new Date(time), y: value })),
+      if (data.every(d => d.avg != null)) {
+        return [{
+          label: dataType,
+          data: data.map(({ avg, time }) => ({ x: new Date(time), y: avg })),
+        }]
+      } else {
+        return data.reduce((acc, {avg_x, avg_y, avg_z, time}) => {
+          acc[0].data.push({ x: new Date(time), y: avg_x })
+          acc[1].data.push({ x: new Date(time), y: avg_y })
+          acc[2].data.push({ x: new Date(time), y: avg_z })
+          return acc
+        }, [{label: 'x', data: []}, {label: 'y', data: []}, {label: 'z', data: []}])
       }
     }))
 
-    const charts = data.filter(d => d.data.length > 0).map(d => {
+    const charts = datasetsArray.filter(datasets => datasets.some(d => d.data.length > 0)).map(datasets => {
       return {
         chartType: 'line',
         chart: {
-          datasets: [{
-            ...d,
-            fill: false
-          }],
+          datasets: datasets.map(dataset => ({...dataset, fill: false})),
           type: 'line',
           options: { scales: { xAxes: [{ type: 'time' }] } },
         }
@@ -76,7 +82,6 @@ export default class {
     })
 
     this.state.deviceData[device.id] = charts
-
     this.setStateDirty('deviceData')
   }
 
@@ -112,7 +117,6 @@ export default class {
     })
 
     this.state.deviceData[device.id] = charts
-
     this.setStateDirty('deviceData')
   }
 }
