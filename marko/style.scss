@@ -67,6 +67,22 @@ header.uk-section {
   border-bottom: 1px solid change-color($blue, $alpha: 0.5);
 }
 
+.step-slider {
+  display: flex;
+  padding: 1em 0 1em 0;
+
+  input[type='range'] {
+    flex: 3;
+    padding-right: 0.5em;
+  }
+
+  input[type='number'] {
+    flex: 1;
+    padding-left: 0.5em;
+    text-align: right;
+  }
+}
+
 html {
   height: 100%;
 }

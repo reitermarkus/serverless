@@ -7,12 +7,17 @@ export default class {
     this.state = {
       devices: [],
       deviceData: {},
+      stepSlider: 24
     }
 
     this.connected = null
     this.notification = null
 
     this.fetchData()
+  }
+
+  updateStepSlider(e) {
+    this.state.stepSlider = e.srcElement?.valueAsNumber
   }
 
   async fetchData() {
@@ -53,6 +58,7 @@ export default class {
         'collection': dataType,
         'begin': start.toISOString(),
         'end': end.toISOString(),
+        'interval': this.state.stepSlider || 24
       })
 
       if (data.every(d => d.avg != null)) {

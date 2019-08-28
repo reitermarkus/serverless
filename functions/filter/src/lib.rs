@@ -14,6 +14,7 @@ struct Args {
   collection: String,
   begin: Option<DateTime<Utc>>,
   end: Option<DateTime<Utc>>,
+  interval: usize
 }
 
 mod duration_steps;
@@ -29,8 +30,8 @@ pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String
     _ => return Ok((StatusCode::BAD_REQUEST, "Invalid format.".to_string())),
   };
 
-  if let (Some(begin), Some(end)) = (args.begin, args.end) {
-    let steps = (begin, end).into_duration_steps(20);
+  if let (Some(begin), Some(end), Some(interval)) = (args.begin, args.end, args.interval) {
+    let steps = (begin, end).into_duration_steps(interval);
     let stream = steps.map(|(begin, end)| fetch_timeframe(&args.device_id, &args.collection, begin, end));
     let res = join_all(stream).await.into_iter().collect::<Result<Vec<_>, _>>()?;
     dbg!(&res);
