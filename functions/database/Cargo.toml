@@ -5,7 +5,7 @@ authors = ["Markus Reiter <me@reitermark.us>"]
 edition = "2018"
 
 [dependencies]
-chrono = "*"
+chrono = { version = "0.4", features = ["serde"] }
 http = "*"
 lazy_static = "*"
 mongodb = "*"
@@ -13,3 +13,4 @@ openfaas = { path = "../openfaas" }
 serde = "1"
 serde_derive = "1"
 serde_json = "1"
+itertools = "0.6"

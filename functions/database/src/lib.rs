@@ -2,13 +2,17 @@ use std::env;
 use std::error::Error;
 use std::str::FromStr;
 
-use chrono::{DateTime, offset::Utc};
+use chrono::{DateTime, Utc};
 use http::{HeaderMap, Method, Uri, StatusCode};
 use lazy_static::lazy_static;
-use mongodb::{doc, bson, Bson, Document, Client, ThreadedClient, db::ThreadedDatabase, coll::options::UpdateOptions};
+use mongodb::{doc, bson, Bson::{self, UtcDatetime}, Document, Client, ThreadedClient, db::ThreadedDatabase, coll::options::UpdateOptions};
 use serde_derive::Deserialize;
+use itertools::Either;
 
 use openfaas;
+
+mod duration_steps;
+use duration_steps::IntoDurationSteps;
 
 lazy_static! {
   static ref MONGO_HOST: String = env::var("MONGO_HOST").expect("MONGO_HOST is not set");
@@ -25,7 +29,12 @@ enum Action {
   Insert { doc: Document },
   InsertOrUpdate { doc: Document },
   Find,
-  Aggregate { pipeline: Vec<Document> },
+  Aggregate {
+    pipeline: Vec<Document>,
+    begin: Option<DateTime<Utc>>,
+    end: Option<DateTime<Utc>>,
+    steps: Option<i32>,
+  },
 }
 
 #[derive(Debug, Deserialize)]
@@ -136,16 +145,31 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
         Err(err) => Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
       }
     },
-    Aggregate { pipeline } => {
+    Aggregate { pipeline, begin, end, steps } => {
       let pipeline = pipeline.into_iter()
         .map(|doc| json_to_bson(doc.into()).as_document().unwrap().to_owned())
         .collect::<Vec<_>>();
 
-      let round = pipeline.len() < 2;
+      let items: Result<Vec<Bson>, mongodb::Error> = if let (Some(begin), Some(end), Some(steps)) = (begin, end, steps) {
+        let steps = (begin, end).into_duration_steps(steps);
+        let stream = steps.map(|(begin, end)| {
+          let mut pipeline = pipeline.clone();
+          pipeline.insert(0, doc! { "$match": { "time": { "$gte": UtcDatetime(begin), "$lte": UtcDatetime(end) } } });
 
-      let items = collection.aggregate(pipeline, None).and_then(|cursor| {
-        cursor.map(|res| res.map(|doc| simplify_bson(doc.into(), round))).collect::<Result<Vec<_>, _>>()
-      });
+          match collection.aggregate(pipeline, None) {
+            Ok(cursor) => Either::Left(cursor.map(|res| res.map(|doc| simplify_bson(doc.into(), false)))),
+            Err(err) => Either::Right(std::iter::once(Err(err))),
+          }
+        }).flatten();
+
+        stream.collect()
+      } else {
+        let round = pipeline.len() < 2;
+
+        collection.aggregate(pipeline, None).and_then(|cursor| {
+          cursor.map(|res| res.map(|doc| simplify_bson(doc.into(), round))).collect()
+        })
+      };
 
       match items {
         Ok(items) => {
