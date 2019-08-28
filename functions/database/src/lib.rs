@@ -155,6 +155,7 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
         let stream = steps.map(|(begin, end)| {
           let mut pipeline = pipeline.clone();
           pipeline.insert(0, doc! { "$match": { "time": { "$gte": UtcDatetime(begin), "$lte": UtcDatetime(end) } } });
+          pipeline.push(doc! { "$set": { "time": begin } });
 
           match collection.aggregate(pipeline, None) {
             Ok(cursor) => Either::Left(cursor.map(|res| res.map(|doc| simplify_bson(doc.into(), false)))),

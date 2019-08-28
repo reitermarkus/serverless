@@ -3,7 +3,6 @@ use std::error::Error;
 use http::{HeaderMap, Method, Uri, StatusCode};
 use serde::{Deserialize, Serialize};
 use serde_json::{self, json, Value};
-use chrono::{DateTime, Utc};
 
 use openfaas;
 
@@ -11,8 +10,8 @@ use openfaas;
 struct Args {
   device_id: String,
   collection: String,
-  begin: Option<DateTime<Utc>>,
-  end: Option<DateTime<Utc>>,
+  begin: Option<String>,
+  end: Option<String>,
   interval: Option<usize>,
 }
 
@@ -29,7 +28,6 @@ pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String
   if let (Some(begin), Some(end), Some(interval)) = (args.begin, args.end, args.interval) {
     let pipeline = vec![
       json!({ "$match": { "device_id": args.device_id } }),
-      json!({ "$match": { "time": { "$gte": begin, "$lte": end } } }),
       json!({ "$group": {
         "_id": null,
         "avg": { "$avg": "$value" },
@@ -37,21 +35,22 @@ pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String
         "avg_y": { "$avg": "$value.y" },
         "avg_z": { "$avg": "$value.z" },
       }}),
-      json!({ "$set": { "time": begin }}),
     ];
 
-    return aggregate(&args.collection, pipeline, Some(interval)).await
+    return aggregate(&args.collection, pipeline, Some(begin), Some(end), Some(interval)).await
   }
 
   let pipeline = vec![json!({ "$match": { "device_id": args.device_id } })];
-  Ok(aggregate(&args.collection, pipeline, None).await?)
+  Ok(aggregate(&args.collection, pipeline, None, None, None).await?)
 }
 
-async fn aggregate(collection: &str, pipeline: Vec<Value>, steps: Option<usize>) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
+async fn aggregate(collection: &str, pipeline: Vec<Value>, begin: Option<String>, end: Option<String>, steps: Option<usize>) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
   openfaas::call("database", json!({
     "collection": collection,
     "action": "aggregate",
     "pipeline": pipeline,
+    "begin": begin,
+    "end": end,
     "steps": steps,
   }).to_string()).await
 }
