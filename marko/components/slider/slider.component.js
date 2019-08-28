@@ -28,7 +28,7 @@ export default class {
 
       // Steps of one day
       step: 60 * 60 * 1000,
-      start: [yesterday, now.getTime()],
+      start: [yesterday, now.getTime()]
     })
 
     const updateState = (idx, date) => {
