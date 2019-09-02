@@ -24,6 +24,18 @@ def create_secret(name, content)
   sh 'docker', 'secret', 'create', name, secret.path
 end
 
+namespace :build do
+  task :functions, [:functions] do |task, args|
+    functions = args.functions&.split || FUNCTIONS
+
+    functions.each do |function|
+      cd 'functions' do
+        sh 'faas-cli', 'build', '-f', "#{function}.yml", function
+      end
+    end
+  end
+end
+
 namespace :deploy do
   desc 'deploy functions'
   task :functions, [:functions] do |task, args|
@@ -34,9 +46,10 @@ namespace :deploy do
       Rake::Task['deploy:swarm'].invoke unless swarm_active?
     end
 
-    cd 'functions' do
-      functions.each do |function|
-        sh 'faas-cli', 'build', '-f', "#{function}.yml", function
+    functions.each do |function|
+      Rake::Task['build:functions'].invoke(function)
+
+      cd 'functions' do
         sh 'faas-cli', 'remove', '-f', "#{function}.yml", function
         sh 'faas-cli', 'deploy', '-f', "#{function}.yml", function
       end
@@ -88,12 +101,15 @@ namespace :deploy do
     puts 'Deploying stack…'
     sh 'docker', 'stack', 'deploy', '--compose-file', 'faas/deploy.yml', 'func'
   end
-
-  desc 'deploy swarm and functions'
-  task :all => [:'deploy:swarm', :'deploy:functions']
 end
 
-task :default => :'deploy:all'
+desc 'build functions'
+task :build => :'build:functions'
+
+desc 'deploy swarm and functions'
+task :deploy => [:'deploy:swarm', :'deploy:functions']
+
+task :default => :deploy
 
 task :kill do
   sh 'docker', 'swarm', 'leave', '--force' if swarm_active?

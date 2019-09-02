@@ -1,0 +1,56 @@
+trigger:
+  branches:
+    include:
+      - '*'
+
+jobs:
+  - job: app
+    displayName: App
+    pool:
+      vmImage: 'macOS-latest'
+    steps:
+      - task: FlutterInstall@0
+        inputs:
+          channel: 'stable'
+          version: 'latest'
+      - task: FlutterBuild@0
+        inputs:
+          target: 'all'
+          projectDirectory: 'mobile/sensor_data'
+          iosCodesign: false
+  - job: rpi
+    displayName: Raspberry Pi
+    variables:
+      TOOLCHAIN: stable
+      RUSTFLAGS: -D warnings
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - template: ci/azure-install-rust.yml
+      - bash: cargo install --force --git https://github.com/rust-embedded/cross
+        displayName: Install cross
+      - bash: |
+          cd rpi
+          ./build
+        displayName: Build
+  - job: functions
+    displayName: Functions
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - bash: curl -sSL https://cli.openfaas.com | sudo sh
+        displayName: Install faas-cli
+      - bash: sudo apt-get install -y ruby
+        displayName: Install ruby
+      - bash: rake build
+        displayName: Build Functions
+  - job: ui
+    displayName: UI
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - bash: |
+          cd marko
+          yarn
+          yarn build
+        displayName: UI

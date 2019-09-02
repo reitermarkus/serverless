@@ -6,9 +6,7 @@ set -o nounset
 
 ip="${1}"
 
-TARGET='armv7-unknown-linux-gnueabihf'
-
-cross build --release --target "${TARGET}"
+. build
 
 scp "target/${TARGET}/release/sensors" pi@"${ip}:/tmp/"
 

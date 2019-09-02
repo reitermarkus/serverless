@@ -19,7 +19,7 @@
 
 #FaaS
 faas
-build
+functions/build
 
 deploy_rs_docker
 
