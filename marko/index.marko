@@ -18,13 +18,15 @@ div.main-container
       if(deviceData === {})
         -- No data available for ${device.name}.
       else if(deviceData)
-        div.step-slider
-          input.uk-range type="range" min="1" max="100" value=(state.stepSlider || 24) on-change('updateStepSlider')
-          input.uk-input type="number" min="1" max="100" value=(state.stepSlider || 24) on-change('updateStepSlider')
-        slider on-update-interval('updateInterval')
-        for|device, index| of=deviceData
-          chart type=device.chartType title=(state.devices[state.currentDevice].name) data={
-            datasets: device.chart.datasets,
-          } options=device.chart.options idx=index
+        div style='display: inline-block; width: 100%;'
+          div.step-slider
+            input.uk-range type="range" min="1" max="100" value=(state.stepSlider || 24) on-change('updateStepSlider')
+            input.uk-input type="number" min="1" max="100" value=(state.stepSlider || 24) on-change('updateStepSlider')
+          slider on-update-interval('updateInterval')
+        div.chart-outer-container
+          for|device, index| of=deviceData
+            chart type=device.chartType title=(state.devices[state.currentDevice].name) data={
+              datasets: device.chart.datasets,
+            } options=device.chart.options idx=index
       else
         div uk-spinner

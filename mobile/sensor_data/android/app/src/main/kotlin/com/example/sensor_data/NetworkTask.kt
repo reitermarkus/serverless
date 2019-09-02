@@ -9,6 +9,7 @@ import com.android.volley.toolbox.Volley
 import com.android.volley.NetworkResponse
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.VolleyError
+import com.android.volley.DefaultRetryPolicy
 
 import android.util.Log
 import android.content.Context;
@@ -50,7 +51,20 @@ class NetworkTask()  {
     ) {
       override fun getBodyContentType() = "application/vnd.kafka.json.v2+json"
       override fun getBody(): ByteArray = jsonBody.toString().toByteArray()
+
+      override fun parseNetworkResponse(response: NetworkResponse): Response<String> {
+        Log.d("NetworkTaskStatusCode", response.statusCode.toString())
+        return super.parseNetworkResponse(response)
+      }
     }
+
+    stringRequest.setRetryPolicy(
+      DefaultRetryPolicy(
+        1000,
+        2,
+        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+      )
+    )
 
     queue!!.add(stringRequest)
   }
