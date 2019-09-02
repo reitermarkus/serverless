@@ -1,4 +1,3 @@
-import { DEVICES, DEVICE_DATA } from './samples'
 import axios from 'axios'
 import UIkit from 'uikit'
 
@@ -7,6 +6,7 @@ export default class {
     this.state = {
       devices: [],
       deviceData: {},
+      currentDevice: null,
       stepSlider: 24
     }
 
@@ -24,13 +24,11 @@ export default class {
     try {
       const {data: devices} = await axios.get('/function/devices')
 
-      console.log(devices)
+      this.state.devices = devices
+      this.setStateDirty('devices')
 
-      this.state = {
-        devices: [...DEVICES, ...devices],
-        deviceData: DEVICE_DATA,
-        currentDevice: 0,
-      }
+      this.state.currentDevice = 0
+      this.setStateDirty('currentDevice')
 
       if (this.connected === false) {
         this.notification?.close()
