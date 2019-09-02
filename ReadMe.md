@@ -2,9 +2,10 @@
 
 ## Dependencies
 
-- Docker: https://docs.docker.com/install/
-- Rust: https://rustup.rs
-  - `cargo-script`: `cargo install cargo-script`
+- [Docker](https://docs.docker.com/install/)
+- [Rust](https://rustup.rs)
+- [Ruby](https://www.ruby-lang.org/)
+  - [Rake](https://ruby.github.io/rake/)
 
 ## Kafka
 
@@ -13,13 +14,13 @@
 To deploy for development, run
 
 ```
-./deploy.rs --no-auth
+rake deploy
 ```
 
 When finished, run
 
 ```
-docker swarm leave -f
+rake kill
 ```
 
 ### Testing
