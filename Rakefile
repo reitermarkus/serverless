@@ -76,9 +76,9 @@ namespace :deploy do
     prometheus_dir = 'faas/prometheus'
     mkdir_p prometheus_dir
     cd prometheus_dir do
-      sh 'curl', '-sL', 'https://raw.githubusercontent.com/openfaas/faas/master/prometheus/alertmanager.yml', '-O'
-      sh 'curl', '-sL', 'https://raw.githubusercontent.com/openfaas/faas/master/prometheus/alert.rules.yml', '-O'
-      sh 'curl', '-sL', 'https://raw.githubusercontent.com/openfaas/faas/master/prometheus/prometheus.yml', '-O'
+      File.write 'alertmanager.yml', URI('https://raw.githubusercontent.com/openfaas/faas/master/prometheus/alertmanager.yml').open(&:read)
+      File.write 'alert.rules.yml', URI('https://raw.githubusercontent.com/openfaas/faas/master/prometheus/alert.rules.yml').open(&:read)
+      File.write 'prometheus.yml', URI('https://raw.githubusercontent.com/openfaas/faas/master/prometheus/prometheus.yml').open(&:read)
     end
 
     db_dir = File.expand_path('faas/db-data')
@@ -90,7 +90,7 @@ namespace :deploy do
   end
 
   desc 'deploy swarm and functions'
-  task :all => :'deploy:functions'
+  task :all => [:'deploy:swarm', :'deploy:functions']
 end
 
 task :default => :'deploy:all'
