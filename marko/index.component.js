@@ -25,8 +25,11 @@ export default class {
       const {data: devices} = await axios.get('/function/devices')
 
       this.state.devices = devices
-      this.state.currentDevice = 0
-      this.handleDeviceChange(this.state.currentDevice)
+
+      if (devices !== []) {
+        this.state.currentDevice = 0
+        this.handleDeviceChange(this.state.currentDevice)
+      }
 
       if (this.connected === false) {
         this.notification?.close()
