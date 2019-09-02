@@ -13,19 +13,18 @@ div.main-container
 
   div.content-container.uk-section
     div.uk-container.uk-container-expand
-      if(state.currentDevice != null)
-        $ const device = state.devices[state.currentDevice]
-        $ const deviceData = state.deviceData[device.id]
-        if(deviceData)
-          div.step-slider
-            input.uk-range type="range" min="1" max="100" value=(state.stepSlider || 24) on-change('updateStepSlider')
-            input.uk-input type="number" min="1" max="100" value=(state.stepSlider || 24) on-change('updateStepSlider')
-          slider on-update-interval('updateInterval')
-          for|device, index| of=deviceData
-            chart type=device.chartType title=(state.devices[state.currentDevice].name) data={
-              datasets: device.chart.datasets,
-            } options=device.chart.options idx=index
-        else
-          -- No data available for ${device.name}.
+      $ const device = state.devices[state.currentDevice]
+      $ const deviceData = device && state.deviceData[device.id]
+      if(deviceData === {})
+        -- No data available for ${device.name}.
+      else if(deviceData)
+        div.step-slider
+          input.uk-range type="range" min="1" max="100" value=(state.stepSlider || 24) on-change('updateStepSlider')
+          input.uk-input type="number" min="1" max="100" value=(state.stepSlider || 24) on-change('updateStepSlider')
+        slider on-update-interval('updateInterval')
+        for|device, index| of=deviceData
+          chart type=device.chartType title=(state.devices[state.currentDevice].name) data={
+            datasets: device.chart.datasets,
+          } options=device.chart.options idx=index
       else
-        -- <div uk-spinner></div>
+        div uk-spinner
