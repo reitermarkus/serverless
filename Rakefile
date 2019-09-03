@@ -32,8 +32,9 @@ def create_secret(name, content)
 end
 
 namespace :build do
-  task :functions, [:functions] do |task, args|
-    functions = args.functions&.split || FUNCTIONS
+  task :functions do |task, args|
+    functions = args.extras
+    functions = FUNCTIONS if functions.empty?
 
     functions.each do |function|
       cd 'functions' do
@@ -45,10 +46,10 @@ end
 
 namespace :deploy do
   desc 'deploy functions'
-  task :functions, [:functions] do |task, args|
-    functions = args.functions&.split
+  task :functions do |task, args|
+    functions = args.extras
 
-    unless functions
+    if functions.empty?
       functions = FUNCTIONS
       Rake::Task['deploy:swarm'].invoke unless swarm_active?
     end
