@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'open3'
+require 'shellwords'
 require 'socket'
 require 'tempfile'
 require 'yaml'
@@ -104,6 +105,8 @@ namespace :deploy do
 
     puts 'Deploying stack…'
     sh 'docker', 'stack', 'deploy', '--compose-file', 'faas/deploy.yml', 'func'
+
+    Rake::Task['db:restore'].invoke('faas/db-dump.gz') if windows? && File.exist?('faas/db-dump.gz')
   end
 end
 
@@ -116,7 +119,9 @@ task :deploy => [:'deploy:swarm', :'deploy:functions']
 task :default => :deploy
 
 task :kill do
-  sh 'docker', 'swarm', 'leave', '--force' if swarm_active?
+  next unless swarm_active?
+  Rake::Task['db:dump'].invoke('faas/db-dump.gz') if windows?
+  sh 'docker', 'swarm', 'leave', '--force'
 end
 
 namespace :db do
@@ -134,12 +139,28 @@ namespace :db do
   end
 
   desc 'dump database'
-  task :dump => :'db:credentials' do
-    sh 'docker', 'exec', mongo_container_id, 'mongodump', '-u', ENV['ME_CONFIG_MONGODB_ADMINUSERNAME'], '-p', 'password', '--authenticationDatabase', 'admin', '--gzip', '--archive'
+  task :dump, [:file] => :'db:credentials' do |task, args|
+    file = args.file
+    cmd = ['docker', 'exec', mongo_container_id, 'mongodump', '-u', ENV['ME_CONFIG_MONGODB_ADMINUSERNAME'], '-p', ENV['ME_CONFIG_MONGODB_ADMINPASSWORD'], '--authenticationDatabase', 'admin', '--gzip', '--archive']
+
+    if file
+      $stderr.puts "#{cmd.shelljoin} > #{file}"
+      Open3.pipeline(cmd, out: file)
+    else
+      sh *cmd
+    end
   end
 
   desc 'restore database'
-  task :restore => :'db:credentials' do
-    sh 'docker', 'exec', '-i', mongo_container_id, 'mongorestore', '-u', ENV['ME_CONFIG_MONGODB_ADMINUSERNAME'], '-p', 'password', '--authenticationDatabase', 'admin', '--gzip', '--archive'
+  task :restore, [:file] => :'db:credentials' do |task, args|
+    file = args.file
+    cmd = ['docker', 'exec', '-i', mongo_container_id, 'mongorestore', '-u', ENV['ME_CONFIG_MONGODB_ADMINUSERNAME'], '-p', ENV['ME_CONFIG_MONGODB_ADMINPASSWORD'], '--authenticationDatabase', 'admin', '--gzip', '--archive']
+
+    if file
+      $stderr.puts "#{cmd.shelljoin} < #{file}"
+      Open3.pipeline(cmd, in: file)
+    else
+      sh *cmd
+    end
   end
 end
