@@ -20,9 +20,12 @@ $orange: rgb(255, 159,  64);
 @import "slider.scss";
 
 $nav-width: 20em;
+$header-height: 12em;
 
 .main-container {
   display: flex;
+  position: fixed;
+  top: $header-height;
 
   @media (max-width: $breakpoint-xsmall-max) {
     flex-wrap: wrap;
@@ -35,10 +38,13 @@ $nav-width: 20em;
 
 .content-container {
   width: 100%;
+  overflow: scroll;
+  padding: 1.5em 0 1.5em 0;
 
   @media (min-width: $breakpoint-small) {
-    flex: 1 1 calc(100% - #{$nav-width});
-    height: 100%;
+    height: calc(100% - #{$header-height});
+    left: $nav-width;
+    width: calc(100% - #{$nav-width});
 
     .uk-container {
       height: 100%;
@@ -62,9 +68,19 @@ $nav-width: 20em;
   }
 }
 
-
-header.uk-section {
+header {
+  position: fixed;
+  height: $header-height;
+  width: 100%;
   border-bottom: 1px solid change-color($blue, $alpha: 0.5);
+  display: flex;
+  align-items: center;
+
+  .uk-container {
+    @media (min-width: $breakpoint-small) {
+      margin: initial;
+    }
+  }
 }
 
 .step-slider {
@@ -101,5 +117,10 @@ body {
 }
 
 .chart {
-  flex: 1 1 50%;
+  width: 100%;
+  height: 100%;
+
+  @media (min-width: $breakpoint-small) {
+    flex: 1 1 50%;
+  }
 }
