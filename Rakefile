@@ -21,7 +21,8 @@ def windows?
 end
 
 def swarm_active?
-  swarm_state = `docker info --format '{{.Swarm.LocalNodeState}}'`.chomp
+  stdout, *_ = Open3.capture3('docker', 'info', '--format', '{{.Swarm.LocalNodeState}}')
+  swarm_state = stdout.chomp
   swarm_state == 'active'
 end
 
