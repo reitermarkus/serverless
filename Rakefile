@@ -57,12 +57,9 @@ namespace :deploy do
   end
 
   desc 'deploy swarm'
-  task :swarm do
+  task :swarm => :'db:credentials' do
     user = 'admin'
     password = 'password'
-
-    mongo_username = 'admin'
-    mongo_password = 'password'
 
     unless swarm_active?
       sh 'docker', 'swarm', 'init'
@@ -70,16 +67,14 @@ namespace :deploy do
       create_secret 'basic-auth-user', user
       create_secret 'basic-auth-password', password
 
-      create_secret 'mongo-root-username', user
-      create_secret 'mongo-root-password', password
+      create_secret 'mongo-root-username', ENV['ME_CONFIG_MONGODB_ADMINUSERNAME']
+      create_secret 'mongo-root-password', ENV['ME_CONFIG_MONGODB_ADMINPASSWORD']
     end
 
     hostname = Socket.gethostname
     puts "Setting Kafka hostname to “#{hostname}”…"
     ENV['KAFKA_PUBLIC_HOSTNAME'] = hostname
 
-    ENV['ME_CONFIG_MONGODB_ADMINUSERNAME'] = mongo_username
-    ENV['ME_CONFIG_MONGODB_ADMINPASSWORD'] = mongo_password
 
     ENV['BASIC_AUTH'] = dev? ? 'false' : 'true'
 
@@ -113,4 +108,31 @@ task :default => :deploy
 
 task :kill do
   sh 'docker', 'swarm', 'leave', '--force' if swarm_active?
+end
+
+namespace :db do
+  def mongo_container_id
+    if (id = `docker ps -f name=func_mongo\\\\. --format '{{.ID}}'`.chomp).empty?
+      raise 'No MongoDB container found.'
+    end
+
+    id
+  end
+
+  task :credentials do
+    mongo_username = 'admin'
+    mongo_password = 'password'
+    ENV['ME_CONFIG_MONGODB_ADMINUSERNAME'] = mongo_username
+    ENV['ME_CONFIG_MONGODB_ADMINPASSWORD'] = mongo_password
+  end
+
+  desc 'dump database'
+  task :dump => :'db:credentials' do
+    sh 'docker', 'exec', mongo_container_id, 'mongodump', '-u', ENV['ME_CONFIG_MONGODB_ADMINUSERNAME'], '-p', 'password', '--authenticationDatabase', 'admin', '--archive'
+  end
+
+  desc 'restore database'
+  task :restore => :'db:credentials' do
+    sh 'docker', 'exec', mongo_container_id, 'mongorestore', '-u', ENV['ME_CONFIG_MONGODB_ADMINUSERNAME'], '-p', 'password', '--authenticationDatabase', 'admin', '--archive'
+  end
 end
