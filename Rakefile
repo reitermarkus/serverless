@@ -138,6 +138,6 @@ namespace :db do
 
   desc 'restore database'
   task :restore => :'db:credentials' do
-    sh 'docker', 'exec', mongo_container_id, 'mongorestore', '-u', ENV['ME_CONFIG_MONGODB_ADMINUSERNAME'], '-p', 'password', '--authenticationDatabase', 'admin', '--archive'
+    sh 'docker', 'exec', '-i', mongo_container_id, 'mongorestore', '-u', ENV['ME_CONFIG_MONGODB_ADMINUSERNAME'], '-p', 'password', '--authenticationDatabase', 'admin', '--archive'
   end
 end
