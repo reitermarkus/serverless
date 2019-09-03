@@ -135,11 +135,11 @@ namespace :db do
 
   desc 'dump database'
   task :dump => :'db:credentials' do
-    sh 'docker', 'exec', mongo_container_id, 'mongodump', '-u', ENV['ME_CONFIG_MONGODB_ADMINUSERNAME'], '-p', 'password', '--authenticationDatabase', 'admin', '--archive'
+    sh 'docker', 'exec', mongo_container_id, 'mongodump', '-u', ENV['ME_CONFIG_MONGODB_ADMINUSERNAME'], '-p', 'password', '--authenticationDatabase', 'admin', '--gzip', '--archive'
   end
 
   desc 'restore database'
   task :restore => :'db:credentials' do
-    sh 'docker', 'exec', '-i', mongo_container_id, 'mongorestore', '-u', ENV['ME_CONFIG_MONGODB_ADMINUSERNAME'], '-p', 'password', '--authenticationDatabase', 'admin', '--archive'
+    sh 'docker', 'exec', '-i', mongo_container_id, 'mongorestore', '-u', ENV['ME_CONFIG_MONGODB_ADMINUSERNAME'], '-p', 'password', '--authenticationDatabase', 'admin', '--gzip', '--archive'
   end
 end
