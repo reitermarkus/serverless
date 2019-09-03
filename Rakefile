@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'socket'
 require 'tempfile'
+require 'yaml'
 
 FUNCTIONS = %w[
   database
@@ -12,6 +13,10 @@ FUNCTIONS = %w[
 
 def dev?
   !ENV['PRODUCTION']
+end
+
+def windows?
+  !(RUBY_PLATFORM !~ /cygwin|mswin|mingw|bccwin|wince|emx/)
 end
 
 def swarm_active?
@@ -75,11 +80,12 @@ namespace :deploy do
     puts "Setting Kafka hostname to “#{hostname}”…"
     ENV['KAFKA_PUBLIC_HOSTNAME'] = hostname
 
-
     ENV['BASIC_AUTH'] = dev? ? 'false' : 'true'
 
     mkdir_p 'faas'
-    cp 'deploy.yml', 'faas/deploy.yml'
+    deploy_yaml = YAML.safe_load(File.read('deploy.yml'))
+    deploy_yaml['services']['mongo'].delete('volumes') if windows?
+    File.write 'faas/deploy.yml', deploy_yaml.to_yaml
 
     prometheus_dir = 'faas/prometheus'
     mkdir_p prometheus_dir
