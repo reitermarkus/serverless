@@ -129,3 +129,21 @@ body {
     flex: 1 1 50%;
   }
 }
+
+.dates {
+  display: flex;
+  flex-direction: column;
+
+  span {
+    display: inline-block;
+  }
+
+  span:nth-child(odd) {
+    font-weight: bold;
+    padding-right: 0.3em;
+  }
+
+  div:nth-child(odd) {
+    padding-top: 0.5em;
+  }
+}

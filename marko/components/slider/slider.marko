@@ -1,5 +1,9 @@
 div.slider-date
-div
-  span -- ${state.start}
-  span -- ${state.end}
+div.dates
+  div
+    span -- Begin:
+    span -- ${state.start}
+  div
+    span -- End:
+    span -- ${state.end}
 button.uk-button.uk-button-primary style='float:right;' on-click('updateInterval') -- Update
