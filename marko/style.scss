@@ -37,12 +37,14 @@ $header-height: 12em;
 }
 
 .content-container {
+  $top-padding: 1.5em;
+
   width: 100%;
-  overflow: scroll;
-  padding: 1.5em 0 1.5em 0;
+  overflow: auto;
+  padding: $top-padding 0 $top-padding 0;
 
   @media (min-width: $breakpoint-small) {
-    height: calc(100% - #{$header-height});
+    height: calc(100% - #{$header-height} - (#{$top-padding} * 2));
     left: $nav-width;
     width: calc(100% - #{$nav-width});
 
