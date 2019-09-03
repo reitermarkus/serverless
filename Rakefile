@@ -1,4 +1,5 @@
 require 'open-uri'
+require 'open3'
 require 'socket'
 require 'tempfile'
 require 'yaml'
@@ -118,10 +119,8 @@ end
 
 namespace :db do
   def mongo_container_id
-    if (id = `docker ps -f name=func_mongo\\\\. --format '{{.ID}}'`.chomp).empty?
-      raise 'No MongoDB container found.'
-    end
-
+    stdout, *_ = Open3.capture3('docker', 'ps', '-f', 'name=func_mongo\.', '--format', '{{.ID}}')
+    raise 'No MongoDB container found.' if (id = stdout.chomp).empty?
     id
   end
 
