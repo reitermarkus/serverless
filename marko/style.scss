@@ -24,8 +24,6 @@ $header-height: 12em;
 
 .main-container {
   display: flex;
-  position: fixed;
-  top: $header-height;
 
   @media (max-width: $breakpoint-xsmall-max) {
     flex-wrap: wrap;
@@ -33,6 +31,8 @@ $header-height: 12em;
 
   @media (min-width: $breakpoint-small) {
     height: 100%;
+    position: fixed;
+    top: $header-height;
   }
 }
 
@@ -69,7 +69,12 @@ $header-height: 12em;
 }
 
 header {
-  position: fixed;
+  @media (min-width: $breakpoint-small) {
+    position: fixed;
+    padding: initial;
+  }
+
+  padding: 1em 0 1em 0;
   height: $header-height;
   width: 100%;
   border-bottom: 1px solid change-color($blue, $alpha: 0.5);
