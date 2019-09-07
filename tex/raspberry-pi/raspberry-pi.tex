@@ -1,0 +1,36 @@
+% !TEX TS-program = xelatex
+%
+\documentclass{article}
+\usepackage[T1]{fontenc}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+\usepackage{xcolor}
+\usepackage{listings}
+
+\lstset{basicstyle=\ttfamily,
+  breaklines = true,
+  showstringspaces = false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue}
+}
+
+\title{IoT Data Analytics using Serverless Computing - Raspberry Pi}
+
+\author{Markus Reiter, Michael Kaltschmid}
+\date{}
+
+\begin{document}
+  \maketitle
+
+  In order for us to gather data, we decided on using multiple Raspberry Pis with different sensors attached to them. We chose the Raspberry Pi because it is backed by a huge community and the vast amount of documentation available for it. Having documentation available was essential since we wanted to write the client application for the Raspberry Pi in Rust. This way we could validate our Rust code by comparing it to example code written in other programming languages, most commonly Python or C in the case of the Raspberry Pi.
+
+  \section{Rust on the Raspberry Pi}
+
+  For our first “Hello, world!” programm which would run on the Raspberry Pi, we took the simplest approach at the time. We would write the code on our development machines and synchronize the code to the Raspberry Pi using \texttt{rsync} and the compile and run it via \texttt{ssh}. This worked fine at the time. Once we got to the point where we needed to add more dependencies for the various sensors and networking, compile times naturally increased to the point at which it simply wasn't feasible anymore to compile directly using the inadequate processor of the Raspberry Pi. A single build was approaching a compile time of around five minutes, so we had to start looking for alternatives.
+
+  \section{Cross Compilation}
+
+  Soon after we realised that compiling directly on the Raspberry Pi was not a good solution, we had to find a way to cross compile for the Raspberry Pi. This was further complicated by the fact the we were using \textit{macOS} and \textit{Windows}, so none of the pre-compiled cross compilation toolchains were an option for us.
+\end{document}
