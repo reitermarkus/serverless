@@ -1,8 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-set -e
-set -o pipefail
-set -o nounset
+set -euo pipefail
 
 if ! dpkg -s dnsutils >/dev/null; then
   sudo apt-get update

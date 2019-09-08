@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 TARGET='armv7-unknown-linux-gnueabihf'
 
 cross build --release --target "${TARGET}"

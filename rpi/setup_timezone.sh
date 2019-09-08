@@ -1,7 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-set -e
-set -o pipefail
-set -o nounset
+set -euo pipefail
 
 sudo timedatectl set-timezone Europe/Vienna

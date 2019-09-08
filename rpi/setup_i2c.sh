@@ -1,8 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-set -e
-set -o pipefail
-set -o nounset
+set -euo pipefail
 
 sudo raspi-config nonint do_i2c 0
 
