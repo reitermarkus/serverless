@@ -32,5 +32,23 @@
 
   \section{Cross Compilation}
 
-  Soon after we realised that compiling directly on the Raspberry Pi was not a good solution, we had to find a way to cross compile for the Raspberry Pi. This was further complicated by the fact the we were using \textit{macOS} and \textit{Windows}, so none of the pre-compiled cross compilation toolchains were an option for us.
+  Soon after we realised that compiling directly on the Raspberry Pi was not a good solution, we had to find a way to cross compile for the Raspberry Pi. This was further complicated by the fact the we were using \textit{macOS} and \textit{Windows}, so none of the pre-compiled cross compilation toolchains for Linux were an option for us.
+
+  We then found the \texttt{cross} tool, which claimed to automatically install the corresponding toolchain and then run the cross compilation in a Docker container, so this should have worked on both \textit{macOS} and \textit{Windows}. Right after we installed it using \texttt{cargo install cross}, we saw that \textit{macOS} and \textit{Windows} support was lacking. On both platforms, tried to simply call \texttt{cargo} directly instead of running in a Docker container. Since this tool still seemed to be the best solution we could find for our situation and since the tool is open-source, we decided to dig into the source code and add the missing \textit{macOS} and \textit{Windows} support ourselves.
+
+  Getting \texttt{cross} to actually run a Docker container on both of our platforms was quite easy, we only had to add two new definitions, one for \textit{macOS} (\texttt{x86\_64-apple-darwin}) and one for \textit{Windows} (\texttt{x86\_64-pc-windows-msvc}). The next problem we were facing was that inside of the Docker container, the \texttt{CARGO\_HOME} directory was mounted, and with it, its \texttt{bin} subdirectory. This meant that the Docker container would first look in this directory instead of the respective toolchain root for the corresponding target's binaries. Since the binaries in \texttt{CARGO\_HOME/bin} are compiled for the host machine, these previously worked fine since only \texttt{x86\_64} \textit{Linux} hosts were supported. Now however, it would try running a \textit{macOS} or \textit{Windows} binary inside of a \textit{Linux} Docker container. This was not as straight-forward to debug as it might seem, since the error message looked like a syntax error in a shell command. Once we found what the problem was, the next challenge was to actually implement the fix for it. We still had to mount \texttt{CARGO\_HOME}, but exclude its \texttt{bin} subdirectory. Since the contents of \texttt{CARGO\_HOME} can vary depending on what you have installed, we could not simply mount each subdirectory individually and exclude \texttt{bin}, so the only way was to use a somewhat hacky workaround.
+
+  The whole \texttt{CARGO\_HOME} directory was already mounted using
+
+  \begin{lstlisting}[language=Bash]
+    -v "$CARGO_HOME:/cargo:Z"
+  \end{lstlisting}
+
+  In order to prevent mounting the \texttt{bin} subdirectory from the host machine, we added
+
+  \begin{lstlisting}[language=Bash]
+    -v /cargo/bin
+  \end{lstlisting}
+
+  This means that technically the \texttt{bin} subdirectory is still mounted, but is overlaid by another virtual volume which is not bound to a directory on the host, which effectively prevents non-Linux binaries being accessible inside the Docker container.
 \end{document}
