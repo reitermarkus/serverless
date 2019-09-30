@@ -126,22 +126,37 @@ task :default => :deploy
 
 task :kill do
   next unless swarm_active?
-  Rake::Task['db:dump'].invoke('faas/db-dump.gz') if windows?
+  Rake::Task['db:dump'].invoke('faas/db-dump.gz')
   sh 'docker', 'swarm', 'leave', '--force'
 end
 
 namespace :db do
   def mongo_container_id
-    Timeout.timeout(30) do
-      loop do
-        stdout, _, status = Open3.capture3('docker', 'ps', '-f', 'name=func_mongo\.', '--format', '{{.ID}}')
-        id = stdout.chomp
-        return id if status.success? && !id.empty?
-        sleep 0.5
+    id = begin
+      Timeout.timeout(30) do
+        loop do
+          stdout, _, status = Open3.capture3('docker', 'ps', '--filter', 'name=func_mongo\.', '--format', '{{.ID}}', '--latest')
+          id = stdout.chomp
+          break id if status.success? && !id.empty?
+          sleep 0.5
+        end
       end
+    rescue
+      raise 'No MongoDB container found.'
     end
-  rescue
-    raise 'No MongoDB container found.'
+
+    begin
+      Timeout.timeout(30) do
+        loop do
+          stdout, _, status = Open3.capture3('docker', 'inspect', '--format', '{{.State.Health.Status}}', id)
+          break if status.success? && stdout.chomp == 'healthy'
+        end
+      end
+    rescue
+      raise 'MongoDB container failed to start.'
+    end
+
+    id
   end
 
   task :credentials do

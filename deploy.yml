@@ -1,4 +1,5 @@
-version: "3.3"
+version: '3.4'
+
 services:
   gateway:
     image: openfaas/gateway:0.14.4
@@ -243,11 +244,11 @@ services:
     hostname: kafka-connector
     environment:
       gateway_url: http://gateway:8080
-      topics: "faas-request,sensor,register-device"
-      print_response: "true"
-      print_response_body: "true"
-      basic_auth: "${BASIC_AUTH:-true}"
-      secret_mount_path: "/run/secrets/"
+      topics: faas-request,sensor,register-device
+      print_response: 'true'
+      print_response_body: 'true'
+      basic_auth: '${BASIC_AUTH:-true}'
+      secret_mount_path: '/run/secrets/'
     secrets:
       - basic-auth-password
       - basic-auth-user
@@ -264,6 +265,12 @@ services:
       MONGO_INITDB_ROOT_PASSWORD_FILE: "/run/secrets/mongo-root-password"
       MONGO_INITDB_ROOT_USERNAME_FILE: "/run/secrets/mongo-root-username"
       MONGO_INITDB_DATABASE: sensordata
+    healthcheck:
+      test: ['CMD', 'mongo', '--quiet', '127.0.0.1/test', '--eval', 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 1)']
+      interval: 10s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
     secrets:
       - mongo-root-password
       - mongo-root-username
