@@ -98,45 +98,9 @@ export default class {
   async handleDeviceChange(id) {
     this.state.currentDevice = id
 
-    const device = this.state.devices[id]
-
     const end = new Date(Date.now())
     const start = new Date(end.getTime() - (1 * 24 * 60 * 60 * 1000))
 
-    this.state.loading = true
-
-    const data = await Promise.all(device.data_types.map(async dataType => {
-      const { data } = await axios.post('/function/filter', {
-        'device_id': device.id,
-        'collection': dataType,
-        'begin': start.toISOString(),
-        'end': end.toISOString(),
-        'interval': this.state.stepSlider || 24
-      })
-
-      return {
-        label: dataType,
-        data: data.map(({ value, time }) => ({ x: new Date(time), y: value })),
-      }
-    }))
-
-    const charts = data.filter(d => d.data.length > 0).map(d => {
-      return {
-        chartType: 'line',
-        chart: {
-          datasets: [{
-            ...d,
-            fill: false
-          }],
-          type: 'line',
-          options: { scales: { xAxes: [{ type: 'time' }] } },
-        }
-      }
-    })
-
-    this.state.loading = false
-
-    this.state.deviceData[device.id] = charts
-    this.setStateDirty('deviceData')
+    this.updateInterval(start, end)
   }
 }
