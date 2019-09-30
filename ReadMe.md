@@ -23,6 +23,18 @@ When finished, run
 rake kill
 ```
 
+To (re)deploy the `filter` function, run
+
+```
+rake deploy:functions[filter]
+```
+
+or to (re)deploy the `devices` and `filter` function, run
+
+```
+rake deploy:functions[devices,filter]
+```
+
 ### Testing
 
 #### Kafka Connector
