@@ -35,7 +35,12 @@ end
 namespace :build do
   task :functions do |task, args|
     functions = args.extras
-    functions = FUNCTIONS if functions.empty?
+
+    if functions.empty?
+      functions = FUNCTIONS
+    else
+      task.reenable
+    end
 
     functions.each do |function|
       cd 'functions' do
@@ -145,7 +150,9 @@ namespace :db do
 
     if file
       $stderr.puts "#{cmd.shelljoin} > #{file}"
-      Open3.pipeline(cmd, out: file)
+      statuses = Open3.pipeline(cmd, out: file)
+      create_shell_runner(cmd).call(statuses.all?(&:success?), statuses.last)
+      task.reenable
     else
       sh *cmd
     end
@@ -158,7 +165,9 @@ namespace :db do
 
     if file
       $stderr.puts "#{cmd.shelljoin} < #{file}"
-      Open3.pipeline(cmd, in: file)
+      statuses = Open3.pipeline(cmd, in: file)
+      create_shell_runner(cmd).call(statuses.all?(&:success?), statuses.last)
+      task.reenable
     else
       sh *cmd
     end
