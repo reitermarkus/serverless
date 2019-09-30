@@ -12,6 +12,7 @@ FUNCTIONS = %w[
   filter
   log-data
   register-device
+  ui
 ]
 
 def dev?
@@ -34,7 +35,7 @@ def create_secret(name, content)
 end
 
 namespace :build do
-  task :functions do |task, args|
+  task :functions => :'build:ui' do |task, args|
     functions = args.extras
 
     if functions.empty?
@@ -48,6 +49,15 @@ namespace :build do
         sh 'faas-cli', 'build', '-f', "#{function}.yml", function
       end
     end
+  end
+
+  task :ui do
+    cd 'marko' do
+      sh 'yarn', 'build'
+    end
+
+    cp 'marko/index.html', 'functions/ui/'
+    cp_r 'marko/static', 'functions/ui/'
   end
 end
 

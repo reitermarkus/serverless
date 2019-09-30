@@ -1,4 +1,4 @@
-FROM openfaas/of-watchdog:0.5.5 as watchdog
+FROM openfaas/of-watchdog:0.7.2 as watchdog
 
 FROM rustlang/rust:nightly-slim as builder
 

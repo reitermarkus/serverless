@@ -20,6 +20,7 @@
 #FaaS
 faas
 functions/build
+functions/ui/*
 
 deploy_rs_docker
 

@@ -11,6 +11,7 @@ const VARIABLES = {
 }
 
 export default {
+  mode: PRODUCTION ? 'production' : 'development',
   entry: './index.js',
   output: {
     path: __dirname,
