@@ -3,6 +3,7 @@ require 'open3'
 require 'shellwords'
 require 'socket'
 require 'tempfile'
+require 'timeout'
 require 'yaml'
 
 FUNCTIONS = %w[
@@ -131,9 +132,16 @@ end
 
 namespace :db do
   def mongo_container_id
-    stdout, *_ = Open3.capture3('docker', 'ps', '-f', 'name=func_mongo\.', '--format', '{{.ID}}')
-    raise 'No MongoDB container found.' if (id = stdout.chomp).empty?
-    id
+    Timeout.timeout(30) do
+      loop do
+        stdout, _, status = Open3.capture3('docker', 'ps', '-f', 'name=func_mongo\.', '--format', '{{.ID}}')
+        id = stdout.chomp
+        return id if status.success? && !id.empty?
+        sleep 0.5
+      end
+    end
+  rescue
+    raise 'No MongoDB container found.'
   end
 
   task :credentials do
