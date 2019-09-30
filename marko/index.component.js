@@ -95,10 +95,16 @@ export default class {
 
     const device = this.state.devices[id]
 
+    const end = new Date(Date.now())
+    const start = new Date(end.getTime() - (1 * 24 * 60 * 60 * 1000))
+
     const data = await Promise.all(device.data_types.map(async dataType => {
       const { data } = await axios.post('/function/filter', {
         'device_id': device.id,
         'collection': dataType,
+        'begin': start.toISOString(),
+        'end': end.toISOString(),
+        'interval': this.state.stepSlider || 24
       })
 
       return {
