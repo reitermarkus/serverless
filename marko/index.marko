@@ -15,9 +15,13 @@ div.main-container
     div.uk-container.uk-container-expand
       $ const device = state.devices[state.currentDevice]
       $ const deviceData = device && state.deviceData[device.id]
+
       if(deviceData === {})
         -- No data available for ${device.name}.
       else if(deviceData)
+        if(state.loading)
+          div uk-spinner
+
         div style='display: inline-block; width: 100%;'
           div.step-slider
             input.uk-range type="range" min="1" max="100" value=(state.stepSlider || 24) on-change('updateStepSlider')

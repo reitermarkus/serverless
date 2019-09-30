@@ -7,7 +7,8 @@ export default class {
       devices: [],
       deviceData: {},
       currentDevice: null,
-      stepSlider: 24
+      stepSlider: 24,
+      loading: false
     }
 
     this.connected = null
@@ -51,6 +52,8 @@ export default class {
   async updateInterval(start, end) {
     const device = this.state.devices[this.state.currentDevice]
 
+    this.state.loading = true
+
     const datasetsArray = await Promise.all(device.data_types.map(async dataType => {
       const { data } = await axios.post('/function/filter', {
         'device_id': device.id,
@@ -86,6 +89,8 @@ export default class {
       }
     })
 
+    this.state.loading = false
+
     this.state.deviceData[device.id] = charts
     this.setStateDirty('deviceData')
   }
@@ -97,6 +102,8 @@ export default class {
 
     const end = new Date(Date.now())
     const start = new Date(end.getTime() - (1 * 24 * 60 * 60 * 1000))
+
+    this.state.loading = true
 
     const data = await Promise.all(device.data_types.map(async dataType => {
       const { data } = await axios.post('/function/filter', {
@@ -126,6 +133,8 @@ export default class {
         }
       }
     })
+
+    this.state.loading = false
 
     this.state.deviceData[device.id] = charts
     this.setStateDirty('deviceData')
