@@ -1,7 +1,11 @@
 // based on https://github.com/marko-js-samples/marko-webpack/blob/master/webpack.config.js
 
+import path from 'path'
 import webpack from 'webpack'
 import { hostname } from 'os'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import { CleanWebpackPlugin } from 'clean-webpack-plugin'
+import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 
 const { NODE_ENV } = process.env
 const PRODUCTION = NODE_ENV === 'production'
@@ -12,10 +16,10 @@ const VARIABLES = {
 
 export default {
   mode: PRODUCTION ? 'production' : 'development',
-  entry: './index.js',
+  entry: './src/index.js',
   output: {
-    path: __dirname,
-    filename: 'static/bundle.js',
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
   },
   devtool: PRODUCTION ? undefined : 'source-map',
   devServer: PRODUCTION ? undefined : {
@@ -26,7 +30,7 @@ export default {
     host: '0.0.0.0',
     port: 8008,
     proxy: {
-      '/function': 'http://localhost:8080'
+      '/function': 'http://localhost:8080',
     },
     historyApiFallback: true,
   },
@@ -37,7 +41,15 @@ export default {
     new webpack.DefinePlugin(Object.keys(VARIABLES).reduce((o, k) => {
       o[`process.env.${k}`] = JSON.stringify(VARIABLES[k])
       return o
-    }, {}))
+    }, {})),
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'Serverless UI',
+      meta: {
+        'viewport': 'width=device-width, initial-scale=1',
+      },
+    }),
+    new MiniCssExtractPlugin(),
   ],
   module: {
     rules: [
@@ -57,6 +69,12 @@ export default {
         test: /\.(scss|sass)$/,
         use: [
           'style-loader',
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: !PRODUCTION,
+            },
+          },
           'css-loader',
           'sass-loader',
         ],

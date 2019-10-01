@@ -56,8 +56,8 @@ namespace :build do
       sh 'yarn', 'build'
     end
 
-    cp 'marko/index.html', 'functions/ui/'
-    cp_r 'marko/static', 'functions/ui/'
+    rm_rf 'functions/ui'
+    cp_r 'marko/dist', 'functions/ui'
   end
 end
 
