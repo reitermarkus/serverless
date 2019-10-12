@@ -53,6 +53,7 @@ namespace :build do
 
   task :ui do
     cd 'marko' do
+      sh 'yarn'
       sh 'yarn', 'build'
     end
 
