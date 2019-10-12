@@ -1,4 +1,4 @@
-# serverless
+# serverless [![Build Status](https://dev.azure.com/reitermarkus/serverless/_apis/build/status/reitermarkus.serverless?branchName=master)](https://dev.azure.com/reitermarkus/serverless/_build/latest?definitionId=2&branchName=master)
 
 ## Dependencies
 
