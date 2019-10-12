@@ -1,0 +1,30 @@
+\section{Serverless Stack}
+
+Arguably the main part of our Bachelor thesis is the serverless stack hence it's also in the title of the project. When doing research for our Bachelor project, thinking about the serverless stack was one of the first things we did. We came across many different serverless frameworks. \textit{OpenWhisk}, \textit{Fission} and \textit{Kubeless} just to name a few. While all of those seem to have their benefits, none of them seemed to be as versatile as \textit{OpenFaaS}. \\
+\textit{OpenFaaS} poses itself to have first class support for \textit{Docker Swarm} and being \textit{Kubernetes} native. The former was particularly interesting for us as this meant that we could test the framework without having to install any external tool except for  \textit{Docker}. \\
+Running was as simple as cloning the \textit{OpenFaaS} repository, calling \texttt{docker swarm init} and executing the provided initialization script. Deploying an actual function is equally as simple. One has the option to either deploy a function from the store through the nicely designed  \textit{OpenFaaS} gateway on port 8080 or with the preferred way, which is using the \textit{faas-cli}. \\
+
+Deploying a function from the store with it would look as follows:
+
+\begin{lstlisting}[language=bash]
+  $ faas store deploy figlet
+\end{lstlisting}
+
+where \texttt{figlet} is the name of the function in the store.\\
+
+After gaining a grasp of how the platform works, we decided to put our own spin on it by firstly modifying the given deploy script to our needs and porting it from \textit{Bash} to \textit{Rust} for it to be cross platform. The next step then was to write our own configuration file for swarm deployment, namely \texttt{deploy.yml}. This \textit{YAML} file includes the configuration for \textit{Kafka}, \textit{Zookeeper}, \textit{MongoDB}, various services that are needed for \textit{OpenFaaS}, a bunch of gateways for visualization and the \textit{Kafka-Connector}. The latter is particularly interesting, because its main purpose is to call a serverless function on a Kafka topic change. To make a function react to a Kafka topic we can again use our example store function \texttt{figlet}
+
+\begin{lstlisting}[language=bash]
+  $ faas store deploy figlet --annotation topic="faas-request"
+\end{lstlisting}
+
+The deployment aspect is the same as before therefore the interesting part is the \texttt{-{}-annotation} flag, where \texttt{topic="faas-request"} is the \textit{Kafka} topic the function is supposed to listen to and act on. We subsequently can look for the result in the logs of the connector service. \\
+While the feature of deploying fucntions from the store is really nice, it is not suitable for our use case, as we highly depend on custom written functions. For this reason we decided to automate the process of deploying functions by extending our deploy script. \\
+
+On every start it essentially calls:
+
+\begin{lstlisting}[language=bash]
+  $ faas-cli deploy -f "function"
+\end{lstlisting}
+
+for each function.

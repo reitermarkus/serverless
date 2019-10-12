@@ -54,3 +54,18 @@ jobs:
           yarn
           yarn build
         displayName: UI
+  - job: tex
+    displayName: TeX
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - bash: sudo apt-get install -y ruby
+        displayName: Install ruby
+      - bash: sudo apt-get install -y texlive-full
+        displayName: Install LaTeX
+      - bash: |
+          rake tex
+        displayName: Compile TeX Documents
+      - bash: |
+          rake tex:clean
+        displayName: Clean TeX Documents

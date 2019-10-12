@@ -206,3 +206,28 @@ namespace :db do
     end
   end
 end
+
+DOCUMENTS = %w[presentation thesis].freeze
+
+namespace :tex do
+  DOCUMENTS.each do |doc|
+    desc "compile #{doc}"
+    task doc do |task, args|
+      watch_arg = '-pvc' if args.extras.include?('watch')
+
+      cd 'tex' do
+        sh 'latexmk', '-cd', "#{doc}/#{doc}.tex", *watch_arg
+      end
+    end
+  end
+
+  desc 'clean all documents'
+  task :clean do
+    cd 'tex' do
+      sh 'latexmk', '-cd', '-C'
+    end
+  end
+end
+
+desc 'compile all documents'
+task :tex => DOCUMENTS.map { |doc| "tex:#{doc}" }

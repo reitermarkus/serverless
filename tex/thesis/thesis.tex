@@ -1,0 +1,38 @@
+% !TEX TS-program = xelatex
+%
+\documentclass[a4paper]{scrartcl}
+
+\usepackage{lmodern}
+
+\usepackage[english]{babel}
+
+\usepackage{xcolor}
+\usepackage{listings}
+
+\lstset{basicstyle=\ttfamily,
+  breaklines = true,
+  showstringspaces = false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue}
+}
+
+\usepackage{bookmark}
+\usepackage{hyperref}
+
+\usepackage{graphicx}
+\usepackage{graphbox}
+\graphicspath{ {../assets/} }
+
+\title{IoT Data Analytics using Serverless Computing - Raspberry Pi}
+
+\author{Markus Reiter, Michael Kaltschmid}
+\date{}
+
+\begin{document}
+  \maketitle
+
+  \input{./chapters/progress.tex}
+  \input{./chapters/mobile.tex}
+  \input{./chapters/serverless-stack.tex}
+  \input{./chapters/raspberry-pi.tex}
+\end{document}
