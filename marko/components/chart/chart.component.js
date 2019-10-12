@@ -54,6 +54,16 @@ export default class {
       })
     }
 
+    const canvas = this.getEl('canvas')
+
+    if (canvas) {
+      if (input.data.datasets[0].data.length === 0) {
+        canvas.style.opacity = '0.5'
+      } else {
+        canvas.style.opacity = '1.0'
+      }
+    }
+
     this.state = {
       type: input.type,
       data: input.data,
@@ -64,6 +74,14 @@ export default class {
   onMount() {
     const canvas = this.getEl('canvas')
     const ctx = canvas.getContext('2d')
+
+    if (canvas) {
+      if (this.state.data.datasets[0].data.length === 0) {
+        canvas.style.opacity = '0.5'
+      } else {
+        canvas.style.opacity = '1.0'
+      }
+    }
 
     this.chart = new Chart(ctx, {
       type: this.state.type,

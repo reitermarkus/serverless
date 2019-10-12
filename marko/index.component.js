@@ -78,13 +78,19 @@ export default class {
       }
     }))
 
-    const charts = datasetsArray.filter(datasets => datasets.some(d => d.data.length > 0)).map(datasets => {
+    const charts = datasetsArray.map(datasets => {
       return {
         chartType: 'line',
         chart: {
           datasets: datasets.map(dataset => ({...dataset, fill: false})),
           type: 'line',
-          options: { scales: { xAxes: [{ type: 'time' }] } },
+          options: {
+            scales: {
+              xAxes: [
+                { type: 'time' }
+              ]
+            }
+          },
         }
       }
     })
