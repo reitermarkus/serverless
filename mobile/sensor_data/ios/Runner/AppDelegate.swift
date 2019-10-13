@@ -10,7 +10,7 @@ import os.log
     didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?
   ) -> Bool {
     let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-    let sensorChannel = FlutterMethodChannel(name: "sensor_data.flutter.dev/sensor", binaryMessenger: controller)
+    let sensorChannel = FlutterMethodChannel(name: "sensor_data.flutter.dev/sensor", binaryMessenger: controller.binaryMessenger)
 
     let sensors = Sensors()
 
