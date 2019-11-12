@@ -1,6 +1,6 @@
 FROM openfaas/of-watchdog:0.7.2 as watchdog
 
-FROM rustlang/rust:nightly-slim as builder
+FROM rust:slim-buster as builder
 
 WORKDIR /home/app
 
@@ -41,7 +41,7 @@ RUN rm target/release/deps/libhandler*
 
 RUN cargo build --release --manifest-path main/Cargo.toml
 
-FROM debian:stretch-slim as ship
+FROM debian:buster-slim as ship
 
 COPY --from=watchdog /fwatchdog /usr/bin/fwatchdog
 RUN chmod +x /usr/bin/fwatchdog

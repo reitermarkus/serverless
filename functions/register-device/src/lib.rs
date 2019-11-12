@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::error::Error;
 
 use http::{HeaderMap, Method, Uri, StatusCode};
@@ -13,7 +12,7 @@ struct Device {
   name: String,
 }
 
-pub async fn handle(method: Method, uri: Uri, headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
+pub async fn handle(method: Method, _uri: Uri, headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
   if method != Method::POST {
     return Ok((StatusCode::METHOD_NOT_ALLOWED, format!("Method '{}' is not allowed.", method)))
   }
