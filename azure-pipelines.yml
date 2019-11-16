@@ -9,12 +9,6 @@ jobs:
     pool:
       vmImage: 'macOS-latest'
     steps:
-      - bash: |
-          # https://github.com/flutter/flutter/issues/41253
-          sudo gem uninstall cocoapods
-          sudo gem install cocoapods -v 1.7.5
-          pod setup
-        displayName: Set up CococaPods
       - task: FlutterInstall@0
         inputs:
           channel: 'stable'
