@@ -59,6 +59,8 @@ jobs:
     pool:
       vmImage: ubuntu-latest
     steps:
+      - bash: sudo apt-get update
+        displayName: Update packages
       - bash: sudo apt-get install -y ruby
         displayName: Install ruby
       - bash: sudo apt-get install -y texlive-full
