@@ -7,7 +7,7 @@ import os.log
 @objc class AppDelegate: FlutterAppDelegate {
   override func application(
     _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
     let sensorChannel = FlutterMethodChannel(name: "sensor_data.flutter.dev/sensor", binaryMessenger: controller.binaryMessenger)
