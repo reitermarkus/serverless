@@ -52,13 +52,10 @@ namespace :build do
   end
 
   task :ui do
-    cd 'marko' do
-      sh 'yarn'
-      sh 'yarn', 'build'
-    end
-
     rm_rf 'functions/ui'
-    cp_r 'marko/dist', 'functions/ui'
+    cp_r 'marko', 'functions/ui'
+    rm_rf 'functions/ui/dist'
+    rm_rf 'functions/ui/node_modules'
   end
 end
 
