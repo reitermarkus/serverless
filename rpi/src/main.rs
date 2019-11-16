@@ -29,8 +29,8 @@ fn sys_stats() -> Result<Vec<Value>, std::io::Error> {
       "type": "memory",
       "time": now(),
       "value": {
-        "used": (memory.total - memory.free).as_usize(),
-        "free": memory.free.as_usize(),
+        "used": memory.total.as_u64() - memory.free.as_u64(),
+        "free": memory.free.as_u64(),
       }
     }));
   }
