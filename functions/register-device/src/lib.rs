@@ -2,7 +2,7 @@ use std::error::Error;
 
 use http::{HeaderMap, Method, Uri, StatusCode};
 use serde_derive::{Deserialize, Serialize};
-use serde_json::{self, json, Value};
+use serde_json::{self, json};
 
 use openfaas;
 
