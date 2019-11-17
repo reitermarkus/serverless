@@ -3,6 +3,7 @@
 ## Dependencies
 
 - [Docker](https://docs.docker.com/install/)
+- [OpenFaaS CLI](https://docs.openfaas.com/cli/install/)
 - [Rust](https://rustup.rs)
 - [Ruby](https://www.ruby-lang.org/)
   - [Rake](https://ruby.github.io/rake/)
