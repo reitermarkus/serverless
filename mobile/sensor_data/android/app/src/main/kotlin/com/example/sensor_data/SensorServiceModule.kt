@@ -29,6 +29,11 @@ class SensorServiceModule() {
       field = value
     }
 
+  var stopService: Boolean = false
+    set(value) {
+      field = value
+    }
+
   @Throws(Exception::class)
   private fun resetService(context: Context) {
     val intent = Intent(FOREGROUND)
@@ -150,7 +155,11 @@ class SensorServiceModule() {
 
         NetworkTask.getInstance(context).sendRequest(records, "sensor", url)
 
-        handler.postDelayed(this, updateInterval.toLong())
+        if (!stopService) {
+          handler.postDelayed(this, updateInterval.toLong())
+        } else {
+          Log.d(FLUTTER_CLASS, "Stopping data collection.")
+        }
       }
     }, 1500)
   }
@@ -158,5 +167,13 @@ class SensorServiceModule() {
   companion object {
     private val FLUTTER_CLASS = "SensorService"
     private val FOREGROUND = "com.sensordata.SensorService"
+
+    @Volatile
+    private var INSTANCE: SensorServiceModule? = null
+    fun getInstance() = INSTANCE ?: synchronized(this) {
+      INSTANCE ?: SensorServiceModule().also {
+        INSTANCE = it
+      }
+    }
   }
 }

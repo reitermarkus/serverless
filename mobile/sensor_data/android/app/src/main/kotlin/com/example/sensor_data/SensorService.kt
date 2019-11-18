@@ -27,6 +27,7 @@ class SensorService: Service() {
   override fun onDestroy() {
     Log.d(FLUTTER_CLASS, "onDestroy")
     super.onDestroy()
+    SensorServiceModule.getInstance().stopService = true
   }
 
   override fun onStartCommand(intent: Intent?, flags:Int, startId:Int): Int {
