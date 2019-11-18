@@ -10,6 +10,7 @@ import android.app.PendingIntent
 import android.graphics.BitmapFactory
 import android.hardware.SensorManager
 import android.os.Handler
+import android.os.Build
 import android.provider.Settings
 import android.content.Context
 
@@ -44,7 +45,13 @@ class SensorServiceModule() {
       val intent = Intent(FOREGROUND)
       intent.setClass(context, SensorService::class.java)
       context.stopService(intent)
-      context.startService(intent)
+
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        context.startForegroundService(intent)
+      } else {
+        context.startService(intent)
+      }
+
       networkLoop(context)
       Log.d(FLUTTER_CLASS, "startService, successfull")
 
