@@ -99,6 +99,8 @@ class SensorServiceModule() {
     val bluetoothName = Settings.Secure.getString(context.getContentResolver(), "bluetooth_name")
     val deviceName = if (bluetoothName == null || bluetoothName.isEmpty()) android.os.Build.MODEL else bluetoothName
 
+    Log.d(FLUTTER_CLASS, "Device name is: $deviceName");
+
     registerDev.put("name", deviceName)
 
     registerDevOuter.put("value", registerDev)

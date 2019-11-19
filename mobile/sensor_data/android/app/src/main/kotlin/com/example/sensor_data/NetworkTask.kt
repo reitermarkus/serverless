@@ -1,15 +1,13 @@
 package com.sensor_data
 
-import com.android.volley.Request
-import com.android.volley.RequestQueue
-import com.android.volley.Response
-import com.android.volley.Response.ErrorListener
-import com.android.volley.Response.Listener
-import com.android.volley.toolbox.Volley
-import com.android.volley.NetworkResponse
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.VolleyError
-import com.android.volley.DefaultRetryPolicy
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType.Companion.toMediaType
 
 import android.util.Log
 import android.content.Context;
@@ -17,55 +15,46 @@ import android.content.Context;
 import org.json.JSONObject
 
 import java.net.InetAddress
+import java.io.IOException
 
 class NetworkTask()  {
   companion object {
-    private var queue : RequestQueue? = null
-
     @Volatile
     private var INSTANCE: NetworkTask? = null
     fun getInstance(context: Context) = INSTANCE ?: synchronized(this) {
-      queue = queue ?: Volley.newRequestQueue(context)
-
       INSTANCE ?: NetworkTask().also {
         INSTANCE = it
       }
     }
+
+    private val client  = OkHttpClient()
   }
 
   fun sendRequest(jsonBody: JSONObject, topic: String, ip: String) {
     val url = "$ip:8082/topics/$topic"
 
-    Log.d("NetworkTask", "sending request to $url.")
+    val contentType = "application/vnd.kafka.json.v2+json; charset=utf-8".toMediaType()
+    val body = RequestBody.create(contentType, jsonBody.toString())
 
-    val stringRequest = object : StringRequest(Request.Method.POST, url,
-      Response.Listener<String> { response ->
-        Log.d("NetworkTask", response.toString())
-      },
-      Response.ErrorListener {
-        fun onErrorResponse(error: VolleyError) {
-          val errorRes = error.networkResponse
-          Log.e("Error", String(errorRes.data, Charsets.UTF_8))
+    val request = Request.Builder()
+        .url(url)
+        .post(body)
+        .build()
+
+    Log.d("NetworkTask SEND", "sending request to $url")
+
+    client.newCall(request).enqueue(object : okhttp3.Callback {
+      override fun onFailure(call: Call, e: IOException) {
+        Log.e("NetworkTask ERROR", e.toString())
+      }
+
+      override fun onResponse(call: Call, response: Response) {
+        response.use {
+          if (!response.isSuccessful) Log.e("NetworkTask ERROR", response.toString())
+
+          Log.d("NetworkTask RESPONSE", response.body!!.string())
         }
       }
-    ) {
-      override fun getBodyContentType() = "application/vnd.kafka.json.v2+json"
-      override fun getBody(): ByteArray = jsonBody.toString().toByteArray()
-
-      override fun parseNetworkResponse(response: NetworkResponse): Response<String> {
-        Log.d("NetworkTaskStatusCode", response.statusCode.toString())
-        return super.parseNetworkResponse(response)
-      }
-    }
-
-    stringRequest.setRetryPolicy(
-      DefaultRetryPolicy(
-        1000,
-        2,
-        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
-      )
-    )
-
-    queue!!.add(stringRequest)
+    })
   }
 }
