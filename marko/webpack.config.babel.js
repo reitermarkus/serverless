@@ -68,7 +68,6 @@ export default {
       {
         test: /\.(scss|sass)$/,
         use: [
-          'style-loader',
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
