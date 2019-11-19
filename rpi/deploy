@@ -16,6 +16,9 @@ ssh pi@"${ip}" < setup_watchdog.sh
 
 local_ip="$(hostname)"
 
+ssh pi@"${ip}" sudo mkdir -p /etc/systemd/system/sensors.service.d
+ssh pi@"${ip}" sudo touch /etc/systemd/system/sensors.service.d/override.conf
+
 cat <<CONFIG | ssh pi@"${ip}" sudo tee /etc/systemd/system/sensors.service
 [Unit]
 Description=sensors
