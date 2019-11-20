@@ -5,6 +5,8 @@ use handler::handle;
 
 #[tokio::main]
 async fn main() -> Result<(), hyper::Error> {
+  env_logger::init();
+
   let addr = ([127, 0, 0, 1], 7878).into();
 
   let make_service = make_service_fn(|_| async {

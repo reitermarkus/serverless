@@ -8,6 +8,7 @@ edition = "2018"
 chrono = { version = "0.4", features = ["serde"] }
 http = "*"
 lazy_static = "*"
+log = "0.4"
 mongodb = "*"
 openfaas = { path = "../openfaas" }
 serde = "1"

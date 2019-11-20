@@ -116,7 +116,10 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
 
       return match collection.insert_one(doc.clone(), None) {
         Ok(result) => Ok((StatusCode::CREATED, format!("Inserted {:?} into collection '{}' in database '{}': {:?}.", doc, args.collection, *MONGO_DB, result))),
-        Err(err) => Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
+        Err(err) => {
+          log::error!("Failed to insert {:?} into collection '{}': {}", doc, args.collection, err);
+          Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err)))
+        },
       }
     },
     InsertOrUpdate { doc } => {
