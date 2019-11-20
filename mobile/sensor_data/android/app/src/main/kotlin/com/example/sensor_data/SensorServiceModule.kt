@@ -46,7 +46,6 @@ class SensorServiceModule() {
     updateInterval = interval
 
     try {
-      //resetService(context)
       val intent = Intent(FOREGROUND)
       intent.setClass(context, SensorService::class.java)
       context.stopService(intent)
@@ -109,7 +108,7 @@ class SensorServiceModule() {
 
     Log.d("REGISTER", registerDevRecords.toString())
 
-    NetworkTask.getInstance(context).sendRequest(registerDevRecords, "register-device", url)
+    NetworkTask.sendRequest(registerDevRecords, "register-device", url)
 
     handler.postDelayed(object : Runnable {
       override fun run() {
@@ -155,7 +154,7 @@ class SensorServiceModule() {
 
         Log.d("DATA", records.toString())
 
-        NetworkTask.getInstance(context).sendRequest(records, "sensor", url)
+        NetworkTask.sendRequest(records, "sensor", url)
 
         if (!stopService) {
           handler.postDelayed(this, updateInterval.toLong())

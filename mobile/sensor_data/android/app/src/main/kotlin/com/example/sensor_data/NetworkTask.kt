@@ -19,42 +19,35 @@ import java.io.IOException
 
 class NetworkTask()  {
   companion object {
-    @Volatile
-    private var INSTANCE: NetworkTask? = null
-    fun getInstance(context: Context) = INSTANCE ?: synchronized(this) {
-      INSTANCE ?: NetworkTask().also {
-        INSTANCE = it
-      }
-    }
-
     private val client  = OkHttpClient()
-  }
 
-  fun sendRequest(jsonBody: JSONObject, topic: String, ip: String) {
-    val url = "$ip:8082/topics/$topic"
+    public fun sendRequest(jsonBody: JSONObject, topic: String, ip: String) {
+      val url = "$ip:8082/topics/$topic"
 
-    val contentType = "application/vnd.kafka.json.v2+json; charset=utf-8".toMediaType()
-    val body = RequestBody.create(contentType, jsonBody.toString())
+      val contentType = "application/vnd.kafka.json.v2+json; charset=utf-8".toMediaType()
+      val body = RequestBody.create(contentType, jsonBody.toString())
 
-    val request = Request.Builder()
-        .url(url)
-        .post(body)
-        .build()
+      val request = Request.Builder()
+          .url(url)
+          .post(body)
+          .build()
 
-    Log.d("NetworkTask SEND", "sending request to $url")
+      Log.d("NetworkTask SEND", "sending request to $url")
 
-    client.newCall(request).enqueue(object : okhttp3.Callback {
-      override fun onFailure(call: Call, e: IOException) {
-        Log.e("NetworkTask ERROR", e.toString())
-      }
-
-      override fun onResponse(call: Call, response: Response) {
-        response.use {
-          if (!response.isSuccessful) Log.e("NetworkTask ERROR", response.toString())
-
-          Log.d("NetworkTask RESPONSE", response.body!!.string())
+      client.newCall(request).enqueue(object: Callback {
+        override fun onFailure(call: Call, e: IOException) {
+          Log.e("NetworkTask ERROR", e.toString())
         }
-      }
-    })
+
+        override fun onResponse(call: Call, response: Response) {
+          response.use {
+            if (!response.isSuccessful)
+              Log.e("NetworkTask ERROR", response.toString())
+
+            Log.d("NetworkTask RESPONSE", response.body!!.string())
+          }
+        }
+      })
+    }
   }
 }

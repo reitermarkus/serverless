@@ -17,7 +17,7 @@ class MainActivity: FlutterActivity() {
   private val SERVICE_CHANNEL = "sensor_data.flutter.dev/service"
   private val SENSOR_CHANNEL = "sensor_data.flutter.dev/sensor"
   private val SETTINGS_CHANNEL = "sensor_data.flutter.dev/settings"
-  public var sensorServiceModule : SensorServiceModule = SensorServiceModule.getInstance()
+  public var sensorServiceModule = SensorServiceModule.getInstance()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
