@@ -125,7 +125,7 @@ class SensorServiceModule() {
         cpu.put("value", CpuInfo.asJson())
         cpu.put("device_id", id)
 
-        val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
 
         cpu.put("time", date.format(Date()))
 
