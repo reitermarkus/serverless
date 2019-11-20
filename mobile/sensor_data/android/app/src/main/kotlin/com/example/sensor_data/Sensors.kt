@@ -1,12 +1,11 @@
 package com.sensor_data
 
+import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.content.Context
 import kotlin.math.PI
-
 import org.json.JSONObject
 
 class Sensors(private val manager: SensorManager) : SensorEventListener {

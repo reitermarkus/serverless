@@ -1,23 +1,20 @@
 package com.sensor_data
 
-import com.sensor_data.R
-import android.app.Activity
-import android.app.Service
-import android.app.NotificationChannel
-import android.app.Notification
-import android.app.NotificationManager
 import android.annotation.TargetApi
-import android.util.Log
-import android.os.IBinder
-import android.os.Build
-import android.content.Intent
+import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
-import android.support.annotation.Nullable
+import android.app.Service
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.os.Build
+import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
-import android.graphics.BitmapFactory
+import android.util.Log
 
-class SensorService: Service() {
+class SensorService : Service() {
   @TargetApi(Build.VERSION_CODES.M)
   override fun onCreate() {
     Log.d(FLUTTER_CLASS, "onCreate")
@@ -30,7 +27,7 @@ class SensorService: Service() {
     SensorServiceModule.getInstance().stopService = true
   }
 
-  override fun onStartCommand(intent: Intent?, flags:Int, startId:Int): Int {
+  override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     if (intent?.getAction().equals("stop_service")) {
       Log.d(FLUTTER_CLASS, "onStartCommand, stopping service")
       stopSelf()
@@ -44,7 +41,7 @@ class SensorService: Service() {
 
   override fun onBind(intent: Intent?): IBinder? = null
 
-  fun getNotificationBuilder(channelId:String, importance:Int): NotificationCompat.Builder {
+  fun getNotificationBuilder(channelId: String, importance: Int): NotificationCompat.Builder {
     val builder: NotificationCompat.Builder
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -71,14 +68,14 @@ class SensorService: Service() {
     }
   }
 
-  private fun createAndShowForegroundNotification(notificationId:Int) {
+  private fun createAndShowForegroundNotification(notificationId: Int) {
     val builder = getNotificationBuilder(
                   "com.sensorData.notification.CHANNEL_ID_FOREGROUND",
                   NotificationManagerCompat.IMPORTANCE_LOW)
 
     val desc = "getting sensor data..."
 
-    //https://stackoverflow.com/questions/30422452/how-to-stop-service-from-its-own-foreground-notification/35171958
+    // https://stackoverflow.com/questions/30422452/how-to-stop-service-from-its-own-foreground-notification/35171958
     val intent = Intent(this, SensorService::class.java)
     intent.setAction("stop_service")
     val stopAction = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)

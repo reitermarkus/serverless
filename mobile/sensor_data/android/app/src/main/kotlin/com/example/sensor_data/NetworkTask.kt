@@ -1,25 +1,19 @@
 package com.sensor_data
 
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType.Companion.toMediaType
-
 import android.util.Log
-import android.content.Context;
-
+import java.io.IOException
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
 import org.json.JSONObject
 
-import java.net.InetAddress
-import java.io.IOException
-
-class NetworkTask()  {
+class NetworkTask() {
   companion object {
-    private val client  = OkHttpClient()
+    private val client = OkHttpClient()
 
     public fun sendRequest(jsonBody: JSONObject, topic: String, ip: String) {
       val url = "$ip:8082/topics/$topic"
@@ -34,7 +28,7 @@ class NetworkTask()  {
 
       Log.d("NetworkTask SEND", "sending request to $url")
 
-      client.newCall(request).enqueue(object: Callback {
+      client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
           Log.e("NetworkTask ERROR", e.toString())
         }

@@ -1,18 +1,12 @@
 package com.sensor_data
 
 import android.os.Bundle
-import android.util.Log
-
 import io.flutter.app.FlutterActivity
-import io.flutter.plugins.GeneratedPluginRegistrant
 import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.BasicMessageChannel
-import io.flutter.plugin.common.StringCodec
-
+import io.flutter.plugins.GeneratedPluginRegistrant
 import org.json.JSONObject
 
-
-class MainActivity: FlutterActivity() {
+class MainActivity : FlutterActivity() {
   private val CPU_CHANNEL = "sensor_data.flutter.dev/cpu_info"
   private val SERVICE_CHANNEL = "sensor_data.flutter.dev/service"
   private val SENSOR_CHANNEL = "sensor_data.flutter.dev/sensor"
@@ -25,12 +19,12 @@ class MainActivity: FlutterActivity() {
     GeneratedPluginRegistrant.registerWith(this)
     MethodChannel(flutterView, CPU_CHANNEL).setMethodCallHandler { call, result ->
       if (call.method.equals("getCpuInfo")) {
-        val cpuInfo : JSONObject? = CpuInfo.asJson()
+        val cpuInfo: JSONObject? = CpuInfo.asJson()
 
         if (cpuInfo != null) {
           result.success(cpuInfo.toString())
         } else {
-          result.error("UNAVAILABLE", "CPU Info not available.", null);
+          result.error("UNAVAILABLE", "CPU Info not available.", null)
         }
       } else {
         result.notImplemented()
@@ -39,8 +33,8 @@ class MainActivity: FlutterActivity() {
 
     MethodChannel(flutterView, SERVICE_CHANNEL).setMethodCallHandler { call, result ->
       if (call.method.equals("startService")) {
-        val url : String? = call.argument("url")
-        val interval : Int? = call.argument("interval")
+        val url: String? = call.argument("url")
+        val interval: Int? = call.argument("interval")
 
         val res = sensorServiceModule.startService(url!!, interval!!, getApplicationContext())
 
@@ -56,12 +50,12 @@ class MainActivity: FlutterActivity() {
 
     MethodChannel(flutterView, SENSOR_CHANNEL).setMethodCallHandler { call, result ->
       if (call.method.equals("getSensorInfo")) {
-        val sensorInfo : JSONObject? = Sensors.getInstance(getApplicationContext()).asJson()
+        val sensorInfo: JSONObject? = Sensors.getInstance(getApplicationContext()).asJson()
 
         if (sensorInfo != null) {
           result.success(sensorInfo.toString())
         } else {
-          result.error("UNAVAILABLE", "Sensor Info not available.", null);
+          result.error("UNAVAILABLE", "Sensor Info not available.", null)
         }
       } else {
         result.notImplemented()
@@ -70,8 +64,8 @@ class MainActivity: FlutterActivity() {
 
     MethodChannel(flutterView, SETTINGS_CHANNEL).setMethodCallHandler { call, result ->
       if (call.method.equals("changeSettings")) {
-        val interval : Int? = call.argument("interval")
-        val url : String? = call.argument("url")
+        val interval: Int? = call.argument("interval")
+        val url: String? = call.argument("url")
 
         sensorServiceModule.updateInterval = interval!!
         sensorServiceModule.url = url!!

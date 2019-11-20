@@ -1,7 +1,6 @@
 package com.sensor_data
-import java.io.*
-import java.util.*
 
+import java.io.RandomAccessFile
 import org.json.JSONObject
 
 class CpuInfo() {

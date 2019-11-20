@@ -1,21 +1,15 @@
 package com.sensor_data
 
-import java.util.HashMap
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.os.Handler
+import android.provider.Settings
+import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.Date
-
-import android.util.Log
-import android.content.Intent
-import android.app.PendingIntent
-import android.graphics.BitmapFactory
-import android.hardware.SensorManager
-import android.os.Handler
-import android.os.Build
-import android.provider.Settings
-import android.content.Context
-
-import org.json.JSONObject
 import org.json.JSONArray
+import org.json.JSONObject
 
 class SensorServiceModule() {
   var url: String = "http://0.0.0.0"
@@ -41,7 +35,7 @@ class SensorServiceModule() {
     context.stopService(intent)
   }
 
-  fun startService(ip: String, interval: Int, context: Context) : Pair<Boolean, String> {
+  fun startService(ip: String, interval: Int, context: Context): Pair<Boolean, String> {
     url = ip
     updateInterval = interval
 
@@ -60,22 +54,20 @@ class SensorServiceModule() {
       Log.d(FLUTTER_CLASS, "startService, successfull")
 
       return Pair(true, "")
-    }
-    catch (e: Exception) {
+    } catch (e: Exception) {
       Log.d(FLUTTER_CLASS, "startService failed!")
-      return Pair (false, "startService failed!")
+      return Pair(false, "startService failed!")
     }
   }
 
-  fun stopService(context: Context) : Pair<Boolean, String>  {
+  fun stopService(context: Context): Pair<Boolean, String> {
     Log.d(FLUTTER_CLASS, "stopService")
 
     try {
       resetService(context)
-    }
-    catch (e: Exception) {
+    } catch (e: Exception) {
       Log.e(FLUTTER_CLASS, "stopService failed!")
-      return Pair (false, "stopService failed!")
+      return Pair(false, "stopService failed!")
     }
 
     return Pair(true, "")
@@ -98,7 +90,7 @@ class SensorServiceModule() {
     val bluetoothName = Settings.Secure.getString(context.getContentResolver(), "bluetooth_name")
     val deviceName = if (bluetoothName == null || bluetoothName.isEmpty()) android.os.Build.MODEL else bluetoothName
 
-    Log.d(FLUTTER_CLASS, "Device name is: $deviceName");
+    Log.d(FLUTTER_CLASS, "Device name is: $deviceName")
 
     registerDev.put("name", deviceName)
 
