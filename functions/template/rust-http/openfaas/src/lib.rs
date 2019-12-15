@@ -2,11 +2,8 @@ use std::env;
 use std::error::Error;
 use std::fs;
 use std::io;
-use std::iter::FromIterator;
 
-use bytes::BytesMut;
-use futures::{TryFutureExt, TryStreamExt};
-use hyper::{Client, Request, Body, StatusCode};
+use hyper::{body::{aggregate, Buf}, Client, Request, Body, StatusCode};
 
 pub fn secret(name: &str) -> Result<String, io::Error> {
   match fs::read_to_string(&format!("/var/openfaas/secrets/{}", name)) {
@@ -26,16 +23,15 @@ pub async fn call(function: &str, body: String) -> Result<(StatusCode, String), 
 
   let response = Client::new()
     .request(request)
-    .map_err(|err| Box::new(err) as _)
-    .await?;
+    .await
+    .map_err(|err| Box::new(err) as _)?;
 
   let status = response.status();
 
-  let bytes = response.into_body()
-    .and_then(move |bytes| async { Ok(BytesMut::from_iter(bytes)) })
-    .try_concat()
-    .map_err(|err| Box::new(err) as _)
-    .await?
+  let bytes = aggregate(response.into_body())
+    .await
+    .map_err(|err| Box::new(err) as _)?
+    .to_bytes()
     .to_vec();
 
   match String::from_utf8(bytes) {

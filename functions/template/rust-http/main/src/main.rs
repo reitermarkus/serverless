@@ -1,8 +1,4 @@
-use std::iter::FromIterator;
-
-use bytes::BytesMut;
-use futures::TryStreamExt;
-use hyper::{Body, Server, Request, Response, StatusCode, service::{make_service_fn, service_fn}};
+use hyper::{body::{aggregate, Buf}, Body, Server, Request, Response, StatusCode, service::{make_service_fn, service_fn}};
 
 use handler::handle;
 
@@ -18,10 +14,9 @@ async fn main() -> Result<(), hyper::Error> {
       let uri = request.uri().clone();
       let headers = request.headers().clone();
 
-      let bytes = request.into_body()
-        .and_then(move |bytes| async { Ok(BytesMut::from_iter(bytes)) })
-        .try_concat()
+      let bytes = aggregate(request.into_body())
         .await?
+        .to_bytes()
         .to_vec();
 
       let body = match String::from_utf8(bytes) {
