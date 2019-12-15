@@ -2,7 +2,9 @@ use std::env;
 use std::error::Error;
 use std::fs;
 use std::io;
+use std::iter::FromIterator;
 
+use bytes::BytesMut;
 use futures::{TryFutureExt, TryStreamExt};
 use hyper::{Client, Request, Body, StatusCode};
 
@@ -30,9 +32,11 @@ pub async fn call(function: &str, body: String) -> Result<(StatusCode, String), 
   let status = response.status();
 
   let bytes = response.into_body()
+    .and_then(move |bytes| async { Ok(BytesMut::from_iter(bytes)) })
     .try_concat()
     .map_err(|err| Box::new(err) as _)
-    .await?.to_vec();
+    .await?
+    .to_vec();
 
   match String::from_utf8(bytes) {
     Ok(content) => Ok((status, content)),

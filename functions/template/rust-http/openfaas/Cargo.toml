@@ -5,5 +5,6 @@ authors = ["Markus Reiter <me@reitermark.us>"]
 edition = "2018"
 
 [dependencies]
-futures-preview = "0.3.0-alpha.19"
-hyper = { version = "0.13.0-alpha.4", features = ["runtime", "unstable-stream"] }
+bytes = "0.5"
+futures = "0.3.1"
+hyper = "0.13.0"
