@@ -5,6 +5,8 @@ authors = ["Michael Kaltschmid <kaltschmidmichael@gmail.com>", "Markus Reiter <m
 edition = "2018"
 
 [dependencies]
+env_logger = "0.7"
+log = "0.4"
 reqwest = { version = "0.9", features = ["default-tls-vendored"] }
 systemstat = "0.1"
 serde = { version = "1", features = ["derive"] }

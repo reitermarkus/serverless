@@ -29,6 +29,7 @@ Type=simple
 Environment=I2C_DEVICE=/dev/i2c-1
 Environment=KAFKA_HOST=${local_ip}
 Environment=KAFKA_PORT=8082
+Environment=RUST_LOG=info
 ExecStart=/usr/local/bin/sensors
 Restart=always
 RestartSec=1

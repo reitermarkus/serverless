@@ -196,7 +196,7 @@ impl KafkaRestClient {
 
 fn register_device(kafka_client: &KafkaRestClient, name: &str) -> String {
   let mac_address = get_mac_address().expect("Cannot retrieve MAC address").expect("No MAC address found").to_string();
-  println!("MAC address: {}", mac_address);
+  log::info!("MAC address: {}", mac_address);
 
   kafka_client.post("register-device", &[json!({
     "value": {
@@ -205,10 +205,13 @@ fn register_device(kafka_client: &KafkaRestClient, name: &str) -> String {
     },
   })]).expect("Failed to register device");
 
+  log::info!("Registered device successfully.");
   mac_address
 }
 
 fn main() {
+  env_logger::init();
+
   let kafka_host = if cfg!(debug_assertions) {
     env::var("KAFKA_HOST").unwrap_or_else(|_| "localhost".to_string())
   } else {
@@ -226,7 +229,7 @@ fn main() {
   let device_id = register_device(&kafka_client, "Raspberry Pi");
 
   loop {
-    println!("KAFKA: {}", kafka_client.url());
+    log::info!("Kafka URL: {}", kafka_client.url());
 
     match sys_stats() {
       Ok(mut stats) => {
@@ -234,16 +237,16 @@ fn main() {
           v.as_object_mut().unwrap().insert("device_id".into(), json!(device_id));
         }
 
-        println!("INFO: {}", to_string_pretty(&json!(stats)).unwrap());
+        log::info!("{}", to_string_pretty(&json!(stats)).unwrap());
 
         let records = stats.into_iter().map(|s| json!({"value": s})).collect::<Vec<_>>();
 
         match kafka_client.post("sensor", &records) {
-          Ok(json_response) => println!("RESPONSE: {}", to_string_pretty(&json_response).unwrap()),
-          Err(err) => eprintln!("ERROR: {}", err.to_string()),
+          Ok(json_response) => log::info!("RESPONSE: {}", to_string_pretty(&json_response).unwrap()),
+          Err(err) => log::error!("{}", err.to_string()),
         }
       },
-      Err(err) => eprintln!("ERROR: {}", err.to_string()),
+      Err(err) => log::error!("{}", err.to_string()),
     }
 
     thread::sleep(Duration::from_secs(15));
