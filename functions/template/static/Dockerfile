@@ -17,7 +17,7 @@ WORKDIR /home/app
 
 COPY function public
 
-HEALTHCHECK --interval=2s CMD ["/fwatchdog", "--run-healthcheck"]
+HEALTHCHECK --interval=2s CMD ["fwatchdog", "--run-healthcheck"]
 
 ENV mode="static"
 
