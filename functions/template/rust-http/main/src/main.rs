@@ -1,4 +1,4 @@
-use hyper::{body::{aggregate, Buf}, Body, Server, Request, Response, StatusCode, service::{make_service_fn, service_fn}};
+use hyper::{body, Body, Server, Request, Response, StatusCode, service::{make_service_fn, service_fn}};
 
 use handler::handle;
 
@@ -14,9 +14,8 @@ async fn main() -> Result<(), hyper::Error> {
       let uri = request.uri().clone();
       let headers = request.headers().clone();
 
-      let bytes = aggregate(request.into_body())
+      let bytes = body::to_bytes(request.into_body())
         .await?
-        .to_bytes()
         .to_vec();
 
       let body = match String::from_utf8(bytes) {

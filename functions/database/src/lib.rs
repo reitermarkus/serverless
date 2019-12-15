@@ -88,7 +88,7 @@ fn json_to_bson(bson: Bson) -> Bson {
   })
 }
 
-pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
+pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send + Sync>> {
   use Action::*;
 
   let args = match serde_json::from_str::<MongoArgs>(&body) {

@@ -14,7 +14,7 @@ struct Device {
   data_types: Vec<String>,
 }
 
-pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, _body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
+pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, _body: String) -> Result<(StatusCode, String), Box<dyn Error + Send + Sync>> {
   if method != Method::GET {
     return Ok((StatusCode::METHOD_NOT_ALLOWED, format!("Method '{}' is not allowed.", method)))
   }

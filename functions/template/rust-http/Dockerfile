@@ -16,7 +16,7 @@ RUN { \
   echo 'openfaas = { path = "../openfaas" }'; \
 } > function/Cargo.toml
 RUN { \
-  echo 'pub async fn handle(_: http::Method, _: http::Uri, _: http::HeaderMap, _: String) -> Result<(http::StatusCode, String), Box<dyn std::error::Error + Send>> {'; \
+  echo 'pub async fn handle(_: http::Method, _: http::Uri, _: http::HeaderMap, _: String) -> Result<(http::StatusCode, String), Box<dyn std::error::Error + Send + Sync>> {'; \
   echo '  Ok((http::StatusCode::OK, "".to_string()))'; \
   echo '}'; \
 } > function/src/lib.rs

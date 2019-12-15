@@ -15,7 +15,7 @@ struct Args {
   interval: Option<usize>,
 }
 
-pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
+pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send + Sync>> {
   if method != Method::POST {
     return Ok((StatusCode::METHOD_NOT_ALLOWED, format!("Method '{}' is not allowed.", method)))
   }
@@ -44,7 +44,7 @@ pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String
   Ok(aggregate(&args.collection, pipeline, None, None, None).await?)
 }
 
-async fn aggregate(collection: &str, pipeline: Vec<Value>, begin: Option<String>, end: Option<String>, steps: Option<usize>) -> Result<(StatusCode, String), Box<dyn Error + Send>> {
+async fn aggregate(collection: &str, pipeline: Vec<Value>, begin: Option<String>, end: Option<String>, steps: Option<usize>) -> Result<(StatusCode, String), Box<dyn Error + Send + Sync>> {
   openfaas::call("database", json!({
     "collection": collection,
     "action": "aggregate",
