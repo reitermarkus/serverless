@@ -8,6 +8,7 @@ functions:
     handler: ./database
     image: database:latest
     environment:
+      RUST_LOG: info
       write_debug: 'true'
       MONGO_HOST: mongo
       MONGO_DB: sensordata

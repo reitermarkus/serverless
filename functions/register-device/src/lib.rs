@@ -22,12 +22,12 @@ pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String
     _ => return Ok((StatusCode::BAD_REQUEST, "Invalid format.".to_string())),
   };
 
-  dbg!(openfaas::call("database", json!({
+  openfaas::call("database", json!({
     "collection": "devices",
     "action": "insert_or_update",
     "doc": {
       "_id": device.id,
       "name": device.name,
     },
-  }).to_string()).await)
+  }).to_string()).await
 }

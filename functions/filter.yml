@@ -8,5 +8,6 @@ functions:
     handler: ./filter
     image: filter:latest
     environment:
+      RUST_LOG: info
       write_debug: 'true'
       gateway_url: http://gateway:8080

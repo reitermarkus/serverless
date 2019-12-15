@@ -45,6 +45,7 @@ async fn main() -> Result<(), hyper::Error> {
     }))
   });
 
+  log::info!("Starting server on {} …", addr);
   let server = Server::bind(&addr)
     .serve(make_service);
 

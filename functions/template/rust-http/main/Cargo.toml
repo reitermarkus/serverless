@@ -10,4 +10,5 @@ env_logger = "0.7"
 futures = "0.3.1"
 handler = { path = "../function" }
 hyper = "0.13.0"
+log = "0.4"
 tokio = { version = "0.2.4", features = ["macros"] }
