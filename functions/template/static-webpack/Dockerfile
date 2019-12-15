@@ -1,7 +1,3 @@
-FROM alpine as tempdir
-
-RUN mkdir -p /tempdir
-
 FROM node:alpine as builder
 
 WORKDIR /home/app
@@ -19,15 +15,13 @@ RUN yarn build
 
 FROM scratch
 
-COPY --from=openfaas/of-watchdog:0.7.2 /fwatchdog /fwatchdog
-COPY --from=tempdir /tempdir /tmp
+COPY --from=openfaas/of-watchdog:0.7.3 /fwatchdog /fwatchdog
 
 WORKDIR /home/app
 
 COPY --from=builder /home/app/dist public
 
-# https://github.com/openfaas-incubator/of-watchdog/pull/87
-# HEALTHCHECK --interval=2s CMD ["/fwatchdog", "healthcheck"]
+HEALTHCHECK --interval=2s CMD ["/fwatchdog", "--run-healthcheck"]
 
 ENV mode="static"
 

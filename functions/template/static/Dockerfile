@@ -1,4 +1,4 @@
-FROM openfaas/of-watchdog:0.7.2 as watchdog
+FROM openfaas/of-watchdog:0.7.3 as watchdog
 
 FROM debian:stretch-slim as ship
 
@@ -17,7 +17,7 @@ WORKDIR /home/app
 
 COPY function public
 
-HEALTHCHECK --interval=2s CMD [ -e /tmp/.lock ] || exit 1
+HEALTHCHECK --interval=2s CMD ["/fwatchdog", "--run-healthcheck"]
 
 ENV mode="static"
 

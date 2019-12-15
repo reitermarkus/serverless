@@ -1,4 +1,4 @@
-FROM openfaas/of-watchdog:0.7.2 as watchdog
+FROM openfaas/of-watchdog:0.7.3 as watchdog
 
 FROM rust:slim-buster as builder
 
@@ -66,7 +66,7 @@ COPY --from=builder /home/app/target/release/main /home/app/
 ENV function_process=./main
 EXPOSE 8080
 
-HEALTHCHECK --interval=2s CMD [ -e /tmp/.lock ] || exit 1
+HEALTHCHECK --interval=2s CMD ["/fwatchdog", "--run-healthcheck"]
 
 ENV upstream_url="http://127.0.0.1:7878"
 ENV mode="http"
