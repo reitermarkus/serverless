@@ -151,3 +151,27 @@ body {
     padding-top: 0.5em;
   }
 }
+
+.date-container {
+  display: flex;
+
+  @media (min-width: $breakpoint-small) {
+    max-width: 30em;
+  }
+
+  input {
+    &:nth-child(odd) {
+      margin-right: 5px;
+    }
+
+    &:nth-child(even) {
+      margin-left: 5px;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    text-align: center;
+  }
+}
