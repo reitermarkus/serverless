@@ -134,7 +134,11 @@ task :default => :deploy
 
 task :kill do
   next unless swarm_active?
-  Rake::Task['db:dump'].invoke('faas/db-dump.gz')
+  begin
+    Rake::Task['db:dump'].invoke('faas/db-dump.gz')
+  rescue
+    $stderr.puts "Database not running, skipping dump."
+  end
   sh 'docker', 'swarm', 'leave', '--force'
 end
 
