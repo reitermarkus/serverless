@@ -6,10 +6,30 @@ export default class {
       start: null,
       end: null,
     }
+
+    this.dateUiSlider = null
   }
 
   updateInterval() {
     this.emit('update-interval', this.state.start, this.state.end)
+  }
+
+  onInput(input) {
+    this.state.start = input.start || this.state.start
+    this.state.end = input.end || this.state.end
+
+    if(this.state.start && this.state.end) {
+      this.dateUiSlider && this.dateUiSlider.updateOptions({
+        start: [
+          this.state.start.getTime(),
+          this.state.end.getTime()
+        ],
+        range: {
+          min: this.state.start.getTime(),
+          max: this.state.end.getTime()
+        },
+      })
+    }
   }
 
   onMount() {
@@ -17,11 +37,10 @@ export default class {
 
     const now = new Date(Date.now())
     const yesterday = new Date(now.getTime() - (1 * 24 * 60 * 60 * 1000)).getTime()
-    const previousWeek = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000)).getTime()
 
-    noUiSlider.create(dateSlider, {
+    this.dateUiSlider = noUiSlider.create(dateSlider, {
       range: {
-        min: previousWeek,
+        min: yesterday,
         max: now.getTime()
       },
       connect: true,

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import UIkit from 'uikit'
+import Pikaday from 'pikaday'
 
 export default class {
   onCreate() {
@@ -8,13 +9,46 @@ export default class {
       deviceData: {},
       currentDevice: null,
       stepSlider: 24,
-      loading: false
+      loading: false,
+      pickerStart: null,
+      pickerEnd: null,
     }
 
     this.connected = null
     this.notification = null
 
     this.fetchData()
+
+    this.pickerStart = null
+    this.pickerEnd = null
+  }
+
+  onUpdate() {
+    if (!this.pickerStart) {
+      const dp = document.getElementById('datepickerStart')
+
+      if(dp)
+        this.pickerStart = new Pikaday({
+          field: dp,
+          maxDate: new Date(),
+          defaultDate: new Date(new Date(Date.now()).getTime() - (1 * 24 * 60 * 60 * 1000)),
+          setDefaultDate: true,
+          onSelect: date => this.state.pickerStart = date
+        })
+    }
+
+    if (!this.pickerEnd) {
+      const dp = document.getElementById('datepickerEnd')
+
+      if (dp)
+        this.pickerEnd = new Pikaday({
+          field: dp,
+          maxDate: new Date(),
+          defaultDate: new Date(Date.now()),
+          setDefaultDate: true,
+          onSelect: date => this.state.pickerEnd = date
+        })
+    }
   }
 
   updateStepSlider(e) {
