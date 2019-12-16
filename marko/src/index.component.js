@@ -55,15 +55,28 @@ export default class {
     this.state.stepSlider = e.srcElement?.valueAsNumber
   }
 
+  getDates() {
+    const end = this.pickerEnd?._d || new Date(Date.now())
+    const start = this.pickerStart?._d || new Date(end.getTime() - (1 * 24 * 60 * 60 * 1000))
+
+    return {
+      start: start,
+      end: end
+    }
+  }
+
   async fetchData() {
     try {
       const {data: devices} = await axios.get('/function/devices')
 
       this.state.devices = devices
 
-      if (devices !== []) {
+      if (devices !== [] && this.state.currentDevice == null) {
         this.state.currentDevice = 0
         this.handleDeviceChange(this.state.currentDevice)
+      } else {
+        const { start, end } = this.getDates()
+        this.updateInterval(start, end, true)
       }
 
       if (this.connected === false) {
@@ -83,10 +96,12 @@ export default class {
     }
   }
 
-  async updateInterval(start, end) {
+  async updateInterval(start, end, silent) {
     const device = this.state.devices[this.state.currentDevice]
 
-    this.state.loading = true
+    if (!silent) {
+      this.state.loading = true
+    }
 
     const datasetsArray = await Promise.all(device.data_types.map(async dataType => {
       const { data } = await axios.post('/function/filter', {
@@ -129,7 +144,9 @@ export default class {
       }
     })
 
-    this.state.loading = false
+    if (!silent) {
+      this.state.loading = false
+    }
 
     this.state.deviceData[device.id] = charts
     this.setStateDirty('deviceData')
@@ -138,9 +155,8 @@ export default class {
   async handleDeviceChange(id) {
     this.state.currentDevice = id
 
-    const end = new Date(Date.now())
-    const start = new Date(end.getTime() - (1 * 24 * 60 * 60 * 1000))
+    const {start, end} = this.getDates()
 
-    this.updateInterval(start, end)
+    this.updateInterval(start, end, false)
   }
 }
