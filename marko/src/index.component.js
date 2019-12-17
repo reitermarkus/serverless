@@ -46,7 +46,16 @@ export default class {
           maxDate: new Date(),
           defaultDate: new Date(Date.now()),
           setDefaultDate: true,
-          onSelect: date => this.state.pickerEnd = date
+          onSelect: date => {
+            const now = new Date()
+            now.setHours(0, 0, 0, 0)
+
+            if (date.getTime() === now.getTime()) {
+              this.state.pickerEnd = new Date()
+            } else {
+              this.state.pickerEnd = date
+            }
+          }
         })
     }
   }
