@@ -40,7 +40,10 @@ pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String
 
   let data = match serde_json::from_str::<Data>(&body) {
     Ok(data) => data,
-    _ => return Ok((StatusCode::BAD_REQUEST, "Invalid format.".to_string())),
+    _ => {
+      log::error!("Invalid JSON format:\n{}", body);
+      return Ok((StatusCode::BAD_REQUEST, "Invalid format.".to_string()))
+    },
   };
 
   if !SUPPORTED_DATA_TYPES.iter().any(|&t| t == data.data_type) {
