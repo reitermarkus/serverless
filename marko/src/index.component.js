@@ -157,6 +157,16 @@ export default class {
 
     const {start, end} = this.getDates()
 
+    if (this.pickerStart) {
+      this.pickerStart.destroy()
+      this.pickerStart = null
+    }
+
+    if (this.pickerEnd) {
+      this.pickerEnd.destroy()
+      this.pickerEnd = null
+    }
+
     this.updateInterval(start, end, false)
   }
 }
