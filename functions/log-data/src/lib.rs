@@ -47,6 +47,7 @@ pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String
   };
 
   if !SUPPORTED_DATA_TYPES.iter().any(|&t| t == data.data_type) {
+    log::error!("Data type '{}' is not supported.", data.data_type);
     return Ok((StatusCode::BAD_REQUEST, format!("Data type '{}' is not supported.", data.data_type)));
   }
 
