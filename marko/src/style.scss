@@ -20,8 +20,8 @@ $orange: rgb(255, 159,  64);
 @import "uikit/src/scss/uikit-theme.scss";
 @import "slider.scss";
 
-$nav-width: 20em;
-$header-height: 12em;
+$nav-width: 18em;
+$header-height: 10em;
 
 .main-container {
   display: flex;
@@ -60,15 +60,16 @@ $header-height: 12em;
   flex: 1 1 $nav-width;
   width: $nav-width;
   box-sizing: border-box;
+  background-color: darken(white, 10%);
 
   @media (max-width: $breakpoint-xsmall-max) {
     flex: auto;
-    border-bottom: 1px solid change-color($blue, $alpha: 0.5);
+    border-bottom: 1px solid darken(white, 13%);
   }
 
   @media (min-width: $breakpoint-small) {
     height: 100%;
-    border-right: 1px solid change-color($blue, $alpha: 0.5);
+    border-right: 1px solid darken(white, 13%);
   }
 }
 
@@ -78,10 +79,11 @@ header {
     padding: initial;
   }
 
+  background-color: darken(white, 7%);
   padding: 1em 0 1em 0;
   height: $header-height;
   width: 100%;
-  border-bottom: 1px solid change-color($blue, $alpha: 0.5);
+  border-bottom: 1px solid darken(white, 10%);
   display: flex;
   align-items: center;
 
@@ -175,3 +177,13 @@ body {
     text-align: center;
   }
 }
+
+.update-data {
+  width: 100%;
+  margin: 0.75em 0 0.75em 0;
+
+  @media (min-width: $breakpoint-small) {
+    width: initial;
+  }
+}
+
