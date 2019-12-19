@@ -95,6 +95,6 @@ class SensorService : Service() {
   }
 
   companion object {
-    private val FLUTTER_CLASS = "SensorService"
+    private val FLUTTER_CLASS = "sensor_data_log SensorService"
   }
 }

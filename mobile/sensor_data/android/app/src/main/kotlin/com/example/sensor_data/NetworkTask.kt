@@ -26,19 +26,19 @@ class NetworkTask() {
           .post(body)
           .build()
 
-      Log.d("NetworkTask SEND", "sending request to $url")
+      Log.d("sensor_data_log NetworkTask SEND", "sending request to $url")
 
       client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
-          Log.e("NetworkTask ERROR", e.toString())
+          Log.e("sensor_data_log NetworkTask ERROR", e.toString())
         }
 
         override fun onResponse(call: Call, response: Response) {
           response.use {
             if (!response.isSuccessful)
-              Log.e("NetworkTask ERROR", response.toString())
+              Log.e("sensor_data_log NetworkTask ERROR", response.toString())
 
-            Log.d("NetworkTask RESPONSE", response.body!!.string())
+            Log.d("sensor_data_log NetworkTask RESPONSE", response.body!!.string())
           }
         }
       })

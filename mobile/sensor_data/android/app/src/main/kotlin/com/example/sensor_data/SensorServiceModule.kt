@@ -98,7 +98,7 @@ class SensorServiceModule() {
     registerDevRecordsArray.put(registerDevOuter)
     registerDevRecords.put("records", registerDevRecordsArray)
 
-    Log.d("REGISTER", registerDevRecords.toString())
+    Log.d("sensor_data_log REGISTER", registerDevRecords.toString())
 
     NetworkTask.sendRequest(registerDevRecords, "register-device", url)
 
@@ -144,7 +144,7 @@ class SensorServiceModule() {
 
         records.put("records", recordsArray)
 
-        Log.d("DATA", records.toString())
+        Log.d("sensor_data_log DATA", records.toString())
 
         NetworkTask.sendRequest(records, "sensor", url)
 
@@ -158,7 +158,7 @@ class SensorServiceModule() {
   }
 
   companion object {
-    private val FLUTTER_CLASS = "SensorService"
+    private val FLUTTER_CLASS = "sensor_data_log SensorService"
     private val FOREGROUND = "com.sensordata.SensorService"
 
     @Volatile
