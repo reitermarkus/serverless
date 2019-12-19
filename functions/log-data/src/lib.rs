@@ -51,6 +51,10 @@ pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String
     return Ok((StatusCode::BAD_REQUEST, format!("Data type '{}' is not supported.", data.data_type)));
   }
 
+  if data.data_type == "illuminance" {
+    log::debug!("Illuminance for device '{}': {:?}", data.device_id, data.value);
+  }
+
   let res = openfaas::call("database", json!({
     "collection": "devices",
     "action": "update",

@@ -10,6 +10,6 @@ functions:
     annotations:
       topic: sensor
     environment:
-      RUST_LOG: info
+      RUST_LOG: debug
       write_debug: 'true'
       gateway_url: http://gateway:8080
