@@ -62,9 +62,16 @@ pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String
     }
   }).to_string()).await;
 
-  if let Err(err) = res {
-    log::error!("Error updating device '{}': {}", data.device_id, err);
-    return Err(err)
+  match res {
+    Ok((code, err)) if !code.is_success() => {
+      log::error!("Error updating device '{}': {}", data.device_id, err);
+      return Ok((code, err))
+    },
+    Err(err) => {
+      log::error!("Error updating device '{}': {}", data.device_id, err);
+      return Err(err)
+    }
+    _ => {},
   }
 
   let res = openfaas::call("database", json!({
@@ -74,6 +81,10 @@ pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String
   }).to_string()).await;
 
   match res {
+    Ok((code, err)) if !code.is_success() => {
+      log::error!("Error inserting '{}' data for device '{}': {}", data.data_type, data.device_id, err);
+      return Ok((code, err))
+    },
     Err(err) => {
       log::error!("Error inserting '{}' data for device '{}': {}", data.data_type, data.device_id, err);
       Err(err)
