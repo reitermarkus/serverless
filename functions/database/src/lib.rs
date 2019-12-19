@@ -5,7 +5,8 @@ use std::str::FromStr;
 use chrono::{DateTime, Utc};
 use http::{HeaderMap, Method, Uri, StatusCode};
 use lazy_static::lazy_static;
-use mongodb::{doc, bson, Bson::{self, UtcDatetime}, Document, Client, ThreadedClient, db::ThreadedDatabase, coll::options::UpdateOptions};
+use bson::{doc, bson, Bson, Document};
+use mongodb::{Client, options::{ClientOptions, StreamAddress, auth::Credential, UpdateOptions}};
 use serde_derive::Deserialize;
 use itertools::Either;
 
@@ -96,12 +97,19 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
     Err(err) => return Err(Box::new(err) as _),
   };
 
-  let client = Client::connect(&MONGO_HOST, *MONGO_PORT).expect("Failed to connect to database");
+  let client_options = ClientOptions::builder()
+    .hosts(vec![
+       StreamAddress {
+         hostname: MONGO_HOST.clone(),
+         port: Some(*MONGO_PORT),
+       }
+    ])
+    .credential(Credential::builder().username(MONGO_USERNAME.clone()).password(MONGO_PASSWORD.clone()).build())
+    .build();
 
-  let admin_database = client.db("admin");
-  admin_database.auth(&MONGO_USERNAME, &MONGO_PASSWORD).expect("Failed to authenticate with database");
+  let client = Client::with_options(client_options).expect("Failed to connect to database");
 
-  let database = client.db(&MONGO_DB);
+  let database = client.database(&MONGO_DB);
   let collection = database.collection(&args.collection);
 
   match args.action {
@@ -130,8 +138,9 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
 
       let filter = doc! { "_id": id };
 
-      let mut update_options = UpdateOptions::new();
-      update_options.upsert = Some(true);
+      let update_options = UpdateOptions::builder()
+        .upsert(true)
+        .build();
 
       match collection.update_one(filter, doc! { "$set": doc.clone() }, Some(update_options)) {
         Ok(_) => Ok((StatusCode::CREATED, "Updated.".to_string())),
@@ -153,11 +162,11 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
         .map(|doc| json_to_bson(doc.into()).as_document().unwrap().to_owned())
         .collect::<Vec<_>>();
 
-      let items: Result<Vec<Bson>, mongodb::Error> = if let (Some(begin), Some(end), Some(steps)) = (begin, end, steps) {
+      let items: Result<Vec<Bson>, mongodb::error::Error> = if let (Some(begin), Some(end), Some(steps)) = (begin, end, steps) {
         let steps = (begin, end).into_duration_steps(steps);
         let stream = steps.map(|(begin, end)| {
           let mut pipeline = pipeline.clone();
-          pipeline.insert(0, doc! { "$match": { "time": { "$gte": UtcDatetime(begin), "$lte": UtcDatetime(end) } } });
+          pipeline.insert(0, doc! { "$match": { "time": { "$gte": Bson::UtcDatetime(begin), "$lte": Bson::UtcDatetime(end) } } });
           pipeline.push(doc! { "$set": { "time": begin } });
 
           match collection.aggregate(pipeline, None) {
