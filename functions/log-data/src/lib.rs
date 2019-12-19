@@ -51,7 +51,7 @@ pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String
     return Ok((StatusCode::BAD_REQUEST, format!("Data type '{}' is not supported.", data.data_type)));
   }
 
-  openfaas::call("database", json!({
+  let res = openfaas::call("database", json!({
     "collection": "devices",
     "action": "update",
     "query": {
@@ -60,11 +60,24 @@ pub async fn handle(method: Method, _uri: Uri, _headers: HeaderMap, body: String
     "update": {
       "$addToSet": { "data_types": data.data_type },
     }
-  }).to_string()).await?;
+  }).to_string()).await;
 
-  openfaas::call("database", json!({
+  if let Err(err) = res {
+    log::error!("Error updating device '{}': {}", data.device_id, err);
+    return Err(err)
+  }
+
+  let res = openfaas::call("database", json!({
     "collection": data.data_type,
     "action": "insert",
     "doc": data,
-  }).to_string()).await
+  }).to_string()).await;
+
+  match res {
+    Err(err) => {
+      log::error!("Error inserting '{}' data for device '{}': {}", data.data_type, data.device_id, err);
+      Err(err)
+    },
+    ok => ok,
+  }
 }
