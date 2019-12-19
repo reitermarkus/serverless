@@ -71,19 +71,19 @@ class Sensors(private val manager: SensorManager) : SensorEventListener {
       Sensor.TYPE_PROXIMITY ->
         _sensorData.put("proximity", event.values[0])
       Sensor.TYPE_AMBIENT_TEMPERATURE ->
-        _sensorData.put("air_temperature", event.values[0])
+        _sensorData.put("temperature", event.values[0])
       Sensor.TYPE_LIGHT ->
         _sensorData.put("illuminance", event.values[0])
       Sensor.TYPE_PRESSURE ->
         _sensorData.put("pressure", event.values[0])
       Sensor.TYPE_RELATIVE_HUMIDITY ->
-        _sensorData.put("relative_humidity", event.values[0])
+        _sensorData.put("humidity", event.values[0])
       Sensor.TYPE_GYROSCOPE_UNCALIBRATED ->
         _sensorData.put("rotation_rate_uncalibrated", xyz(event))
       Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED ->
         _sensorData.put("magnetic_field_uncalibrated", xyz(event))
       Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR ->
-        _sensorData.put("geomagnetic_rotation", xyz(event))
+        _sensorData.put("rotation", xyz(event))
     }
   }
 }
