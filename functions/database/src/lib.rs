@@ -115,14 +115,9 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
   let collection = database.collection(&args.collection);
 
   match args.action {
-    Insert { mut doc } => {
-      if let Some(time) = doc.get_mut("time") {
-        if let Some(s) = time.as_str() {
-          if let Ok(date) = DateTime::<Utc>::from_str(s) {
-            *time = date.into()
-          }
-        }
-      }
+    Insert { doc } => {
+      let doc = json_to_bson(doc.into());
+      let doc = doc.as_document().to_owned().unwrap();
 
       return match collection.insert_one(doc.clone(), None) {
         Ok(result) => Ok((StatusCode::CREATED, format!("Inserted {:?} into collection '{}' in database '{}': {:?}.", doc, args.collection, *MONGO_DB, result))),
