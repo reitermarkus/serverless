@@ -31,8 +31,8 @@ div.main-container
           slider on-update-interval('updateInterval') start=state.pickerStart end=state.pickerEnd
         div.chart-outer-container
           for|device, index| of=deviceData
-            chart type=device.chartType title=(state.devices[state.currentDevice].name) data={
-              datasets: device.chart.datasets,
-            } options=device.chart.options idx=index
+            chart type=device.chartContainer.chartType title=(device.title) data={
+              datasets: device.chartContainer.chart.datasets,
+            } options=device.chartContainer.chart.options idx=index
       else
         div uk-spinner

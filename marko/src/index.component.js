@@ -122,33 +122,42 @@ export default class {
       })
 
       if (data.every(d => d.avg != null)) {
-        return [{
-          label: dataType,
-          data: data.map(({ avg, time }) => ({ x: new Date(time), y: avg })),
-        }]
+        return {
+          title: dataType,
+          chart: [{
+            label: dataType,
+            data: data.map(({ avg, time }) => ({ x: new Date(time), y: avg })),
+          }]
+        }
       } else {
-        return data.reduce((acc, {avg_x, avg_y, avg_z, time}) => {
-          acc[0].data.push({ x: new Date(time), y: avg_x })
-          acc[1].data.push({ x: new Date(time), y: avg_y })
-          acc[2].data.push({ x: new Date(time), y: avg_z })
-          return acc
-        }, [{label: 'x', data: []}, {label: 'y', data: []}, {label: 'z', data: []}])
+        return {
+          title: dataType,
+          chart: data.reduce((acc, {avg_x, avg_y, avg_z, time}) => {
+            acc[0].data.push({ x: new Date(time), y: avg_x })
+            acc[1].data.push({ x: new Date(time), y: avg_y })
+            acc[2].data.push({ x: new Date(time), y: avg_z })
+            return acc
+          }, [{label: 'x', data: []}, {label: 'y', data: []}, {label: 'z', data: []}])
+        }
       }
     }))
 
     const charts = datasetsArray.map(datasets => {
       return {
-        chartType: 'line',
-        chart: {
-          datasets: datasets.map(dataset => ({...dataset, fill: false})),
-          type: 'line',
-          options: {
-            scales: {
-              xAxes: [
-                { type: 'time' }
-              ]
-            }
-          },
+        title: datasets.title,
+        chartContainer: {
+          chartType: 'line',
+          chart: {
+            datasets: datasets.chart.map(dataset => ({...dataset, fill: false})),
+            type: 'line',
+            options: {
+              scales: {
+                xAxes: [
+                  { type: 'time' }
+                ]
+              }
+            },
+          }
         }
       }
     })
