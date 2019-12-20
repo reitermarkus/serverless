@@ -96,7 +96,10 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
 
   let args = match serde_json::from_str::<MongoArgs>(&body) {
     Ok(json) => json,
-    Err(err) => return Err(Box::new(err) as _),
+    Err(err) => {
+      log::error!("Failed parsing body: {}\n{}", err, body);
+      return Err(Box::new(err) as _)
+    },
   };
 
   let client_options = ClientOptions::builder()
