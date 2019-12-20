@@ -8,6 +8,7 @@ use lazy_static::lazy_static;
 use bson::{doc, bson, Bson, Document};
 use mongodb::{Client, options::{ClientOptions, StreamAddress, auth::Credential, UpdateOptions}};
 use serde_derive::Deserialize;
+use serde_json::Value;
 use itertools::Either;
 
 use openfaas;
@@ -94,7 +95,9 @@ fn json_to_bson(bson: Bson) -> Bson {
 pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send + Sync>> {
   use Action::*;
 
-  let args = match serde_json::from_str::<MongoArgs>(&body) {
+  let json_body = serde_json::from_str::<Value>(&body)?;
+
+  let args = match serde_json::from_value::<MongoArgs>(json_body) {
     Ok(json) => json,
     Err(err) => {
       log::error!("Failed parsing body: {}\n{}", err, body);
