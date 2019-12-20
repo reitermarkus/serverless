@@ -79,6 +79,8 @@ fn simplify_bson(bson: Bson, round: bool) -> Bson {
 fn json_to_bson(bson: Bson) -> Bson {
   use Bson::*;
 
+  log::debug!("json_to_bson: {:?}", bson);
+
   bson.map(&|v| match v {
     String(s) => if let Ok(datetime) = s.parse::<DateTime<Utc>>() {
       UtcDatetime(datetime)
