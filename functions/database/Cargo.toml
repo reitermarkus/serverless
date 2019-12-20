@@ -10,7 +10,7 @@ http = "*"
 lazy_static = "*"
 log = "0.4"
 mongodb = "0.9"
-bson = "0.14"
+bson = { version = "0.14", features = ["u2i"] }
 openfaas = { path = "../openfaas" }
 serde = "1"
 serde_derive = "1"
