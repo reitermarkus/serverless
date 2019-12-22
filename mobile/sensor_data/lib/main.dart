@@ -14,6 +14,7 @@ import 'device_meta.dart';
 import 'cpu_info.dart';
 import 'sensors.dart';
 import 'settings.dart';
+import 'web_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -43,6 +44,7 @@ class _SensorDataState extends State<SensorData> {
     _widgets = <Widget>[
       new DeviceMeta(),
       new Sensors(),
+      new SensorWebView(),
       new Settings()
     ];
 
@@ -63,11 +65,18 @@ class _SensorDataState extends State<SensorData> {
       ),
       BottomNavigationBarItem(
         icon: PlatformWidget(
+          ios: (_) => Icon(IconData(0xf4d2, fontFamily: CupertinoIcons.iconFont, fontPackage: CupertinoIcons.iconFontPackage)),
+          android: (_) => Icon(Icons.web),
+        ),
+        title: Text('Sensor UI'),
+      ),
+      BottomNavigationBarItem(
+        icon: PlatformWidget(
           ios: (_) => Icon(CupertinoIcons.settings),
           android: (_) => Icon(Icons.settings),
         ),
-        title: Text('Settings'),
-      ),
+        title: Text('Setings')
+      )
     ];
 
     if (Platform.isAndroid) {
