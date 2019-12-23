@@ -27,7 +27,6 @@ export default class {
 
     if (urlParams.has('headless') && Boolean(urlParams.get('headless'))) {
       this.state.headless = true
-      //console.log(this.state.headless)
     }
   }
 

@@ -38,7 +38,7 @@ class _SensorWebViewState extends State<SensorWebView> {
   @override
   Widget build(BuildContext context) {
     return _url != '' && _url != null ? WebView(
-      initialUrl: '$_url:8080/function/ui/',
+      initialUrl: '$_url:8080/function/ui/?headless=true',
       javascriptMode: JavascriptMode.unrestricted,
       onPageStarted: (String url) {
         print('Page started loading: $url');

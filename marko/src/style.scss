@@ -70,6 +70,14 @@ $header-height: 10em;
     &.uk-section {
       padding: .75em 0 .75em 0;
     }
+
+    li:not(.uk-active) {
+      display: none;
+    }
+
+    ul:active li, ul:hover li {
+      display: block;
+    }
   }
 
   @media (min-width: $breakpoint-small) {
