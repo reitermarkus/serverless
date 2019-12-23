@@ -13,6 +13,6 @@ class {
 }
 
 ul class="uk-nav-primary uk-nav-parent-icon" uk-nav
-  for|device, i| of=state.devices
-    li key=`${i}` class=(state.current == i ? 'uk-active' : '')
-      a href=`#${device.id}` on-click('changeDevice', i) -- ${device.name}
+  for|id, device| in=state.devices
+    li key=`${id}` class=(state.current == id ? 'uk-active' : '')
+      a href=`#${id}` on-click('changeDevice', id) -- ${device.name}

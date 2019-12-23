@@ -84,12 +84,13 @@ export default class {
 
   async fetchData() {
     try {
-      const {data: devices} = await axios.get('/function/devices')
-
+      let {data: devices} = await axios.get('/function/devices')
+      devices = devices.reduce((acc, d) => { acc[d.id] = d; return acc }, {})
       this.state.devices = devices
 
       if (devices !== [] && this.state.currentDevice == null) {
-        this.state.currentDevice = 0
+        const currentDeviceId = location.hash.substring(1) || Object.keys(devices)[0]
+        this.state.currentDevice = currentDeviceId
         this.handleDeviceChange(this.state.currentDevice)
       } else {
         const { start, end } = this.getDates()
