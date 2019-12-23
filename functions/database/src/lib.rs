@@ -5,7 +5,7 @@ use std::str::FromStr;
 use chrono::{DateTime, Utc};
 use http::{HeaderMap, Method, Uri, StatusCode};
 use lazy_static::lazy_static;
-use bson::{doc, bson, Bson, Document};
+use bson::{doc, bson, Bson};
 use mongodb::{Client, options::{ClientOptions, StreamAddress, auth::Credential, UpdateOptions}};
 use serde_derive::Deserialize;
 use serde_json::Value;
@@ -27,12 +27,12 @@ lazy_static! {
 #[derive(Debug, Deserialize)]
 #[serde(tag = "action", rename_all = "snake_case")]
 enum Action {
-  Update { query: Document, update: Document },
-  Insert { doc: Document },
-  InsertOrUpdate { doc: Document },
+  Update { query: Value, update: Value },
+  Insert { doc: Value },
+  InsertOrUpdate { doc: Value },
   Find,
   Aggregate {
-    pipeline: Vec<Document>,
+    pipeline: Vec<Value>,
     begin: Option<DateTime<Utc>>,
     end: Option<DateTime<Utc>>,
     steps: Option<i32>,
@@ -77,19 +77,38 @@ fn simplify_bson(bson: Bson, round: bool) -> Bson {
   })
 }
 
-fn json_to_bson(bson: Bson) -> Bson {
-  use Bson::*;
-
-  log::debug!("json_to_bson: {:?}", bson);
-
-  bson.map(&|v| match v {
-    String(s) => if let Ok(datetime) = s.parse::<DateTime<Utc>>() {
-      UtcDatetime(datetime)
-    } else {
-      String(s)
+fn json_to_bson(json: Value) -> Bson {
+  match json {
+    Value::Number(n) => {
+      if let Some(f) = n.as_f64() {
+        Bson::FloatingPoint(f)
+      } else {
+        Bson::I64(n.as_i64().expect(&format!("Could not convert {:?} to i64", n)))
+      }
     },
-    bson => bson,
-  })
+    Value::Array(vec) => {
+      Bson::Array(vec.into_iter().map(json_to_bson).collect())
+    },
+    Value::Object(map) => {
+      Bson::Document(map.into_iter().map(|(k, v)| (k, json_to_bson(v))).collect())
+    },
+    Value::String(s) => if let Ok(datetime) = s.parse::<DateTime<Utc>>() {
+      Bson::UtcDatetime(datetime)
+    } else {
+      Bson::String(s)
+    },
+    v => Bson::from(v),
+  }
+}
+
+macro_rules! to_doc {
+  ($json:expr) => {{
+    if let Some(doc) = json_to_bson($json).as_document() {
+      doc.to_owned()
+    } else {
+      return Ok((StatusCode::BAD_REQUEST, "Failed to parse document.".to_string()))
+    }
+  }}
 }
 
 pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: String) -> Result<(StatusCode, String), Box<dyn Error + Send + Sync>> {
@@ -122,8 +141,7 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
 
   match args.action {
     Insert { doc } => {
-      let doc = json_to_bson(doc.into());
-      let doc = doc.as_document().to_owned().unwrap();
+      let doc = to_doc!(doc);
 
       return match collection.insert_one(doc.clone(), None) {
         Ok(result) => Ok((StatusCode::CREATED, format!("Inserted {:?} into collection '{}' in database '{}': {:?}.", doc, args.collection, *MONGO_DB, result))),
@@ -134,6 +152,8 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
       }
     },
     InsertOrUpdate { doc } => {
+      let doc = to_doc!(doc);
+
       let id: String = match doc.get("_id").and_then(|id| id.as_str()) {
         Some(id) => id.to_string(),
         _ => return Ok((StatusCode::BAD_REQUEST, "No ID found.".to_string())),
@@ -162,7 +182,7 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
     },
     Aggregate { pipeline, begin, end, steps } => {
       let pipeline = pipeline.into_iter()
-        .map(|doc| json_to_bson(doc.into()).as_document().unwrap().to_owned())
+        .map(|doc| json_to_bson(doc).as_document().unwrap().to_owned())
         .collect::<Vec<_>>();
 
       let items: Result<Vec<Bson>, mongodb::error::Error> = if let (Some(begin), Some(end), Some(steps)) = (begin, end, steps) {
@@ -196,6 +216,9 @@ pub async fn handle(_method: Method, _uri: Uri, _headers: HeaderMap, body: Strin
       }
     },
     Update { query, update } => {
+      let query = to_doc!(query);
+      let update = to_doc!(update);
+
       match collection.update_one(query, update, None) {
         Ok(_) => Ok((StatusCode::CREATED, "Inserted.".to_string())),
         Err(err) => Ok((StatusCode::INTERNAL_SERVER_ERROR, format!("{}", err))),
