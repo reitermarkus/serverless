@@ -78,6 +78,10 @@ $header-height: 10em;
     ul:active li, ul:hover li {
       display: block;
     }
+
+    li a {
+      display: inline-block;
+    }
   }
 
   @media (min-width: $breakpoint-small) {
