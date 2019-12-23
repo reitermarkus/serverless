@@ -62,9 +62,14 @@ $header-height: 10em;
   box-sizing: border-box;
   background-color: darken(white, 10%);
 
+
   @media (max-width: $breakpoint-xsmall-max) {
     flex: auto;
     border-bottom: 1px solid darken(white, 13%);
+
+    &.uk-section {
+      padding: .75em 0 .75em 0;
+    }
   }
 
   @media (min-width: $breakpoint-small) {

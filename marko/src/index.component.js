@@ -12,6 +12,7 @@ export default class {
       loading: false,
       pickerStart: null,
       pickerEnd: null,
+      headless: false
     }
 
     this.connected = null
@@ -21,6 +22,13 @@ export default class {
 
     this.pickerStart = null
     this.pickerEnd = null
+
+    const urlParams = new URLSearchParams(window.location.search)
+
+    if (urlParams.has('headless') && Boolean(urlParams.get('headless'))) {
+      this.state.headless = true
+      //console.log(this.state.headless)
+    }
   }
 
   onUpdate() {
