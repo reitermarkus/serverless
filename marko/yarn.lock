@@ -4336,9 +4336,9 @@ pify@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/pify/-/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
 
-pikaday@^1.8.0:
+pikaday@DiXN/Pikaday#master:
   version "1.8.0"
-  resolved "https://registry.yarnpkg.com/pikaday/-/pikaday-1.8.0.tgz#ce930e257042e852e6aadee1115e01554b2d71c5"
+  resolved "https://codeload.github.com/DiXN/Pikaday/tar.gz/c667e27c10a94742b625cb7ec1da7c058f2a692c"
 
 pinkie-promise@^2.0.0:
   version "2.0.1"
