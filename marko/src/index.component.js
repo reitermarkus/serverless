@@ -1,10 +1,11 @@
 import axios from 'axios'
 import UIkit from 'uikit'
+import moment from 'moment'
 
 export default class {
   onCreate() {
-    const startDate = new Date(new Date(Date.now()).getTime() - (1 * 24 * 60 * 60 * 1000))
     const endDate = new Date()
+    const startDate = new Date(moment(endDate).subtract(1, 'day').startOf('day'))
 
     this.state = {
       devices: [],
@@ -32,11 +33,25 @@ export default class {
   }
 
   handleStartDateChange(date) {
-    this.state.currentStartDate = date
+    if (this.state.currentStartDate === this.state.startDate) {
+      this.state.currentStartDate = date
+    }
+
+    this.state.startDate = date
   }
 
   handleEndDateChange(date) {
-    this.state.currentEndDate = date
+    if (moment().startOf('day').isSame(date)) {
+      date = new Date()
+    } else {
+      date = new Date(moment(date).endOf('day'))
+    }
+
+    if (this.state.currentEndDate === this.state.endDate || date >= this.state.endDate) {
+      this.state.currentEndDate = date
+    }
+
+    this.state.endDate = date
   }
 
   updateStepSlider(e) {
