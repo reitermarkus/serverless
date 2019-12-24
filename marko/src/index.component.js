@@ -1,70 +1,42 @@
 import axios from 'axios'
 import UIkit from 'uikit'
-import Pikaday from 'pikaday'
 
 export default class {
   onCreate() {
+    const startDate = new Date(new Date(Date.now()).getTime() - (1 * 24 * 60 * 60 * 1000))
+    const endDate = new Date()
+
     this.state = {
       devices: [],
       deviceData: {},
       currentDevice: null,
       stepSlider: 24,
       loading: false,
-      pickerStart: null,
-      pickerEnd: null,
-      headless: false
+      headless: false,
+      startDate: startDate,
+      endDate: endDate,
+      currentStartDate: startDate,
+      currentEndDate: endDate,
     }
 
     this.connected = null
     this.notification = null
-
-    this.fetchData()
-
-    this.pickerStart = null
-    this.pickerEnd = null
 
     const urlParams = new URLSearchParams(window.location.search)
 
     if (urlParams.has('headless') && Boolean(urlParams.get('headless'))) {
       this.state.headless = true
     }
+
+    this.fetchData()
   }
 
-  onUpdate() {
-    if (!this.pickerStart) {
-      const dp = document.getElementById('datepickerStart')
+  handleStartDateChange(date) {
+    this.state.currentStartDate = date
+  }
 
-      if(dp)
-        this.pickerStart = new Pikaday({
-          field: dp,
-          maxDate: new Date(),
-          defaultDate: new Date(new Date(Date.now()).getTime() - (1 * 24 * 60 * 60 * 1000)),
-          setDefaultDate: true,
-          onSelect: date => this.state.pickerStart = date
-        })
-    }
-
-    if (!this.pickerEnd) {
-      const dp = document.getElementById('datepickerEnd')
-
-      if (dp)
-        this.pickerEnd = new Pikaday({
-          field: dp,
-          maxDate: new Date(),
-          defaultDate: new Date(Date.now()),
-          setDefaultDate: true,
-          onSelect: date => {
-            const now = new Date()
-            now.setHours(0, 0, 0, 0)
-
-            if (date.getTime() === now.getTime()) {
-              this.state.pickerEnd = new Date()
-            } else {
-              this.state.pickerEnd = date
-            }
-          }
-        })
-    }
+  handleEndDateChange(date) {
+    this.state.currentEndDate = date
   }
 
   updateStepSlider(e) {
@@ -72,12 +44,9 @@ export default class {
   }
 
   getDates() {
-    const end = this.pickerEnd?._d || new Date(Date.now())
-    const start = this.pickerStart?._d || new Date(end.getTime() - (1 * 24 * 60 * 60 * 1000))
-
     return {
-      start: start,
-      end: end
+      start: this.state.currentStartDate,
+      end: this.state.currentEndDate
     }
   }
 
@@ -87,7 +56,7 @@ export default class {
       devices = devices.reduce((acc, d) => { acc[d.id] = d; return acc }, {})
       this.state.devices = devices
 
-      if (devices !== [] && this.state.currentDevice == null) {
+      if (devices !== {} && this.state.currentDevice == null) {
         const currentDeviceId = location.hash.substring(1) || Object.keys(devices)[0]
         this.state.currentDevice = currentDeviceId
         this.handleDeviceChange(this.state.currentDevice)
@@ -114,6 +83,9 @@ export default class {
   }
 
   async updateInterval(start, end, silent) {
+    this.state.currentStartDate = start
+    this.state.currentEndDate = end
+
     const device = this.state.devices[this.state.currentDevice]
 
     if (!silent) {
@@ -182,16 +154,6 @@ export default class {
     this.state.currentDevice = id
 
     const {start, end} = this.getDates()
-
-    if (this.pickerStart) {
-      this.pickerStart.destroy()
-      this.pickerStart = null
-    }
-
-    if (this.pickerEnd) {
-      this.pickerEnd.destroy()
-      this.pickerEnd = null
-    }
 
     this.updateInterval(start, end, false)
   }

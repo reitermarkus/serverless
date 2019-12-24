@@ -24,12 +24,12 @@ div.main-container
 
         div style='display: inline-block; width: 100%;'
           div.date-container
-            input.uk-input type='text' id='datepickerStart' readonly
-            input.uk-input type='text' id='datepickerEnd' readonly
+            datepicker start=state.currentStartDate end=state.endDate on-date-change('handleStartDateChange')
+            datepicker start=state.currentEndDate end=state.endDate on-date-change('handleEndDateChange')
           div.step-slider
             input.uk-range type='range' min='1' max='100' value=(state.stepSlider || 24) on-change('updateStepSlider')
             input.uk-input type='number' min='1' max='100' value=(state.stepSlider || 24) on-change('updateStepSlider')
-          slider on-update-interval('updateInterval') start=state.pickerStart end=state.pickerEnd
+          slider on-update-interval('updateInterval') start=state.startDate currentStart=state.currentStartDate end=state.endDate currentEnd=state.currentEndDate
         div.chart-outer-container
           for|device, index| of=deviceData
             chart type=device.chartContainer.chartType title=(device.title) data={
