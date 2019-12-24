@@ -1,9 +1,19 @@
 div.slider-date
 div.dates
+
   div
+    $ const start = state.start && state.start.toString()
+    $ const sRegex = /.*(:\d+)/g
+    $ const sGroups = start && sRegex.exec(start)
+
     span -- Begin:
-    span -- ${state.start}
+    span -- ${start && start.substring(0, start.indexOf(sGroups[1]) + sGroups[1].length)}
   div
+    $ const end = state.end && state.end.toString()
+    $ const eRegex = /.*(:\d+)/g
+    $ const eGroups = end && eRegex.exec(end)
+
     span -- End:
-    span -- ${state.end}
+    span -- ${end && end.substring(0, end.indexOf(eGroups[1]) + eGroups[1].length)}
+  div
 button.uk-button.uk-button-primary.update-data style='float:right;' on-click('updateInterval') -- Update
