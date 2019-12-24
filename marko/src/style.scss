@@ -14,7 +14,7 @@ $orange: rgb(255, 159,  64);
   orange: $orange;
 }
 
-@import "node_modules/pikaday/scss/pikaday.scss";
+@import "pikaday/scss/pikaday.scss";
 @import "uikit/src/scss/variables-theme.scss";
 @import "uikit/src/scss/mixins-theme.scss";
 @import "uikit/src/scss/uikit-theme.scss";
