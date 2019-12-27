@@ -7,7 +7,7 @@ use serde_json::{self, json, Value};
 use openfaas;
 
 const SUPPORTED_DATA_TYPES: [&'static str; 15] = [
-  "CPU",
+  "cpu_frequency",
   "proximity",
   "acceleration",
   "cpu_temperature",

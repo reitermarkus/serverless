@@ -112,8 +112,8 @@ class SensorServiceModule() {
         val cpuOuter = JSONObject()
         val cpu = JSONObject()
 
-        cpu.put("type", "CPU")
-        cpu.put("value", CpuInfo.asJson())
+        cpu.put("type", "cpu_frequency")
+        cpu.put("value", CpuInfo.getCurrentFrequency(0).dropLast(3).toFloat())
         cpu.put("device_id", id)
 
         val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
