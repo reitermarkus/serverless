@@ -219,6 +219,11 @@ namespace :tex do
 
       cd 'tex' do
         sh 'latexmk', '-cd', "#{doc}/#{doc}.tex", *watch_arg
+
+        cd 'thesis' do
+          sh 'ls', '-a'
+          sh 'pwd'
+        end
       end
     end
   end

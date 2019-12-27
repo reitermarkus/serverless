@@ -58,16 +58,16 @@ jobs:
     displayName: TeX
     pool:
       vmImage: ubuntu-latest
+    container: thomasweise/docker-texlive-full:latest
     steps:
-      - bash: sudo apt-get update
-        displayName: Update packages
-      - bash: sudo apt-get install -y ruby
-        displayName: Install ruby
-      - bash: sudo apt-get install -y texlive-full
-        displayName: Install LaTeX
       - bash: |
-          rake tex
+          cd tex
+          latexmk -cd 'thesis/thesis.tex'
         displayName: Compile TeX Documents
-      - bash: |
-          rake tex:clean
-        displayName: Clean TeX Documents
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: 'tex/thesis/thesis.pdf'
+          ArtifactName: 'thesis'
+          publishLocation: 'container'
+        displayName: Publish TeX Documents
+
