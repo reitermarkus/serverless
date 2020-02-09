@@ -16,6 +16,17 @@
   keywordstyle=\color{blue}
 }
 
+\usepackage[
+% style   = numeric,
+  style   = alphabetic,
+% style   = authortitle,
+% style   = verbose,
+% style   = reading,
+% style   = draft,
+  sorting = none,
+]{biblatex}
+\bibliography{thesis}
+
 \usepackage{bookmark}
 \usepackage{hyperref}
 
@@ -33,10 +44,13 @@
 
   \input{./chapters/abstract.tex}
 
+  \newpage
   \tableofcontents
 
+  \newpage
   \input{./chapters/preface.tex}
 
+  \newpage
   \input{./chapters/introduction.tex}
   \input{./chapters/motivation.tex}
   \input{./chapters/background.tex}
@@ -48,4 +62,7 @@
   \input{./chapters/serverless-stack.tex}
   \input{./chapters/raspberry-pi.tex}
   \input{./chapters/ui.tex}
+
+  \newpage
+  \printbibliography
 \end{document}
