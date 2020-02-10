@@ -1,1 +1,39 @@
 \section{Introduction}
+
+\subsection{Serverless Computing}
+
+In recent years, serverless computing has been gaining traction as an alternative to the classic
+monolithic approach to developing software. In contrast to traditional software development where
+the software is centered around a single server delivering all of the functionality, serverless
+computing is based around the idea of splitting this functionality into separate functions. Each of
+these functions can then be deployed on a serverless stack. Depending on the stack, the functions
+will only be spun up on demand when they are called and killed when they are not needed anymore.
+This results in more efficient usage of resources and improved modularity.
+
+The name “serverless computing” is not quite fitting as there is still a server that is hosting the
+serverless stack, however, unlike in the traditional sense, the user does not have to set up all
+the services themselves. For this reason most big cloud providers (AWS, Azure, Google, etc.) offer
+services that mimic serverless computing. While those services might be easier to use and less work
+to set up, a lot of flexibilty is lost in availabilty of programming languages and in our case more
+importantly in the flexibilty of hardware resource distribution.
+
+
+\subsection{IoT (Internet of Things)}
+
+Similar to serverless computing, “Internet of Things” devices increased in popularity in the last
+couple of years. IoT devices are devices which are connected via the Internet either for the
+purpose of collecting data from sensors or in order for them to control or be controlled by other
+IoT devices. Today IoT devices can be found in household appliances like washing machines, fridges,
+televisions, garage doors and many more.
+
+For this thesis, their application for the purpose of data collection was our primary
+focus. Another big advantage to using IoT devices is the low cost of some of the do-it-yourself and
+open-source solutions, which can be achieved with a micro-controller such as the Raspberry Pi and
+readily available off-the-shelf sensors.
+
+\subsection{Data Analytics}
+
+In this thesis, we explore the possibility of combining both serverless computing and IoT for the
+purpose of analysing sensor data. More specifically, we want to test the limits of cheap IoT
+hardware in a serverless context. Furthermore, we want to subsequently visualise the collected
+data in an intuitive user interface that can be displayed on any device.
