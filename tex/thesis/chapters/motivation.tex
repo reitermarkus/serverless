@@ -1,54 +1,52 @@
 \section{Motivation}
 
-Our task is to do \textit{IoT data analytics with serverless computing}, therefore as a first step
-we started out by thinking about the underlying infrastructure. We decided on using Apache Kafka for
-streaming,  \textit{MongoDB} as our database and \textit{OpenFaaS} as the serverless platform.
+In this section, we describe our motivation for exploring IoT data analysis using serverless
+computing.
 
-The decision to use \textit{OpenFaaS} was made because of its ease to deploy a stack of services
-using \textit{Docker Swarm}. While doing research we came across many different serverless
-frameworks. \textit{OpenWhisk}, \textit{Fission} and \textit{Kubeless} just to name a few. While all
-of those seem to have their benefits, none of them seemed to be as versatile as \textit{OpenFaaS}.
-\textit{OpenFaaS} poses itself to have first class support for \textit{Docker Swarm} and being
-\textit{Kubernetes} native. The former was particularly interesting for us as this meant that we
-could test the framework without having to install any external tool except for  \textit{Docker}.
-Running was as simple as cloning the \textit{OpenFaaS} repository, calling \texttt{docker swarm
-init} and executing the provided initialization script. Deploying an actual function is equally as
-simple. One has the option to either deploy a function from the store through the nicely designed
-\textit{OpenFaaS} gateway on port 8080 or with the prefered way, which is using the
-\textit{faas-cli}. Deploying a function from the store with it would look as follows
 
-\begin{lstlisting}[language=bash]
-  $ faas store deploy figlet
-\end{lstlisting}
+\subsection{Flexibility}
 
-where \texttt{figlet} is the name of the function in the store.
+Using a serverless approach for building software inherently provides more flexibility than the
+traditional approach using a monolithic architecture. This applies to both the development process
+itself as well as the much more diverse deployment options. Traditionally, you would have to choose
+a single programming language for a project since using multiple would increase complexity of both
+the development phase as well as the deployment strategy. Also, the initial setup of a single server
+and its ongoing maintenance cost using only one language is much easier than having to maintain a
+server running multiple different languages. In this regard, serverless computing provides much
+greater flexibility. A program is built from separate functions interacting with one another. These
+functions usually communicate via a JSON API. Functions are programming language agnostic, so as
+long as the language you are using can invoke a web request to call another function, you can use it
+to develop a function. This gives the developer the freedom to choose the best language for a given
+task, rather than sticking to a single language which might not be ideal for some specific tasks.
+Additionally, deployment of functions is managed by the severless stack, so there is no maintenance
+overhead after the serverless stack is deployed. Every function is a self-contained unit of
+execution, usually in the form of a container which can be deployed on the serverless stack. This
+means that the programming language runtime environment and all dependencies are therefore also
+contained in that same container. This allows the developer to not only use different programming
+languages but also different versions of the same language without any maintenance difficulties
+compared to doing the same on a single server.
 
-After gaining a grasp of how the platform works, we decided to put our own spin on it by firstly
-modifying the given deploy script to our needs and porting it from \textit{Bash} to \textit{Rust}
-for it to be cross platform. The next step then was to write our own configuration file for swarm
-deployment, namely \texttt{deploy.yml}. This \textit{YAML} file includes the configuration for
-\textit{Kafka}, \textit{Zookeeper}, \textit{MongoDB}, various services that are needed for
-\textit{OpenFaaS}, a bunch of gateways for visualisation and the \textit{Kafka-Connector}. The
-latter is particularly interesting, because its main purpose is to call a serverless function on a
-Kafka topic change. To make a function react to a Kafka topic we can again use our example store
-function \texttt{figlet}
+\subsection{Modularity}
 
-\begin{lstlisting}[language=bash]
-  $ faas store deploy figlet --annotation topic="faas-request"
-\end{lstlisting}
+The traditional approach of a monolithic architecture is by nature error prone and not failure
+tolerant. If one component crashes all other components on that server might go down as well. With
+serverless functions this problem can be avoided as every function is a individual item and
+therefore isolated from other functions. This fact makes maintaining systems much easier as problems
+are faster and more efficiently identifiable. Testing is also simpler as one can write tests per
+function instead of chunks in a larger code segment.
 
-The deployment aspect is the same as before therefore the interesting part is the
-\texttt{--annotation} flag, where \texttt{topic="faas-request"} is the \textit{Kafka} topic the
-function is supposed to listen to and act on. We subsequently can look for the result in the logs of
-the connector service.
+\subsection{Efficiency}
 
-While our technology stack for the most part was nice to work with, we still had our fair share of
-problems. The most significant so far was in relation to our \textit{MongoDB} database.
-\textit{MongoDB's} API design is confusing to say the least. Questionable deprecation choices and
-multiple connect interfaces are the most rampant examples. Unfortunately those were not the only
-problems in that regard we ran into. Connecting through a node instance natively on the system would
-work fine, however connecting through a deployed function in \textit{OpenFaaS} was not possible.
-After applying various fixes the function was finally able to connect.
+Traditional software stacks often require considerable hardware in order to run software
+efficiently. In our thesis we try to show that rich functionality on the server side can also be
+achieved without expensive hardware with the power of serverless computing. Since the heavy lifting
+is done by the serverless stack and the clients in our case only have to read sensor data, invoke
+web requests, almost any cheap micro-controller is sufficient for processing.
 
-The next challenge will be to post to the database through the \textit{Kafka-Connector}. When that
-is done we can finally focus on gathering data from IoT devices.
+\subsection{Portability}
+
+One of the advantages of serverless computing is portability as one can easily transfer all
+functions from one provider to another provider. In our case however we try to take things further as
+not only the functions are portable, the whole stack in a sense is portable. Every major component
+of the stack is composed of containers, which means as long as \textit{Docker} is installed on the
+host machine the stack should be able to install.
