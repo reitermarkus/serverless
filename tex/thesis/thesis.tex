@@ -1,10 +1,12 @@
 % !TEX TS-program = xelatex
 %
-\documentclass[a4paper,12pt]{scrartcl}
+\documentclass[a4paper,12pt,parskip]{scrartcl}
+
+\linespread{1.25}
 
 \usepackage{lmodern}
-\usepackage{parskip}
 
+\usepackage{csquotes}
 \usepackage[english]{babel}
 
 \usepackage{xcolor}
@@ -36,8 +38,6 @@
 \usepackage{graphbox}
 \graphicspath{ {../assets/} }
 
-\linespread{1.25}
-
 \title{IoT Data Analytics \\ using Serverless Computing}
 
 \author{Michael Kaltschmid \& Markus Reiter}
@@ -57,9 +57,13 @@
 
   \newpage
   \input{./chapters/introduction.tex}
+  \newpage
   \input{./chapters/background.tex}
+  \newpage
   \input{./chapters/motivation.tex}
+  \newpage
   \input{./chapters/methodology.tex}
+  \newpage
   \input{./chapters/results.tex}
 
   \newpage
