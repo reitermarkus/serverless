@@ -1,4 +1,4 @@
-\section{Mobile Application}
+\subsection{Mobile Application}
 
 Another one of our tasks was to create a mobile application that fetches data from the respective
 device and sends data to a \textit{Kafka} topic which subsequently invokes a \textit{serverless
@@ -61,35 +61,35 @@ native code for \textit{iOS} which splits the code base further.
 
 The finished application now contains four Views:
 
-\begin{itemize}
-  \item \textit{Device info} which contains various information about the running system.
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=20em]{mobile-device-info}
+  \caption{\textit{Device Info} contains various information about the running system.}
+\end{figure}
 
-  \begin{center}
-    \includegraphics[height=25em]{mobile-device-info}
-  \end{center}
 
-  \item \textit{CPU} shows the amount of cores available and the frequency they are currently
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=20em]{mobile-cpu}
+  \caption{\textit{CPU} shows the amount of cores available and the frequency they are currently
   running at, if they are running at all. This view, however, is only available on \textit{Android}
-  due to limitations on retrieval of CPU information on \textit{iOS}.
+  due to limitations on retrieval of CPU information on \textit{iOS}.}
+\end{figure}
 
-  \begin{center}
-    \includegraphics[height=25em]{mobile-cpu}
-  \end{center}
 
-  \item \textit{Sensors} lists various sensors on both platforms.
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=20em]{mobile-sensors}
+  \includegraphics[height=20em]{mobile-sensors-2}
+  \caption{\textit{Sensors} lists various sensors on both platforms.}
+\end{figure}
 
-  \begin{center}
-    \includegraphics[height=25em]{mobile-sensors}
-    \includegraphics[height=25em]{mobile-sensors-2}
-  \end{center}
-
-  \item \textit{Settings} gives the user the ability to modify the interval of sending data to the
-  server and the \textit{URL} where the server is located.
-
-  \begin{center}
-    \includegraphics[height=25em]{mobile-settings}
-  \end{center}
-\end{itemize}
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=20em]{mobile-settings}
+  \caption{\textit{Settings} gives the user the ability to modify the interval of sending data to the
+  server and the \textit{URL} where the server is located.}
+\end{figure}
 
 The most important part about the application however is sending data to a \textit{Kafka} topic
 which then invokes a \textit{serverless function}. To achieve this we wrap all data into categories

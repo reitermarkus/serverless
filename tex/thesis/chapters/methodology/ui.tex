@@ -1,4 +1,4 @@
-\section{Serverless UI}
+\subsection{Serverless UI}
 
 Another instrumental part of the project is the UI. Without any form of visualization our whole data
 gathering process would not be of much use. For this reason we decided early on what kind of front
@@ -7,14 +7,14 @@ end web development stack we would use. Since both us are familiar with \textit{
 to render \textit{UI} elements and to update \textit{UI} elements reactively on
 UI change - we decided on using \textit{MarkoJS}.
 
-\subsection{MarkoJS}
+\subsubsection{MarkoJS}
 
 \textit{MarkoJS} shares many of the same benefits as \textit{React} with some added flexibility like
 \textit{concise HTML syntax} which makes the whole \textit{markup} more readable and easier to
 write. It also has the ability to use conventual control flow structures like \textit{if} or
 \textit{for} directly in the \textit{markup}.
 
-\subsection{Babel}
+\subsubsection{Babel}
 
 However \textit{Marko} is most and foremost a \textit{JavaScript} framework and due to the nature of
 the before mentioned features, \textit{transpiling} is inevitable. \textit{Transpiling} means to
@@ -24,7 +24,7 @@ technology \textit{Babel}. With \textit{Babel} \textit{transpiling} is rather ea
 definitions are in a \textit{webpack.config.babel.js} file which brings us to the next essential
 tool \textit{Webpack}.
 
-\subsection{Webpack}
+\subsubsection{Webpack}
 
 "webpack is a module bundler. Its main purpose is to bundle JavaScript files for usage in a browser,
 yet it is also capable of transforming, bundling, or packaging just about any resource or asset.".
@@ -35,7 +35,7 @@ that reloads on file change. Furthermore \textit{Webpack} runs all files through
 optimization plugins on release build, which can bring down the size of the \textit{code bundle}
 quite considerably. \textit{Webpack} is also able to transform \textit{SASS} into \textit{CSS}.
 
-\subsection{SASS}
+\subsubsection{SASS}
 
 \textit{SASS} is a superset of \textit{CSS} with many additional features like variables, functions,
 nesting and exporting / importing files. We make heavy use of those features to structure and

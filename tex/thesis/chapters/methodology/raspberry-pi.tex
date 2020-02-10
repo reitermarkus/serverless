@@ -1,4 +1,4 @@
-\section{Raspberry Pi}
+\subsection{Raspberry Pi}
 
 In order for us to gather data, we decided on using multiple Raspberry Pis with different sensors
 attached to them. We chose the Raspberry Pi because it is backed by a huge community and the vast
@@ -7,7 +7,7 @@ wanted to write the client application for the Raspberry Pi in Rust. This way we
 Rust code by comparing it to example code written in other programming languages, most commonly
 Python or C in the case of the Raspberry Pi.
 
-\subsection{Rust on the Raspberry Pi}
+\subsubsection{Rust on the Raspberry Pi}
 
 For our first “Hello, world!” program which would run on the Raspberry Pi, we took the simplest
 approach at the time. We would write the code on our development machines and synchronize the code
@@ -18,7 +18,7 @@ feasible anymore to compile directly using the inadequate processor of the Raspb
 build was approaching a compile time of around five minutes, so we had to start looking for
 alternatives.
 
-\subsection{Cross Compilation}
+\subsubsection{Cross Compilation}
 
 Soon after we realised that compiling directly on the Raspberry Pi was not a good solution, we had
 to find a way to cross compile for the Raspberry Pi. This was further complicated by the fact the we
