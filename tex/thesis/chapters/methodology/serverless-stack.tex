@@ -11,7 +11,7 @@ seem to have their benefits, none of them seemed to be as versatile as \textit{O
 could test the framework without having to install any external tool except for  \textit{Docker}.
 
 Running was as simple as cloning the \textit{OpenFaaS} repository, calling \texttt{docker swarm
-init} and executing the provided initialization script. Deploying an actual function is equally as
+init} and executing the provided initialisation script. Deploying an actual function is equally as
 simple. One has the option to either deploy a function from the store through the nicely designed
 \textit{OpenFaaS} gateway on port 8080 or with the preferred way, which is using the
 \textit{faas-cli}.
@@ -29,7 +29,7 @@ modifying the given deploy script to our needs and porting it from \textit{Bash}
 for it to be cross platform. The next step then was to write our own configuration file for swarm
 deployment, namely \texttt{deploy.yml}. This \textit{YAML} file includes the configuration for
 \textit{Kafka}, \textit{Zookeeper}, \textit{MongoDB}, various services that are needed for
-\textit{OpenFaaS}, a bunch of gateways for visualization and the \textit{Kafka-Connector}. The
+\textit{OpenFaaS}, a bunch of gateways for visualisation and the \textit{Kafka-Connector}. The
 latter is particularly interesting, because its main purpose is to call a serverless function on a
 Kafka topic change. To make a function react to a Kafka topic we can again use our example store
 function \texttt{figlet}
