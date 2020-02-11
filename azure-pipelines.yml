@@ -72,7 +72,7 @@ jobs:
     displayName: TeX
     pool:
       vmImage: ubuntu-latest
-    container: thomasweise/docker-texlive-full:latest
+    container: mirisbowring/texlive_ctan_full:2019
     steps:
       - bash: |
           cd tex
