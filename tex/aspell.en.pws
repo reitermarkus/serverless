@@ -10,6 +10,7 @@ OpenWhisk
 Kubeless
 Kubernetes
 UI
+UIs
 MarkoJS
 ForegroundService
 Webpack
@@ -22,3 +23,16 @@ transpiling
 DOM
 macOS
 modularise
+analytics
+reactively
+natively
+runtime
+Dev
+bundler
+hacky
+pre
+faas
+cli
+figlet
+MongoDB
+AWS

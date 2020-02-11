@@ -15,8 +15,8 @@ could test the framework without having to install any external tool except for 
 Running was as simple as cloning the \textit{OpenFaaS} repository, calling \texttt{docker swarm
 init} and executing the provided initialization script. Deploying an actual function is equally as
 simple. One has the option to either deploy a function from the store through the nicely designed
-\textit{OpenFaaS} gateway on port 8080 or with the prefered way, which is using the
-\textit{faas-cli}. Deploying a function from the store with it would look as follows
+\textit{OpenFaaS} gateway on port 8080 or with the preferred way, which is using the
+\texttt{faas-cli}. Deploying a function from the store with it would look as follows
 
 \begin{lstlisting}[language=bash]
 $ faas store deploy figlet
@@ -35,7 +35,7 @@ Kafka topic change. To make a function react to a Kafka topic we can again use o
 function \texttt{figlet}
 
 \begin{lstlisting}[language=bash]
-  $ faas store deploy figlet --annotation topic="faas-request"
+$ faas store deploy figlet --annotation topic="faas-request"
 \end{lstlisting}
 
 The deployment aspect is the same as before therefore the interesting part is the
@@ -45,7 +45,7 @@ the connector service.
 
 While our technology stack for the most part was nice to work with, we still had our fair share of
 problems. The most significant so far was in relation to our \textit{MongoDB} database.
-\textit{MongoDB's} API design is confusing to say the least. Questionable deprecation choices and
+\textit{MongoDB}'s API design is confusing to say the least. Questionable deprecation choices and
 multiple connect interfaces are the most rampant examples. Unfortunately those were not the only
 problems in that regard we ran into. Connecting through a node instance natively on the system would
 work fine, however connecting through a deployed function in \textit{OpenFaaS} was not possible.

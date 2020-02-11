@@ -54,19 +54,26 @@ jobs:
           yarn
           yarn build
         displayName: UI
+  - job: spell_check
+    displayName: Spell Check
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - bash: |
+          sudo apt-get update
+          sudo apt-get install -y aspell-en
+        displayName: Install Dependencies
+      - bash: |
+          set -euo pipefail
+          cd tex
+          ! cat thesis/**/*.tex | aspell --per-conf=./aspell.conf -t list | grep '.*'
+        displayName: Check Spelling
   - job: tex
     displayName: TeX
     pool:
       vmImage: ubuntu-latest
     container: thomasweise/docker-texlive-full:latest
     steps:
-      - bash: |
-          apt-get install aspell-en
-          cd tex
-          if cat thesis/**/*.tex | aspell --per-conf=./aspell.conf -t list | grep '.*'; then
-            exit 1
-          fi
-        displayName: Check Spelling
       - bash: |
           cd tex
           latexmk -cd 'thesis/thesis.tex'
@@ -77,4 +84,3 @@ jobs:
           ArtifactName: 'thesis'
           publishLocation: 'container'
         displayName: Publish TeX Documents
-
