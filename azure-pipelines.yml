@@ -61,6 +61,13 @@ jobs:
     container: thomasweise/docker-texlive-full:latest
     steps:
       - bash: |
+          apt-get install aspell-en
+          cd tex
+          if cat thesis/**/*.tex | aspell --per-conf=./aspell.conf -t list | grep '.*'; then
+            exit 1
+          fi
+        displayName: Check Spelling
+      - bash: |
           cd tex
           latexmk -cd 'thesis/thesis.tex'
         displayName: Compile TeX Documents
