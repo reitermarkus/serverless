@@ -49,3 +49,27 @@ as a single unit.
 
 \subsection{Docker}
 
+Docker is a technology which is used to run software packaged into containers. Containers are
+self-contained and provide an isolated environment for software to run in. A container includes
+all configuration files and dependencies as well as the software itself, which makes it highly
+portable. In the case of \textit{Docker}, these stand-alone container images can then be executed
+by the \textit{Docker Engine}, which turns the stored images into running containers. For this
+reason, every container image contains a customisable entrypoint command which is executed when
+the container is started.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{docker-containerized-and-vm}
+  \caption{Comparison of Containerized Applications and Virtual Machines \cite{docker-container}}
+\end{figure}
+
+\textit{Docker} containers are standardised, which means they can run virtually anywhere the
+\textit{Docker Engine} is supported, be it on Linux, Windows, in data centres or the cloud.
+Compared to virtual machines, containers are very lightweight since they share the host machine's
+system kernel and thus don't require a separate operating system for each application. Despite
+not using a separate operating, containers are completely isolated from the host system as well as
+other containers by default.
+
+Furthermore, since containers usually don't contain a full operating system, startup times are
+also much faster compared to virtual machines, which have to completely boot the entire operating
+system from scratch in addition to starting the application. \cite{docker-container}
