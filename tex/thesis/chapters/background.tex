@@ -73,3 +73,32 @@ other containers by default.
 Furthermore, since containers usually don't contain a full operating system, startup times are
 also much faster compared to virtual machines, which have to completely boot the entire operating
 system from scratch in addition to starting the application. \cite{docker-container}
+
+\subsection{OpenFaaS}
+
+"OpenFaaS - Serverless Functions Made Simple”. As the slogan already entails, \textit{OpenFaaS} is a
+framework for the deployment of serverless functions. In contrast to competing hosted products like
+\textit{AWS Lambda} or \textit{Azure Cloud Functions} it offers a lot more flexibility in the way
+functions are written and hardware resources are managed. In fact any programming language that one
+can think of can be used to write functions for \textit{OpenFaaS} as long as they are provided with
+a \textit{Dockerfile}. Deploying \textit{OpenFaaS's} stack in a cluster is easy as well, as the
+framework poses itself to have first class support for \textit{Docker Swarm} and being
+\textit{Kubernetes} native. \cite{openfaas-docs}
+
+\subsection{MongoDB}
+
+\subsection{Apache ZooKeeper}
+
+ZooKeeper is a service for centrally managing configuration, naming, handling distributed
+synchronisation and providing group services. Many distributed applications need access to
+some or all of these kinds of services, so ZooKeeper is a great way to avoid reinventing the
+wheel. This is especially true given the fact that these highly distributed scenarios bring with
+them a vast amount of potential bugs and race conditions every time these services would have to
+be implemented from scratch. It is incredibly hard to get these things completely right the first
+time, and by using ZooKeeper all of these potential problems are nullified and a lot of time can
+be saved which can be spent developing the actual application logic rather than spending it on
+debugging synchronisation problems or managing configuration across a distributed network.
+Particularly in the long run, using ZooKeeper helps reduce unforeseen complexity for applications
+continuously increasing in size. \cite{zookeeper-homepage}
+
+\subsection{Apache Kafka}
