@@ -29,9 +29,9 @@ is provided as a service from the cloud provider. \cite{wikiservcomp}
 Historically, each new paradigm in the space of cloud computing has brought with it a new layer of
 abstraction. First, there was the move from managing physical hardware in a data centre to being
 able to rent infrastructure from a cloud provider. This layer, called IaaS (Infrastructure as a
-Service), shifted the need for the customer to manage hardware infrastructure to the cloud
-provider. This change also improved scalability as customers could now rent infrastructure on a
-pay-as-you-go basis instead of paying for servers which would be idle most of the time.
+Service), shifted the need for the customer to manage hardware infrastructure to the cloud provider.
+This change also improved scalability as customers could now rent infrastructure on a pay-as-you-go
+basis instead of paying for servers which would be idle most of the time.
 
 With IaaS, the customer is still responsible for managing the setup of the rented infrastructure,
 i.e. installing the necessary dependencies needed to run a given application. Naturally, the next
@@ -41,21 +41,21 @@ called PaaS (Platform as a Service). Using this layer of abstraction, the user d
 neither about managing the underlying hardware nor about managing the operating system the
 application is running on.
 
-Now, in the era of serverless computing, there is yet again a new layer of abstraction. Called
-FaaS (Function as a Service), this layer provides a runtime environment for a given language in
-order to run functions. An application deployed in a FaaS environment consists of multiple
-functions interacting with one another whereas in a PaaS environment, an application is deployed
-as a single unit.
+Now, in the era of serverless computing, there is yet again a new layer of abstraction. Called FaaS
+(Function as a Service), this layer provides a runtime environment for a given language in order to
+run functions. An application deployed in a FaaS environment consists of multiple functions
+interacting with one another whereas in a PaaS environment, an application is deployed as a single
+unit.
 
 \subsection{Docker}
 
 Docker is a technology which is used to run software packaged into containers. Containers are
-self-contained and provide an isolated environment for software to run in. A container includes
-all configuration files and dependencies as well as the software itself, which makes it highly
-portable. In the case of \textit{Docker}, these stand-alone container images can then be executed
-by the \textit{Docker Engine}, which turns the stored images into running containers. For this
-reason, every container image contains a customisable entry point command which is executed when
-the container is started.
+self-contained and provide an isolated environment for software to run in. A container includes all
+configuration files and dependencies as well as the software itself, which makes it highly portable.
+In the case of \textit{Docker}, these stand-alone container images can then be executed by the
+\textit{Docker Engine}, which turns the stored images into running containers. For this reason,
+every container image contains a customisable entry point command which is executed when the
+container is started.
 
 \begin{figure}[H]
   \centering
@@ -64,15 +64,15 @@ the container is started.
 \end{figure}
 
 \textit{Docker} containers are standardised, which means they can run virtually anywhere the
-\textit{Docker Engine} is supported, be it on Linux, Windows, in data centres or the cloud.
-Compared to virtual machines, containers are very lightweight since they share the host machine's
-system kernel and thus don't require a separate operating system for each application. Despite
-not using a separate operating, containers are completely isolated from the host system as well as
-other containers by default.
+\textit{Docker Engine} is supported, be it on Linux, Windows, in data centres or the cloud. Compared
+to virtual machines, containers are very lightweight since they share the host machine's system
+kernel and thus don't require a separate operating system for each application. Despite not using a
+separate operating, containers are completely isolated from the host system as well as other
+containers by default.
 
-Furthermore, since containers usually don't contain a full operating system, startup times are
-also much faster compared to virtual machines, which have to completely boot the entire operating
-system from scratch in addition to starting the application. \cite{docker-container}
+Furthermore, since containers usually don't contain a full operating system, startup times are also
+much faster compared to virtual machines, which have to completely boot the entire operating system
+from scratch in addition to starting the application. \cite{docker-container}
 
 \subsection{OpenFaaS}
 
@@ -80,25 +80,76 @@ system from scratch in addition to starting the application. \cite{docker-contai
 framework for the deployment of serverless functions. In contrast to competing hosted products like
 \textit{AWS Lambda} or \textit{Azure Cloud Functions} it offers a lot more flexibility in the way
 functions are written and hardware resources are managed. In fact any programming language that one
-can think of can be used to write functions for \textit{OpenFaaS} as long as they are provided with
+can think of can be used to write functions for \textit{OpenFaaS}, as long as they are provided with
 a \textit{Dockerfile}. Deploying \textit{OpenFaaS's} stack in a cluster is easy as well, as the
 framework poses itself to have first class support for \textit{Docker Swarm} and being
 \textit{Kubernetes} native. \cite{openfaas-docs}
 
 \subsection{MongoDB}
 
+\textit{MongoDB} is a document database, that is scalable and flexible. \textit{MongoDB's} data is
+ stored in flexible, JSON-like documents, making it easy to work with. The document database offers
+ powerful ways to access and analyse data with features like Ad hoc querying and real time
+ aggregation. Since \textit{MongoDB} is a distributed database at its core, high availability and
+ horizontal scaling are already built in. Furthermore due to its “real-time” nature \textit{MongoDB}
+ lends itself very well for IoT applications.  \cite{mongodb-description}
+
 \subsection{Apache ZooKeeper}
 
 ZooKeeper is a service for centrally managing configuration, naming, handling distributed
-synchronisation and providing group services. Many distributed applications need access to
-some or all of these kinds of services, so ZooKeeper is a great way to avoid reinventing the
-wheel. This is especially true given the fact that these highly distributed scenarios bring with
-them a vast amount of potential bugs and race conditions every time these services would have to
-be implemented from scratch. It is incredibly hard to get these things completely right the first
-time, and by using ZooKeeper all of these potential problems are nullified and a lot of time can
-be saved which can be spent developing the actual application logic rather than spending it on
-debugging synchronisation problems or managing configuration across a distributed network.
-Particularly in the long run, using ZooKeeper helps reduce unforeseen complexity for applications
-continuously increasing in size. \cite{zookeeper-homepage}
+synchronisation and providing group services. Many distributed applications need access to some or
+all of these kinds of services, so ZooKeeper is a great way to avoid reinventing the wheel. This is
+especially true given the fact that these highly distributed scenarios bring with them a vast amount
+of potential bugs and race conditions every time these services would have to be implemented from
+scratch. It is incredibly hard to get these things completely right the first time, and by using
+ZooKeeper all of these potential problems are nullified and a lot of time can be saved which can be
+spent developing the actual application logic rather than spending it on debugging synchronisation
+problems or managing configuration across a distributed network. Particularly in the long run, using
+ZooKeeper helps reduce unforeseen complexity for applications continuously increasing in size.
+\cite{zookeeper-homepage}
 
 \subsection{Apache Kafka}
+
+Apache Kafka is a distributed streaming platform. The first of its three key capabilities is the
+ability of publishing and subscribing to streams of records, akin to message queues. Secondly, the
+fault-tolerant storage of these streams of records over a long period of time is essential. The
+final piece of the puzzle is the real-time processing of these streams.
+
+Kafka is usually used to create real-time pipelines for passing data between distributed
+applications or to transform streams of data in real-time. Kafka is deployed as a cluster on a
+single machine or on multiple servers and groups streams into categories called “topics”. Each
+record consists of a key-value pair and a timestamp to provide the possibility to process streams
+chronologically.
+
+There are four core APIs provided by Kafka. The Producer and Consumer APIs are used to either post
+records to a topic or to receive records from a topic, respectively. Then there is the Streams API,
+which is used essentially to tie an application in between one or multiple input streams and
+producing one or multiple output streams. Lastly, there is the Connector API, which allows linking
+Kafka to external systems. This is essential for connecting serverless functions to streams.
+\cite{kafka-introduction}
+
+\subsection{Rust}
+
+\textit{Rust} is a new strongly typed open source programming language supported by
+\textit{Mozilla}. The basic idea of the language is to offer low level system access with focus on
+security, performance and concurrency. \cite{rustbook1, forkjoin}
+
+In a way \textit{Rust} is an alternative to \textit{C}/\textit{C++} with the difference of it having
+support for high level programming language concepts like pattern matching, closures and safe memory
+management. \cite{rustbook1, forkjoin}
+
+Memory management actually differs quite considerably compared to conventional languages like
+\textit{Java} or \textit{C}/\textit{C++}. \textit{Rust} does not use a garbage collector.
+Furthermore, thanks to the ownership model, memory does not need to be freed manually, avoiding
+common pitfalls like a double-free error.
+
+Like many other modern programming language, \textit{Rust} has its own package manager, called
+\textit{Cargo}. To some extent, \textit{Cargo} can be compared with \textit{NPM} from the
+\textit{JavaScript} ecosystem. However the amount of packages (a.k.a \textit{Crates}) available in
+\textit{Rust} is substantially lower compared to \textit{NPM} as \textit{Rust} is a much younger
+language with a smaller community.
+
+Due to \textit{Rust}'s strong emphasis on ownership and typing many concurrency issues are already
+caught at compile time. Data races are prevented as it is impossible to have multiple shared
+references to a variable without synchronisation. This concept is also referred as “fearless
+concurrency”. \cite{rustbook2}
