@@ -76,56 +76,58 @@ from scratch in addition to starting the application. \cite{docker-container}
 
 \subsection{OpenFaaS}
 
-"OpenFaaS - Serverless Functions Made Simple”. As the slogan already entails, \textit{OpenFaaS} is a
+“OpenFaaS - Serverless Functions Made Simple”. As the slogan already entails, \textit{OpenFaaS} is a
 framework for the deployment of serverless functions. In contrast to competing hosted products like
 \textit{AWS Lambda} or \textit{Azure Cloud Functions} it offers a lot more flexibility in the way
 functions are written and hardware resources are managed. In fact any programming language that one
 can think of can be used to write functions for \textit{OpenFaaS}, as long as they are provided with
-a \textit{Dockerfile}. Deploying \textit{OpenFaaS's} stack in a cluster is easy as well, as the
+a \textit{Dockerfile}. Deploying \textit{OpenFaaS}'s stack in a cluster is easy as well, as the
 framework poses itself to have first class support for \textit{Docker Swarm} and being
 \textit{Kubernetes} native. \cite{openfaas-docs}
 
 \subsection{MongoDB}
 
-\textit{MongoDB} is a document database, that is scalable and flexible. \textit{MongoDB's} data is
+\textit{MongoDB} is a document database, that is scalable and flexible. \textit{MongoDB}'s data is
  stored in flexible, JSON-like documents, making it easy to work with. The document database offers
- powerful ways to access and analyse data with features like Ad hoc querying and real time
+ powerful ways to access and analyse data with features like ad hoc querying and real time
  aggregation. Since \textit{MongoDB} is a distributed database at its core, high availability and
  horizontal scaling are already built in. Furthermore due to its “real-time” nature \textit{MongoDB}
  lends itself very well for IoT applications.  \cite{mongodb-description}
 
 \subsection{Apache ZooKeeper}
 
-ZooKeeper is a service for centrally managing configuration, naming, handling distributed
+\textit{ZooKeeper} is a service for centrally managing configuration, naming, handling distributed
 synchronisation and providing group services. Many distributed applications need access to some or
-all of these kinds of services, so ZooKeeper is a great way to avoid reinventing the wheel. This is
-especially true given the fact that these highly distributed scenarios bring with them a vast amount
-of potential bugs and race conditions every time these services would have to be implemented from
-scratch. It is incredibly hard to get these things completely right the first time, and by using
-ZooKeeper all of these potential problems are nullified and a lot of time can be saved which can be
-spent developing the actual application logic rather than spending it on debugging synchronisation
-problems or managing configuration across a distributed network. Particularly in the long run, using
-ZooKeeper helps reduce unforeseen complexity for applications continuously increasing in size.
+all of these kinds of services, so \textit{ZooKeeper} is a great way to avoid reinventing the wheel.
+This is especially true given the fact that these highly distributed scenarios bring with them a
+vast amount of potential bugs and race conditions every time these services would have to be
+implemented from scratch. It is incredibly hard to get these things completely right the first time,
+and by using \textit{ZooKeeper} all of these potential problems are nullified and a lot of time can
+be saved which can be spent developing the actual application logic rather than spending it on
+debugging synchronisation problems or managing configuration across a distributed network.
+Particularly in the long run, using \textit{ZooKeeper} helps reduce unforeseen complexity for
+applications continuously increasing in size.
 \cite{zookeeper-homepage}
 
 \subsection{Apache Kafka}
 
-Apache Kafka is a distributed streaming platform. The first of its three key capabilities is the
-ability of publishing and subscribing to streams of records, akin to message queues. Secondly, the
-fault-tolerant storage of these streams of records over a long period of time is essential. The
-final piece of the puzzle is the real-time processing of these streams.
+\textit{Apache Kafka} is a distributed streaming platform. The first of its three key capabilities
+is the ability of publishing and subscribing to streams of records, akin to message queues.
+Secondly, the fault-tolerant storage of these streams of records over a long period of time is
+essential. The final piece of the puzzle is the real-time processing of these streams.
 
-Kafka is usually used to create real-time pipelines for passing data between distributed
-applications or to transform streams of data in real-time. Kafka is deployed as a cluster on a
-single machine or on multiple servers and groups streams into categories called “topics”. Each
+\textit{Kafka} is usually used to create real-time pipelines for passing data between distributed
+applications or to transform streams of data in real-time. \textit{Kafka} is deployed as a cluster
+on a single machine or on multiple servers and groups streams into categories called “topics”. Each
 record consists of a key-value pair and a timestamp to provide the possibility to process streams
 chronologically.
 
-There are four core APIs provided by Kafka. The Producer and Consumer APIs are used to either post
-records to a topic or to receive records from a topic, respectively. Then there is the Streams API,
-which is used essentially to tie an application in between one or multiple input streams and
-producing one or multiple output streams. Lastly, there is the Connector API, which allows linking
-Kafka to external systems. This is essential for connecting serverless functions to streams.
+There are four core APIs provided by \textit{Kafka}. The Producer and Consumer APIs are used to
+either post records to a topic or to receive records from a topic, respectively. Then there is the
+Streams API, which is used essentially to tie an application in between one or multiple input
+streams and producing one or multiple output streams. Lastly, there is the Connector API, which
+allows linking \textit{Kafka} to external systems. This is essential for connecting serverless
+functions to streams.
 \cite{kafka-introduction}
 
 \subsection{Rust}
@@ -158,19 +160,20 @@ concurrency”. \cite{rustbook2}
 
 \textit{Flutter} is a \textit{UI} toolkit from \textit{Google} for building natively compiled mobile
 applications. With the same code base the application can also be deployed on web and desktop.
-\textit{Flutter} offers many features that make the developing experience easier like “Stateful Hot
-Reload” and filtering application specific error messages on \textit{Android} by default. Although
-\textit{Flutter} is a cross plattform framework it is said to still rival native performance on
-\textit{Android} and \textit{iOS} by directly transforming \textit{Flutter} code into native code.
+\textit{Flutter} offers many features that make the developing experience easier like
+\textit{Stateful Hot Reload} and filtering application specific error messages on \textit{Android}
+by default. Although \textit{Flutter} is a cross platform framework it is said to still rival native
+performance on \textit{Android} and \textit{iOS} by directly transforming \textit{Flutter} code into
+native code.
 \cite{flutter}
 
 \textit{Flutter} uses \textit{Dart} as its programming language. So the before mentioned \textit{Flutter}
 code is actually \textit{Dart} code. \textit{Dart} itself has many language extensions that are well
 suited for mobile application development. For example the language offers a mature and complete
-async-await implementation with isolate-based concurrency support. Furthermore its syntax is
-familiar and seems inspired by other popular modern languages. As mentioned before \textit{Flutter}
-transpiles its code to the platform's native instruction set. On mobile this is native \textit{ARM}
-code and on the web it transforms to \textit{JavaScript}. \cite{dart}
+\textit{async-await} implementation with isolate-based concurrency support. Furthermore its syntax
+is familiar and seems inspired by other popular modern languages. As mentioned before
+\textit{Flutter} transpiles its code to the platform's native instruction set. On mobile this is
+native \textit{ARM} code and on the web it transforms to \textit{JavaScript}. \cite{dart}
 
 \subsection{Azure Pipelines}
 
@@ -178,7 +181,7 @@ code and on the web it transforms to \textit{JavaScript}. \cite{dart}
 used to automatically build and test projects. Given that all major platforms, i.e. Linux, macOS and
 Windows, are supported, projects written in virtually any language can be built and tested. In
 addition to continuous integration, \textit{Azure Pipelines} also offers continuous delivery (CD),
-which can be used to directly pushlish any build artifacts, e.g. compiled binaries. Like many other
+which can be used to directly publish any build artifacts, e.g. compiled binaries. Like many other
 CI providers, \textit{Azure Pipelines} provides a free plan for open-source projects.
 \cite{azure-pipelines}
 
