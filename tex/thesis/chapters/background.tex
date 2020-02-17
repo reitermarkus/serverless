@@ -153,3 +153,35 @@ Due to \textit{Rust}'s strong emphasis on ownership and typing many concurrency 
 caught at compile time. Data races are prevented as it is impossible to have multiple shared
 references to a variable without synchronisation. This concept is also referred as “fearless
 concurrency”. \cite{rustbook2}
+
+\subsection{Flutter}
+
+\textit{Flutter} is a \textit{UI} toolkit from \textit{Google} for building natively compiled mobile
+applications. With the same code base the application can also be deployed on web and desktop.
+\textit{Flutter} offers many features that make the developing experience easier like “Stateful Hot
+Reload” and filtering application specific error messages on \textit{Android} by default. Although
+\textit{Flutter} is a cross plattform framework it is said to still rival native performance on
+\textit{Android} and \textit{iOS} by directly transforming \textit{Flutter} code into native code.
+\cite{flutter}
+
+\textit{Flutter} uses \textit{Dart} as its programming language. So the before mentioned \textit{Flutter}
+code is actually \textit{Dart} code. \textit{Dart} itself has many language extensions that are well
+suited for mobile application development. For example the language offers a mature and complete
+async-await implementation with isolate-based concurrency support. Furthermore its syntax is
+familiar and seems inspired by other popular modern languages. As mentioned before \textit{Flutter}
+transpiles its code to the platform's native instruction set. On mobile this is native \textit{ARM}
+code and on the web it transforms to \textit{JavaScript}. \cite{dart}
+
+\subsection{Azure Pipelines}
+
+\textit{Azure Pipelines} is a continuous integration (CI) service provided by Microsoft which is
+used to automatically build and test projects. Given that all major platforms, i.e. Linux, macOS and
+Windows, are supported, projects written in virtually any language can be built and tested. In
+addition to continuous integration, \textit{Azure Pipelines} also offers continuous delivery (CD),
+which can be used to directly pushlish any build artifacts, e.g. compiled binaries. Like many other
+CI providers, \textit{Azure Pipelines} provides a free plan for open-source projects.
+\cite{azure-pipelines}
+
+Continuous integration is a very important measure for ensuring that new changes to a project don't
+break existing functionality. Without it, those breaking changes would result in much more work when
+they come to light in the future, possibly even by introducing seemingly unrelated changes.
