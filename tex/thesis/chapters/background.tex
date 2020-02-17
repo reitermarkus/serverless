@@ -85,6 +85,12 @@ a \textit{Dockerfile}. Deploying \textit{OpenFaaS}'s stack in a cluster is easy 
 framework poses itself to have first class support for \textit{Docker Swarm} and being
 \textit{Kubernetes} native. \cite{openfaas-docs}
 
+\begin{figure}[H]
+  \centering
+  \adjincludegraphics[max width=\textwidth]{of-workflow}
+  \caption{\textit{OpenFaaS} workflow \cite{openfaas-docs}}
+\end{figure}
+
 \subsection{MongoDB}
 
 \textit{MongoDB} is a document database, that is scalable and flexible. \textit{MongoDB}'s data is
@@ -93,6 +99,21 @@ framework poses itself to have first class support for \textit{Docker Swarm} and
  aggregation. Since \textit{MongoDB} is a distributed database at its core, high availability and
  horizontal scaling are already built in. Furthermore due to its “real-time” nature \textit{MongoDB}
  lends itself very well for IoT applications.  \cite{mongodb-description}
+
+ \begin{figure}[H]
+  \centering
+  \begin{lstlisting}[language=Json, basicstyle=\small]
+    {
+      _id: "5cf0029caff5056591b0ce7d,
+      name: 'Jane WU',
+      address: {
+        street: '1 Cricle Rd',
+        city: 'Los Anageles'
+      }
+    }
+  \end{lstlisting}
+  \caption{\textit{MongoDB JSON} document. (adapted from \cite{mongodb-description})}
+\end{figure}
 
 \subsection{Apache ZooKeeper}
 
