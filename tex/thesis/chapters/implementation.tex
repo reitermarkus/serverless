@@ -53,7 +53,84 @@ After applying various fixes the function was finally able to connect.
 The next challenge will be to post to the database through the \textit{Kafka-Connector}. When that
 is done we can finally focus on gathering data from IoT devices.
 
-\input{./chapters/methodology/mobile.tex}
-\input{./chapters/methodology/serverless-stack.tex}
-\input{./chapters/methodology/raspberry-pi.tex}
-\input{./chapters/methodology/ui.tex}
+\newpage
+
+\subsection{Functions}
+
+With the OpenFaaS framework, every function consists of three parts: a function template, the
+function's source code and a definition file.
+
+Function templates are categorised by the programming language the corresponding function is written
+in. At the bare minimum, a template contains a \texttt{Dockerfile} and a \texttt{template.yml}. The
+\texttt{Dockerfile} has to be written in a way such that a \texttt{function} directory on the same
+directory level is copied into the image. During the build step, this \texttt{function} directory
+contains the source code, so depending on the programming language, it either has to be compiled or
+moved to the correct location straight away. Additionally, the \texttt{Dockerfile} has to install
+the \textit{OpenFaaS Watchdog}. The \textit{OpenFaaS Watchdog} is a service which is used to connect
+the function to the \textit{OpenFaaS} gateway. Historically, the watchdog would pass requests to the
+function via \textit{Standard Input} and the return the function's \textit{Standard Output} as the
+response. With this method however, the function could not control any aspect of the \textit{HTTP}
+request and response. The new version of the \textit{OpenFaaS Watchdog} offers a few more operation
+modes. The first, called \texttt{http}, forwards the received request to a specified port in the
+function. This means that function templates using this mode have to be written in such a way that
+they include an web server. This way the function can consume the \textit{HTTP} request directly,
+which also makes calling functions easier since they can use standard \textit{HTTP} methods and
+status codes. Another new mode is \texttt{static}, which can be used to create very simple functions
+serving static files. \cite{of-watchdog} The \texttt{template.yml} file contains the metadata for
+the function. This file can be empty, i.e. all metadata is optional, but most commonly it contains
+at least the \texttt{language} property used to specify the programming language the template is
+meant for. \cite{openfaas-build-functions} Commonly, a \texttt{function} directory containing a
+“Hello, world!” function is included in the template itself to serve as a starting point when
+creating a new function from scratch.
+
+Another part needed for building a function is a definition file containing the name of the function
+and all other data needed to deploy the functions. One essential part of this definition file is the
+gateway URL, which the \textit{OpenFaaS Watchdog} uses to connect to the \textit{OpenFaaS} gateway.
+
+\begin{figure}[H]
+  \begin{lstlisting}
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+functions:
+  filter:
+    lang: rust-http
+    handler: ./filter
+    image: filter:latest
+    environment:
+      RUST_LOG: info
+      write_debug: 'true'
+      gateway_url: http://gateway:8080
+  \end{lstlisting}
+  \caption{A definition file for a Rust function called \texttt{filter}.}
+  \label{fig:function-definition}
+\end{figure}
+
+In \autoref{fig:function-definition} we can see that there are two different gateway URLs. The
+first one, \texttt{provider.gateway}, is used by the \texttt{faas-cli} command line tool in order to
+know where to deploy the function to. The second one,
+\texttt{functions.filter.environment.gateway\_url} is the URL the gateway can be reached from inside
+the cluster and the one passed to the \textit{OpenFaaS Watchdog}. Furthermore, the function template
+is specified using \texttt{functions.filter.lang}, the path the the function's source code is given
+by \texttt{functions.filter.handler} and the name of the \textit{Docker} image is specified by
+\texttt{functions.filter.image}.
+
+Assuming the definition file shown in \autoref{fig:function-definition} is called
+\texttt{filter.yml}, we can build the function using the following command:
+
+\begin{lstlisting}[language=bash]
+faas-cli build -f filter.yml
+\end{lstlisting}
+
+Once built, the function can be deployed using an equally simple command:
+
+\begin{lstlisting}[language=bash]
+faas-cli deploy -f filter.yml
+\end{lstlisting}
+
+\input{./chapters/implementation/mobile.tex}
+\input{./chapters/implementation/serverless-stack.tex}
+\input{./chapters/implementation/raspberry-pi.tex}
+\input{./chapters/implementation/ui.tex}
+\input{./chapters/implementation/azure.tex}
