@@ -1,1 +1,6 @@
 language: rust
+build_options:
+  - name: debug
+    packages: ['']
+  - name: release
+    packages: ['release']

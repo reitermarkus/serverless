@@ -1,6 +1,6 @@
-FROM openfaas/of-watchdog:0.7.3 as watchdog
+FROM openfaas/of-watchdog:0.7.6 as watchdog
 
-FROM ekidd/rust-musl-builder as builder
+FROM ekidd/rust-musl-builder:1.41.0 as builder
 
 RUN mkdir -p function/src
 RUN { \
@@ -23,28 +23,31 @@ COPY openfaas openfaas
 COPY main main
 COPY Cargo.toml Cargo.toml
 
+# Abuse the `ADDITIONAL_PACKAGE` arg to switch between debug and release builds.
+ARG ADDITIONAL_PACKAGE=release
+ARG PROFILE="${ADDITIONAL_PACKAGE}"
+
 # Pre-cache template dependencies.
-RUN cargo build --release --manifest-path main/Cargo.toml
+RUN cargo build ${PROFILE:+--${PROFILE}} --manifest-path main/Cargo.toml
 
 # Pre-cache function dependencies using dummy implementation.
 COPY function/Cargo.toml function/Cargo.toml
-RUN cargo build --release --manifest-path main/Cargo.toml
-
-RUN rm target/x86_64-unknown-linux-musl/release/main*
-RUN rm target/x86_64-unknown-linux-musl/release/deps/libhandler*
+RUN cargo build ${PROFILE:+--${PROFILE}} --manifest-path main/Cargo.toml \
+ && rm target/x86_64-unknown-linux-musl/${PROFILE:-debug}/main* \
+ && rm target/x86_64-unknown-linux-musl/${PROFILE:-debug}/deps/libhandler* \
+ && rm -r function
 
 # Compile function function using actual implementation.
-RUN rm -r function
 COPY function function
-
-RUN cargo build --release --manifest-path main/Cargo.toml
+RUN cargo build ${PROFILE:+--${PROFILE}} --manifest-path main/Cargo.toml \
+ && mv target/x86_64-unknown-linux-musl/${PROFILE:-debug}/main ../main
 
 FROM scratch
 
 COPY --from=watchdog /fwatchdog /usr/bin/fwatchdog
-COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/main .
+COPY --from=builder /home/rust/main /usr/bin/main
 
-ENV function_process=./main
+ENV function_process=main
 EXPOSE 8080
 
 HEALTHCHECK --interval=2s CMD ["fwatchdog", "--run-healthcheck"]
