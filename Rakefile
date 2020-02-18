@@ -46,7 +46,7 @@ namespace :build do
 
     functions.each do |function|
       cd 'functions' do
-        sh 'faas-cli', 'build', '-f', "#{function}.yml"
+        sh 'faas-cli', 'build', '--build-option', (dev? ? 'debug' : 'release'), '-f', "#{function}.yml"
       end
     end
   end
