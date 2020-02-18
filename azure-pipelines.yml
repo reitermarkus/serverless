@@ -65,8 +65,22 @@ jobs:
         displayName: Install Dependencies
       - bash: |
           set -euo pipefail
+          shopt -s globstar
           cd tex
-          ! cat thesis/**/*.tex | aspell --per-conf=./aspell.conf -t list | grep '.*'
+          for i in thesis/**/*.tex
+          do
+            asp=$(<$i aspell --dont-suggest pipe --per-conf=./aspell.conf -t list | awk 'BEGIN {n=1} /^$/{n++} /^..+$/{print n": "$0}' | tail -n +2 |
+              while read ln tag spell col ; do
+                echo "$ln$col $spell"
+              done
+            )
+            if ! [ -z "$asp" ]
+            then
+              echo $i
+              echo "----"
+              echo -e "$asp\n"
+            fi
+          done
         displayName: Check Spelling
   - job: tex
     displayName: TeX
