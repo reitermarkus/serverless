@@ -1,0 +1,6 @@
+language: javascript
+build_options:
+  - name: debug
+    packages: ['development']
+  - name: release
+    packages: ['production']
