@@ -1,8 +1,6 @@
 FROM openfaas/of-watchdog:0.7.3 as watchdog
 
-FROM rust:slim-buster as builder
-
-WORKDIR /home/app
+FROM ekidd/rust-musl-builder as builder
 
 RUN mkdir -p function/src
 RUN { \
@@ -32,36 +30,19 @@ RUN cargo build --release --manifest-path main/Cargo.toml
 COPY function/Cargo.toml function/Cargo.toml
 RUN cargo build --release --manifest-path main/Cargo.toml
 
+RUN rm target/x86_64-unknown-linux-musl/release/main*
+RUN rm target/x86_64-unknown-linux-musl/release/deps/libhandler*
+
 # Compile function function using actual implementation.
 RUN rm -r function
 COPY function function
 
-RUN rm target/release/main*
-RUN rm target/release/deps/libhandler*
-
 RUN cargo build --release --manifest-path main/Cargo.toml
 
-FROM debian:buster-slim as ship
+FROM scratch
 
 COPY --from=watchdog /fwatchdog /usr/bin/fwatchdog
-RUN chmod +x /usr/bin/fwatchdog
-
-ARG ADDITIONAL_PACKAGE
-RUN apt-get update -qy \
-    && apt-get install -qy --no-install-recommends ${ADDITIONAL_PACKAGE} \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create a non-root user
-RUN addgroup --system app \
-    && adduser --system --ingroup app app
-
-RUN chown app:app -R /home/app
-
-USER app
-
-WORKDIR /home/app
-COPY --from=builder /home/app/target/release/main /home/app/
+COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/main .
 
 ENV function_process=./main
 EXPOSE 8080

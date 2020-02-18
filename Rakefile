@@ -46,7 +46,7 @@ namespace :build do
 
     functions.each do |function|
       cd 'functions' do
-        sh 'faas-cli', 'build', '-f', "#{function}.yml", function
+        sh 'faas-cli', 'build', '-f', "#{function}.yml"
       end
     end
   end
@@ -73,8 +73,8 @@ namespace :deploy do
       Rake::Task['build:functions'].invoke(function)
 
       cd 'functions' do
-        sh 'faas-cli', 'remove', '-f', "#{function}.yml", function
-        sh 'faas-cli', 'deploy', '-f', "#{function}.yml", function
+        sh 'faas-cli', 'remove', '-f', "#{function}.yml"
+        sh 'faas-cli', 'deploy', '-f', "#{function}.yml"
       end
     end
   end
