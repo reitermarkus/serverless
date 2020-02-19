@@ -70,7 +70,7 @@ jobs:
           ret=0
           for i in thesis/**/*.tex
           do
-            asp=$(<$i aspell --dont-suggest pipe --per-conf=./aspell.conf -t list | awk 'BEGIN {n=1} /^$/{n++} /^..+$/{print n": "$0}' | tail -n +2 |
+            asp=$(<$i sed '/\\begin{lstlisting}/,/\\end{lstlisting}/d' | aspell --dont-suggest pipe --per-conf=./aspell.conf -t list | awk 'BEGIN {n=1} /^$/{n++} /^..+$/{print n": "$0}' | tail -n +2 |
               while read ln tag spell col ; do
                 echo "$ln$col $spell"
               done
