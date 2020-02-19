@@ -5,6 +5,8 @@ require 'socket'
 require 'tempfile'
 require 'timeout'
 require 'yaml'
+require 'net/http'
+require 'json'
 
 FUNCTIONS = %w[
   database
@@ -233,6 +235,22 @@ namespace :tex do
     cd 'tex' do
       sh 'latexmk', '-cd', '-C'
     end
+  end
+
+  task :download do
+    json = Net::HTTP.get(URI('https://dev.azure.com/reitermarkus/serverless/_apis/build/builds?definitions=2&$top=1&api-version=5.0-preview.5'))
+    parsed_json = JSON.parse(json)
+    id = parsed_json.dig 'value', 0, 'id'
+    download_url = "https://dev.azure.com/reitermarkus/9f00b2ca-5e57-4700-aee5-5e7c454ffc52/_apis/build/builds/#{id}/artifacts?artifactName=thesis&api-version=5.1&%24format=zip"
+
+    if windows?
+      sh 'wget', '-O', 'thesis.zip', download_url
+    else
+      File.write 'thesis.zip', URI(download_url).open(&:read)
+    end
+
+    sh 'unzip', 'thesis.zip'
+    sh 'rm', '-rf', 'thesis.zip'
   end
 end
 
