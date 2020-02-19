@@ -127,6 +127,24 @@ Once built, the function can be deployed using an equally simple command:
 faas-cli deploy -f filter.yml
 \end{lstlisting}
 
+We chose to write all of our functions in Rust. When we first started, there was not yet an official
+\textit{OpenFaaS} function template for Rust, so we had to create our own. For our custom template,
+we used the builder pattern our \texttt{Dockerfile}. In our case this meant we would first compile
+the Rust function using the official \textit{Docker} image for \textit{Rust}. This image is based on
+\textit{Debian}, which means that we could then copy the compiled function into a bare
+\textit{Debian} image which doesn't include the \textit{Rust} compiler, therefore saving space. This
+resulted in each function image being around \SI{90}{\mega\byte} in size. Still, this was too much
+for a simple function in our opinion.
+
+It is possible to write a \texttt{Dockerfile} without using any base image, using the \texttt{FROM
+scratch} directive. For this to work, however, we need to generate a statically compiled version of
+our functions since there is no operating system providing libraries. By extension, this meant we
+had to replace our compile step, since the official \texttt{Rust} docker image does not provide
+support for creating statically linked binaries. Thankfully, there exists a \textit{Docker} image
+called \texttt{rust-musl-builder} \cite{rust-musl-builder} for this exact reason. Using the
+\texttt{rust-musl-builder} image, we could reduce the average image size for our functions to around
+\SI{15}{\mega\byte}, a sixth of their original size.
+
 \input{./chapters/implementation/mobile.tex}
 \input{./chapters/implementation/serverless-stack.tex}
 \input{./chapters/implementation/raspberry-pi.tex}
