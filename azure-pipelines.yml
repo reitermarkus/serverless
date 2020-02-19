@@ -67,6 +67,7 @@ jobs:
           set -euo pipefail
           shopt -s globstar
           cd tex
+          ret=0
           for i in thesis/**/*.tex
           do
             asp=$(<$i aspell --dont-suggest pipe --per-conf=./aspell.conf -t list | awk 'BEGIN {n=1} /^$/{n++} /^..+$/{print n": "$0}' | tail -n +2 |
@@ -79,8 +80,10 @@ jobs:
               echo $i
               echo "----"
               echo -e "$asp\n"
+              ret=1
             fi
           done
+          exit $ret
         displayName: Check Spelling
   - job: tex
     displayName: TeX
