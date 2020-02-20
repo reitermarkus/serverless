@@ -11,7 +11,7 @@ Python or C in the case of the Raspberry Pi.
 
 For our first “Hello, world!” program which would run on the Raspberry Pi, we took the simplest
 approach at the time. We would write the code on our development machines and synchronise the code
-to the Raspberry Pi using \texttt{rsync} and the compile and run it via \texttt{ssh}. This worked
+to the Raspberry Pi using \texttt{rsync} and then compile and run it via \texttt{ssh}. This worked
 fine at the time. Once we got to the point where we needed to add more dependencies for the various
 sensors and networking, compile times naturally increased to the point at which it simply wasn't
 feasible anymore to compile directly using the inadequate processor of the Raspberry Pi. A single
@@ -43,25 +43,65 @@ directory instead of the respective toolchain root for the corresponding target'
 the binaries in \texttt{CARGO\_HOME/bin} are compiled for the host machine, these previously worked
 fine since only \texttt{x86\_64} \textit{Linux} hosts were supported. Now however, it would try
 running a \textit{macOS} or \textit{Windows} binary inside of a \textit{Linux} Docker container.
-This was not as straight-forward to debug as it might seem, since the error message looked like a
-syntax error in a shell command. Once we found what the problem was, the next challenge was to
-actually implement the fix for it. We still had to mount \texttt{CARGO\_HOME}, but exclude its
-\texttt{bin} subdirectory. Since the contents of \texttt{CARGO\_HOME} can vary depending on what you
-have installed, we could not simply mount each subdirectory individually and exclude \texttt{bin},
-so the only way was to use a somewhat hacky workaround.
+This was not as straight-forward to debug as it might seem, since the error message made it seem as
+though it was a syntax error in a shell command. Once we found what the problem was, the next
+challenge was to actually implement the fix for it. We still had to mount \texttt{CARGO\_HOME}, but
+exclude its \texttt{bin} subdirectory. Since the contents of \texttt{CARGO\_HOME} can vary depending
+on what you have installed, we could not simply mount each subdirectory individually and exclude
+\texttt{bin}, so the only way was to use a somewhat hacky workaround.
 
 The whole \texttt{CARGO\_HOME} directory was already mounted using
 
 \begin{lstlisting}[language=Bash]
-  -v "$CARGO_HOME:/cargo:Z"
+-v "${CARGO_HOME}:/cargo:Z"
 \end{lstlisting}
 
 In order to prevent mounting the \texttt{bin} subdirectory from the host machine, we added
 
 \begin{lstlisting}[language=Bash]
-  -v /cargo/bin
+-v /cargo/bin
 \end{lstlisting}
 
 This means that technically the \texttt{bin} subdirectory is still mounted, but is overlaid by
 another virtual volume which is not bound to a directory on the host, which effectively prevents
-non-Linux binaries being accessible inside the Docker container.
+non-Linux binaries from being accessible inside the Docker container. After this change, we could
+finally compile our program on both \textit{macOS} and \textit{Windows}.
+
+\subsubsection{Sensors}
+
+For the actual collection of data, we of course needed to implement some sensors. The first sensor
+we implemented is the widely used \textit{BMP180}, a digital sensor which acts as a combination of a
+thermometer and barometer. The \textit{BMP180} communicates over the \textit{I\textsuperscript{2}C}
+bus. \textit{I\textsuperscript{2}C} is supported natively by most \textit{Linux} distributions,
+consequentially also by the \textit{Raspbian} operating system running on the \textit{Raspberry Pi}.
+We quickly found a Rust library called \texttt{i2cdev}, which provides idiomatic wrapper functions to
+interface with the \textit{Linux} \textit{I\textsuperscript{2}C} interface. Another library called
+\texttt{i2cdev\_bmp180} then gave us an API for performing temperature and air pressure measurements.
+
+The second sensor we wanted to implement is the \textit{AM2320}, digital temperature and humidity
+sensor. The \textit{AM2320} also communicates over the \textit{I\textsuperscript{2}C} bus, which
+means we could use a library fittingly called \textit{am2320}, which also is based on the
+\textit{i2cdev} library, to produce temperature and humidity measurements. We also contributed some
+improvements (see \url{https://github.com/gferon/am2320.rs/pull/1}) to this library.
+
+The last sensor we implemented is a simple analog photoresistor acting as a luminosity sensor. Due
+to the fact that the Raspberry Pi does not have any analog \textit{GPIO} pins, we had to resort to
+using an analog-to-digital converter. To simplify the implementation of such a converter, we chose
+the \textit{ADS1115}, which like the \textit{BMP180} and \textit{AM2320} communicates over the
+\textit{I\textsuperscript{2}C} bus. Using the \texttt{ads1x1x} library, we could the read the analog
+photoresistor's voltage. By knowing this voltage, we can then approximate the luminosity.
+
+\begin{figure}[H]
+  \centering
+  \adjincludegraphics[max width=\textwidth]{wiring}
+  \caption{Wiring diagram of sensors connected to a Raspberry Pi}
+  \label{fig:raspberry-wiring}
+\end{figure}
+
+In \autoref{fig:raspberry-wiring} we can see how the sensors are connected to the Raspberry Pi. The
+orange and red wires signify the 3.3V and 5V power supply lanes, respectively. The black wire is the
+ground connection, and blue and violet are the two wires (receive/transmit) for the
+\textit{I\textsuperscript{2}C} bus. From top to bottom, you can see the photoresistor connected to
+the analog-to-digital converter (ADC), followed by the \textit{BMP180} and the \textit{AM2320}. It
+is easy to see that all sensors share the same \textit{I\textsuperscript{2}C} bus by looking at the
+diagram.
