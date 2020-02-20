@@ -37,6 +37,8 @@ jobs:
     displayName: Functions
     pool:
       vmImage: ubuntu-latest
+    variables:
+      PRODUCTION: true
     steps:
       - bash: curl -sSL https://cli.openfaas.com | sudo sh
         displayName: Install faas-cli

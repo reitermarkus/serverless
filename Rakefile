@@ -41,14 +41,15 @@ namespace :build do
     functions = args.extras
 
     if functions.empty?
-      functions = FUNCTIONS
+      cd 'functions' do
+        sh 'faas-cli', 'build', '--build-option', (dev? ? 'debug' : 'release'), '-f', 'functions.yml'
+      end
     else
       task.reenable
-    end
-
-    functions.each do |function|
-      cd 'functions' do
-        sh 'faas-cli', 'build', '--build-option', (dev? ? 'debug' : 'release'), '-f', "#{function}.yml"
+      functions.each do |function|
+        cd 'functions' do
+          sh 'faas-cli', 'build', '--build-option', (dev? ? 'debug' : 'release'), '-f', "#{function}.yml"
+        end
       end
     end
   end
@@ -57,14 +58,15 @@ namespace :build do
     functions = args.extras
 
     if functions.empty?
-      functions = FUNCTIONS
+      cd 'functions' do
+        sh 'faas-cli', 'push', '-f', 'functions.yml'
+      end
     else
       task.reenable
-    end
-
-    functions.each do |function|
-      cd 'functions' do
-        sh 'faas-cli', 'push', '-f', "#{function}.yml"
+      functions.each do |function|
+        cd 'functions' do
+          sh 'faas-cli', 'push', '-f', "#{function}.yml"
+        end
       end
     end
   end

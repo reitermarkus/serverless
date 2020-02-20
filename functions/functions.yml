@@ -1,24 +1,60 @@
 provider:
-  name: faas
+  name: openfaas
   gateway: http://127.0.0.1:8080
 
 functions:
-  faas-request:
-    lang: node8-express
-    handler: ./faas-request
-    image: faas-request:latest
+  database:
+    lang: rust-http
+    handler: ./database
+    image: docker.pkg.github.com/reitermarkus/serverless/database:latest
     environment:
-      write_timeout: 10s
-      read_timeout: 10s
+      RUST_LOG: info
+      write_debug: 'true'
       MONGO_HOST: mongo
-  sensor-request:
-    lang: node8-express
-    handler: ./sensor-request
-    image: sensor-request:latest
+      MONGO_DB: sensordata
+    secrets:
+      - mongo-root-password
+      - mongo-root-username
+  log-data:
+    lang: rust-http
+    handler: ./log-data
+    image: docker.pkg.github.com/reitermarkus/serverless/log-data:latest
     annotations:
-     topic: "sensor"
+      topic: sensor
     environment:
-      write_timeout: 10s
-      read_timeout: 10s
-      MONGO_HOST: mongo
-
+      RUST_LOG: debug
+      write_debug: 'true'
+      gateway_url: http://gateway:8080
+  filter:
+    lang: rust-http
+    handler: ./filter
+    image: docker.pkg.github.com/reitermarkus/serverless/filter:latest
+    environment:
+      RUST_LOG: info
+      write_debug: 'true'
+      gateway_url: http://gateway:8080
+  register-device:
+    lang: rust-http
+    handler: ./register-device
+    image: docker.pkg.github.com/reitermarkus/serverless/register-device:latest
+    annotations:
+      topic: register-device
+    environment:
+      RUST_LOG: info
+      write_debug: 'true'
+      gateway_url: http://gateway:8080
+  ui:
+    lang: webpack-static
+    handler: ./ui
+    image: docker.pkg.github.com/reitermarkus/serverless/ui:latest
+    environment:
+      write_debug: 'true'
+      gateway_url: http://gateway:8080
+  devices:
+    lang: rust-http
+    handler: ./devices
+    image: docker.pkg.github.com/reitermarkus/serverless/devices:latest
+    environment:
+      RUST_LOG: info
+      write_debug: 'true'
+      gateway_url: http://gateway:8080
