@@ -4,4 +4,22 @@ In order to properly verify our results we used \textit{Azure Pipelines} as our 
 of choice. \textit{Azure Pipelines} offers 10 parallel jobs with unlimited time per job for
 open source projects. \cite{azure-pipelines-devop}
 
-In our case we used the \textit{CI} platform for multiple purposes.
+In our case we used the \textit{CI} platform for 6 jobs, that are \textit{app}, \textit{rpi}
+\textit{functions}, \textit{ui} and \textit{tex}.
+
+In \textit{app} we build and test our \textit{Flutter mobile application}. For the \textit{vmImage}
+the job will run on we have to choose \textit{macOS} in order to build the application for
+\textit{Android} and \textit{iOS} since \textit{Apple} restricts building of \textit{iOS apps} to
+\textit{macOS}.
+
+The \textit{rpi} job is responsible for building and testing the application, that will be deployed
+on the \textit{Rasperry Pi} in order to measure sensor data. The program is written in
+\textit{Rust}. Because \textit{Rust} is cross platform, a conventional \textit{Ubuntu} image is
+sufficient. Unfortunately \textit{Azure Pipelines} virtual machines do not have \textit{Rust}
+installed by default, therefore we have to rely on a template provided by the \textit{Rust Cargo
+team} \cite{rust-cargo}. This \textit{Azure Pipelines} job however is not trivial and requires
+multiple steps. \textit{Rasperry Pis} use \textit{ARM} as there instruction set and therefore differ
+from the instruction set used in the virtual machines of \textit{Azure}. A simple compile of the
+application is for this reason not possible. In order to run the program on the \textit{Rasperry
+PI}, the application actually has to be cross compiled with the correct toolchain
+\textit{armv7-unknown-linux-gnueabi}.
