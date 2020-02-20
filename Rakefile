@@ -7,15 +7,7 @@ require 'timeout'
 require 'yaml'
 require 'net/http'
 require 'json'
-
-FUNCTIONS = %w[
-  database
-  devices
-  filter
-  log-data
-  register-device
-  ui
-]
+require 'etc'
 
 def dev?
   !ENV['PRODUCTION']
@@ -42,7 +34,7 @@ namespace :build do
 
     if functions.empty?
       cd 'functions' do
-        sh 'faas-cli', 'build', '--build-option', (dev? ? 'debug' : 'release'), '-f', 'functions.yml'
+        sh 'faas-cli', 'build', '--build-option', (dev? ? 'debug' : 'release'), '-f', 'functions.yml', '--parallel', Etc.nprocessors.to_s
       end
     else
       task.reenable
@@ -59,7 +51,7 @@ namespace :build do
 
     if functions.empty?
       cd 'functions' do
-        sh 'faas-cli', 'push', '-f', 'functions.yml'
+        sh 'faas-cli', 'push', '-f', 'functions.yml', '--parallel', Etc.nprocessors.to_s
       end
     else
       task.reenable
