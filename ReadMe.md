@@ -33,7 +33,7 @@ rake deploy:functions[filter]
 or to (re)deploy the `devices` and `filter` function, run
 
 ```
-rake deploy:functions[devices,filter]
+rake deploy:functions[devices, filter]
 ```
 
 ### Testing
@@ -54,24 +54,16 @@ docker service logs func_connector -f
 
 to see if Kafka Connector received the line.
 
-#### Functions
-
-To test a function, i.e. `function-name`, first deploy the swarm, then run
-
-```bash
-./deploy.rs func function-name
-```
-
 ## Mobile App
 
 ### Requirements
 
-[Yarn](https://www.yarnpkg.com/en/docs/install) and the [React Native Toolkit](https://facebook.github.io/react-native/docs/getting-started) have to be installed.
+- [Flutter](https://flutter.dev)
+- [Xcode](https://developer.apple.com/xcode/) for iOS development
+- [Android SDK](https://developer.android.com/studio) for Android development
 
-### Developing for Android
+### Running the Application
 
-For developing the Android app, open `mobile/SensorData` and run `react-native run-android`.
-
-### Developing for iOS
-
-For developing the iOS app, open `mobile/SensorData/ios/SensorData.xcodeproj` in Xcode.
+```
+flutter run
+```
