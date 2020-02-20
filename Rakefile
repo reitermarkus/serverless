@@ -48,7 +48,7 @@ namespace :build do
       task.reenable
       functions.each do |function|
         cd 'functions' do
-          sh 'faas-cli', 'build', '--build-option', (dev? ? 'debug' : 'release'), '-f', "#{function}.yml"
+          sh 'faas-cli', 'build', '--build-option', (dev? ? 'debug' : 'release'), '-f', 'functions.yml', '--filter', function
         end
       end
     end
@@ -65,7 +65,7 @@ namespace :build do
       task.reenable
       functions.each do |function|
         cd 'functions' do
-          sh 'faas-cli', 'push', '-f', "#{function}.yml"
+          sh 'faas-cli', 'push', '-f', 'functions.yml', '--filter', function
         end
       end
     end
@@ -85,7 +85,6 @@ namespace :deploy do
     functions = args.extras
 
     if functions.empty?
-      functions = FUNCTIONS
       Rake::Task['deploy:swarm'].invoke unless swarm_active?
     end
 
@@ -93,8 +92,8 @@ namespace :deploy do
       Rake::Task['build:functions'].invoke(function)
 
       cd 'functions' do
-        sh 'faas-cli', 'remove', '-f', "#{function}.yml"
-        sh 'faas-cli', 'deploy', '-f', "#{function}.yml"
+        sh 'faas-cli', 'remove', '-f', 'functions.yml', '--filter', function
+        sh 'faas-cli', 'deploy', '-f', 'functions.yml', '--filter', function
       end
     end
   end
