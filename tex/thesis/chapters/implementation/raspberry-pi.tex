@@ -74,22 +74,23 @@ we implemented is the widely used \textit{BMP180}, a digital sensor which acts a
 thermometer and barometer. The \textit{BMP180} communicates over the \textit{I\textsuperscript{2}C}
 bus. \textit{I\textsuperscript{2}C} is supported natively by most \textit{Linux} distributions,
 consequentially also by the \textit{Raspbian} operating system running on the \textit{Raspberry Pi}.
-We quickly found a Rust library called \texttt{i2cdev}, which provides idiomatic wrapper functions to
-interface with the \textit{Linux} \textit{I\textsuperscript{2}C} interface. Another library called
-\texttt{i2cdev\_bmp180} then gave us an API for performing temperature and air pressure measurements.
+We quickly found a Rust library called \texttt{i2cdev}, which provides idiomatic wrapper functions
+to interface with the \textit{Linux} \textit{I\textsuperscript{2}C} interface. Another library
+called \texttt{i2cdev\_bmp180} then gave us an API for performing temperature and air pressure
+measurements.
 
-The second sensor we wanted to implement is the \textit{AM2320}, digital temperature and humidity
+The second sensor we wanted to implement is the \textit{AM2320}, a digital temperature and humidity
 sensor. The \textit{AM2320} also communicates over the \textit{I\textsuperscript{2}C} bus, which
 means we could use a library fittingly called \textit{am2320}, which also is based on the
 \textit{i2cdev} library, to produce temperature and humidity measurements. We also contributed some
 improvements (see \url{https://github.com/gferon/am2320.rs/pull/1}) to this library.
 
-The last sensor we implemented is a simple analog photoresistor acting as a luminosity sensor. Due
-to the fact that the Raspberry Pi does not have any analog \textit{GPIO} pins, we had to resort to
-using an analog-to-digital converter. To simplify the implementation of such a converter, we chose
+The last sensor we implemented is a simple analogue photoresistor acting as a luminosity sensor. Due
+to the fact that the Raspberry Pi does not have any analogue \textit{GPIO} pins, we had to resort to
+using an analogue-to-digital converter. To simplify the implementation of such a converter, we chose
 the \textit{ADS1115}, which like the \textit{BMP180} and \textit{AM2320} communicates over the
-\textit{I\textsuperscript{2}C} bus. Using the \texttt{ads1x1x} library, we could the read the analog
-photoresistor's voltage. By knowing this voltage, we can then approximate the luminosity.
+\textit{I\textsuperscript{2}C} bus. Using the \texttt{ads1x1x} library, we could the read the
+analogue photoresistor's voltage. By knowing this voltage, we can then approximate the luminosity.
 
 \begin{figure}[H]
   \centering
@@ -102,6 +103,6 @@ In \autoref{fig:raspberry-wiring} we can see how the sensors are connected to th
 orange and red wires signify the 3.3V and 5V power supply lanes, respectively. The black wire is the
 ground connection, and blue and violet are the two wires (receive/transmit) for the
 \textit{I\textsuperscript{2}C} bus. From top to bottom, you can see the photoresistor connected to
-the analog-to-digital converter (ADC), followed by the \textit{BMP180} and the \textit{AM2320}. It
+the analogue-to-digital converter (ADC), followed by the \textit{BMP180} and the \textit{AM2320}. It
 is easy to see that all sensors share the same \textit{I\textsuperscript{2}C} bus by looking at the
 diagram.
