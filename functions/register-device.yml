@@ -6,7 +6,7 @@ functions:
   register-device:
     lang: rust-http
     handler: ./register-device
-    image: register-device:latest
+    image: docker.pkg.github.com/reitermarkus/serverless/register-device:latest
     annotations:
       topic: register-device
     environment:

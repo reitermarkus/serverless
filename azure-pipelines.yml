@@ -44,6 +44,13 @@ jobs:
         displayName: Install ruby
       - bash: rake build
         displayName: Build Functions
+      - task: Docker@2
+        displayName: Log into Docker Hub
+        inputs:
+          containerRegistry: github
+          command: login
+      - bash: rake build:push
+        displayName: Push Functions to GitHub Packages
   - job: ui
     displayName: UI
     pool:

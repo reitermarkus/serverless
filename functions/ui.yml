@@ -6,7 +6,7 @@ functions:
   ui:
     lang: webpack-static
     handler: ./ui
-    image: ui:latest
+    image: docker.pkg.github.com/reitermarkus/serverless/ui:latest
     environment:
       write_debug: 'true'
       gateway_url: http://gateway:8080

@@ -6,7 +6,7 @@ functions:
   log-data:
     lang: rust-http
     handler: ./log-data
-    image: log-data:latest
+    image: docker.pkg.github.com/reitermarkus/serverless/log-data:latest
     annotations:
       topic: sensor
     environment:

@@ -53,6 +53,22 @@ namespace :build do
     end
   end
 
+  task :push => :'build:functions' do |task, args|
+    functions = args.extras
+
+    if functions.empty?
+      functions = FUNCTIONS
+    else
+      task.reenable
+    end
+
+    functions.each do |function|
+      cd 'functions' do
+        sh 'faas-cli', 'push', '-f', "#{function}.yml"
+      end
+    end
+  end
+
   task :ui do
     rm_rf 'functions/ui'
     cp_r 'marko', 'functions/ui'
