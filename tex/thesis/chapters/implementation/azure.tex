@@ -23,3 +23,22 @@ from the instruction set used in the virtual machines of \textit{Azure}. A simpl
 application is for this reason not possible. In order to run the program on the \textit{Rasperry
 PI}, the application actually has to be cross compiled with the correct toolchain
 \textit{armv7-unknown-linux-gnueabi}.
+
+With the \textit{functions} job we build all the \textit{OpenFaaS} functions in the pipeline. It is
+also arguably the most complex job since it requires multiple steps. First off in order to deploy
+functions in \textit{OpenFaaS} the \textit{OpenFaaS CLI} is required and for that reason it has to
+be installed as well. Since our whole deploy script is written \textit{Ruby} or more specifically in
+\textit{Rake} we also need to install that. The next step is the most important one of this job, the
+actual build of the functions. Compiling \textit{Rust} is rather slow and therefore occupies about
+20 minutes on \textit{Azure} for building all functions. Build those functions, however is not only
+time consuming on the \textit{CI} platform. Deploying the whole stack on our test device, the
+\textit{Intel NUC} also takes some time, mainly because of function compiling. For this reason we
+have a further step in the \textit{functions} job, which pushes all images to the \textit{GitHub
+Package registry}. Every subsequent fresh deploy then only needs to pull the images from the
+registry instead of building them each time.
+
+\begin{figure}[H]
+  \centering
+  \adjincludegraphics[max width=\textwidth]{github-registry}
+  \caption{Images of all functions in \textit{GitHub Package registry} on \url{https://github.com/reitermarkus/serverless/packages}}
+\end{figure}
