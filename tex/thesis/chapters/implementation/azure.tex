@@ -1,8 +1,8 @@
 \subsection{Azure Pipelines}
 
-In order to properly verify our results we used \textit{Azure Pipelines} as our continues integration service
-of choice. \textit{Azure Pipelines} offers 10 parallel jobs with unlimited time per job for
-open source projects. \cite{azure-pipelines-devop}
+In order to properly verify our results we used \textit{Azure Pipelines} as our continues
+integration service of choice. \textit{Azure Pipelines} offers 10 parallel jobs with unlimited time
+per job for open source projects. \cite{azure-pipelines-devop}
 
 In our case we used the \textit{CI} platform for 6 jobs, that are \textit{app}, \textit{rpi}
 \textit{functions}, \textit{ui} and \textit{tex}.
@@ -41,4 +41,45 @@ registry instead of building them each time.
   \centering
   \adjincludegraphics[max width=\textwidth]{github-registry}
   \caption{Images of all functions in \textit{GitHub Package registry} on \url{https://github.com/reitermarkus/serverless/packages}}
+\end{figure}
+
+The \textit{UI} job is among the fastest running jobs as it only has to build the website with
+\textit{WebPack}.
+
+On the other hand the \textit{spellcheck} job is much more interesting and also is generally way
+more handy. The main purpose of it is, to check if the spelling conforms with \textit{aspell's}
+British English dictionary. Unfortunately in our case the default output of \textit{aspell} is too
+basic and for this reason we need a script (modified version of \cite{aspell-awk}) to make it more
+useful. By default \textit{aspell} only outputs errors without any more context. However we would
+like to have it a bit more verbose. Because \textit{aspell's} support for \textit{LaTeX} is not
+quite as good as we would like it to be, we first have to remove all content inside of
+\textit{lstlisting} commands. The next step is to then check all \textit{LaTeX} documents with
+\textit{aspell} and finally we pipe that output into \textit{Awk} to get line number information.
+The script then essentially fails if there is an output and passes if there is none (no spelling
+mistakes).
+
+\begin{figure}[H]
+  \begin{lstlisting}[language=bash]
+    thesis/chapters/background.tex
+    ----
+    87:32 ce
+    90:19 Cricle
+    91:19 Anageles
+
+    thesis/chapters/implementation.tex
+    ----
+    78:8 openfaas
+    82:4 lang
+    82:15 http
+    88:14 url
+    104:25 yml
+    108:26 yml
+
+    thesis/chapters/implementation/ui.tex
+    ----
+    42:23 timespan
+
+    ##[error]Bash exited with code '1'.
+  \end{lstlisting}
+  \caption{Modified output of \textit{aspell}. The script fails as there are spelling mistakes.}
 \end{figure}
