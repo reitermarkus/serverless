@@ -80,14 +80,12 @@ namespace :deploy do
       Rake::Task['deploy:swarm'].invoke unless swarm_active?
 
       cd 'functions' do
-        sh 'faas-cli', 'remove', '-f', 'functions.yml'
-        sh 'faas-cli', 'deploy', '-f', 'functions.yml'
+        sh 'faas-cli', 'deploy', '-f', 'functions.yml', '--send-registry-auth'
       end
     else
       functions.each do |function|
         cd 'functions' do
-          sh 'faas-cli', 'remove', '-f', 'functions.yml', '--filter', function
-          sh 'faas-cli', 'deploy', '-f', 'functions.yml', '--filter', function
+          sh 'faas-cli', 'deploy', '-f', 'functions.yml', '--send-registry-auth', '--filter', function
         end
       end
     end
