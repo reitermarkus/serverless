@@ -5,7 +5,7 @@ integration service of choice. \textit{Azure Pipelines} offers 10 parallel jobs 
 per job for open source projects. \cite{azure-pipelines-devop}
 
 In our case we used the \textit{CI} platform for 6 jobs, that are \textit{app}, \textit{rpi}
-\textit{functions}, \textit{ui} and \textit{tex}.
+\textit{functions}, \textit{ui}, \textit{spellcheck} and \textit{tex}.
 
 In \textit{app} we build and test our \textit{Flutter mobile application}. For the \textit{vmImage}
 the job will run on we have to choose \textit{macOS} in order to build the application for
@@ -82,4 +82,16 @@ mistakes).
     ##[error]Bash exited with code '1'.
   \end{lstlisting}
   \caption{Modified output of \textit{aspell}. The script fails as there are spelling mistakes.}
+\end{figure}
+
+The last function is \textit{tex}, which builds the initial presentation and the thesis on each
+commit. To accomplish this we use the \textit{mirisbowring/texlive\_ctan\_full Docker image}. This
+image provides as with a complete \textit{LaTeX} environment without much configuration hassle.
+After a successful build we make use of the \textit{continues delivery} aspect of \textit{Azure
+Pipelines} by hosting the compiled \textit{LaTeX} document as an artifact on \textit{Azure}.
+
+\begin{figure}[H]
+  \centering
+  \adjincludegraphics[max width=\textwidth]{artifact}
+  \caption{\textit{Azure Pipeline} artifact on \url{https://dev.azure.com/reitermarkus/serverless/}}
 \end{figure}
