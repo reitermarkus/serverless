@@ -27,4 +27,5 @@ deploy_rs_docker
 
 node_modules
 
+!tex/assets/implementation-diagram.pdf
 !tex/assets/wiring.pdf
