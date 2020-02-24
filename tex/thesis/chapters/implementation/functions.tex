@@ -1,0 +1,92 @@
+\subsection{Functions}
+
+With the OpenFaaS framework, every function consists of three parts: a function template, the
+function's source code and a definition file.
+
+Function templates are categorised by the programming language the corresponding function is written
+in. At the bare minimum, a template contains a \texttt{Dockerfile} and a \texttt{template.yml}. The
+\texttt{Dockerfile} has to be written in a way such that a \texttt{function} directory on the same
+directory level is copied into the image. During the build step, this \texttt{function} directory
+contains the source code, so depending on the programming language, it either has to be compiled or
+moved to the correct location straight away. Additionally, the \texttt{Dockerfile} has to install
+the \textit{OpenFaaS Watchdog}. The \textit{OpenFaaS Watchdog} is a service which is used to connect
+the function to the \textit{OpenFaaS} gateway. Historically, the watchdog would pass requests to the
+function via \textit{Standard Input} and the return the function's \textit{Standard Output} as the
+response. With this method however, the function could not control any aspect of the \textit{HTTP}
+request and response. The new version of the \textit{OpenFaaS Watchdog} offers a few more operation
+modes. The first, called \texttt{http}, forwards the received request to a specified port in the
+function. This means that function templates using this mode have to be written in such a way that
+they include an web server. This way the function can consume the \textit{HTTP} request directly,
+which also makes calling functions easier since they can use standard \textit{HTTP} methods and
+status codes. Another new mode is \texttt{static}, which can be used to create very simple functions
+serving static files. \cite{of-watchdog} The \texttt{template.yml} file contains the metadata for
+the function. This file can be empty, i.e. all metadata is optional, but most commonly it contains
+at least the \texttt{language} property used to specify the programming language the template is
+meant for. \cite{openfaas-build-functions} Commonly, a \texttt{function} directory containing a
+“Hello, world!” function is included in the template itself to serve as a starting point when
+creating a new function from scratch.
+
+Another part needed for building a function is a definition file containing the name of the function
+and all other data needed to deploy the functions. One essential part of this definition file is the
+gateway URL, which the \textit{OpenFaaS Watchdog} uses to connect to the \textit{OpenFaaS} gateway.
+
+\begin{figure}[H]
+  \centering
+  \begin{lstlisting}
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+functions:
+  filter:
+    lang: rust-http
+    handler: ./filter
+    image: filter:latest
+    environment:
+      RUST_LOG: info
+      write_debug: 'true'
+      gateway_url: http://gateway:8080
+  \end{lstlisting}
+  \caption{A definition file for a Rust function called \texttt{filter}.}
+  \label{fig:function-definition}
+\end{figure}
+
+In \autoref{fig:function-definition} we can see that there are two different gateway URLs. The
+first one, \texttt{provider.gateway}, is used by the \texttt{faas-cli} command line tool in order to
+know where to deploy the function to. The second one,
+\texttt{functions.filter.environment.gateway\_url} is the URL the gateway can be reached from inside
+the cluster and the one passed to the \textit{OpenFaaS Watchdog}. Furthermore, the function template
+is specified using \texttt{functions.filter.lang}, the path the the function's source code is given
+by \\ \texttt{functions.filter.handler} and the name of the \textit{Docker} image is specified by \\
+\texttt{functions.filter.image}.
+
+Assuming the definition file shown in \autoref{fig:function-definition} is called
+\texttt{filter.yml}, we can build the function using the following command:
+
+\begin{lstlisting}[language=bash]
+faas-cli build -f filter.yml
+\end{lstlisting}
+
+Once built, the function can be deployed using an equally simple command:
+
+\begin{lstlisting}[language=bash]
+faas-cli deploy -f filter.yml
+\end{lstlisting}
+
+We chose to write all of our functions in Rust. When we first started, there was not yet an official
+\textit{OpenFaaS} function template for Rust, so we had to create our own. For our custom template,
+we used the builder pattern our \texttt{Dockerfile}. In our case this meant we would first compile
+the Rust function using the official \textit{Docker} image for \textit{Rust}. This image is based on
+\textit{Debian}, which means that we could then copy the compiled function into a bare
+\textit{Debian} image which doesn't include the \textit{Rust} compiler, therefore saving space. This
+resulted in each function image being around \SI{90}{\mega\byte} in size. Still, this was too much
+for a simple function in our opinion.
+
+It is possible to write a \texttt{Dockerfile} without using any base image, using the \texttt{FROM
+scratch} directive. For this to work, however, we need to generate a statically compiled version of
+our functions since there is no operating system providing libraries. By extension, this meant we
+had to replace our compile step, since the official \texttt{Rust} docker image does not provide
+support for creating statically linked binaries. Thankfully, there exists a \textit{Docker} image
+called \texttt{rust-musl-builder} \cite{rust-musl-builder} for this exact reason. Using the
+\texttt{rust-musl-builder} image, we could reduce the average image size for our functions to around
+\SI{15}{\mega\byte}, a sixth of their original size.
