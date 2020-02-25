@@ -24,7 +24,14 @@ technology \textit{Babel}. With \textit{Babel} \textit{transpiling} is rather ea
 definitions are in a \textit{webpack.config.babel.js} file which brings us to the next essential
 tool \textit{Webpack}.
 
+\subsubsection{SASS}
+
+\textit{SASS} is a superset of \textit{CSS} with many additional features like variables, functions,
+nesting and exporting/importing files. We make heavy use of those features to structure and
+modularise our \textit{CSS} code.
+
 \subsubsection{Webpack}
+\label{sec:webpack}
 
 “Webpack is a module bundler. Its main purpose is to bundle JavaScript files for usage in a browser,
 yet it is also capable of transforming, bundling, or packaging just about any resource or asset.”
@@ -32,16 +39,11 @@ yet it is also capable of transforming, bundling, or packaging just about any re
 
 With that being said \textit{Webpack} can to some extend be considered as the main part of the whole
 \textit{front end stack} as it is responsible for orchestrating \textit{transpiling} of
-\textit{MarkoJS} files. It is also responsible for providing \textit{Webpack Dev Server}, a server
-that reloads on file change. Furthermore \textit{Webpack} runs all files through certain
-optimisation plugins on release build, which can bring down the size of the \textit{code bundle}
-quite considerably. \textit{Webpack} is also able to transform \textit{SASS} into \textit{CSS}.
-
-\subsubsection{SASS}
-
-\textit{SASS} is a superset of \textit{CSS} with many additional features like variables, functions,
-nesting and exporting/importing files. We make heavy use of those features to structure and
-modularise our \textit{CSS} code.
+\textit{MarkoJS} files with the help of \textit{Babel}. It is also responsible for providing
+\textit{Webpack Dev Server}, a server that reloads on file change. Furthermore \textit{Webpack} runs
+all files through certain optimisation plugins on release build, which can bring down the size of
+the \textit{code bundle} quite considerably. \textit{Webpack} is also able to transform
+\textit{SASS} into \textit{CSS}.
 
 \subsubsection{UI}
 
