@@ -51,13 +51,13 @@ functions:
   \label{fig:function-definition}
 \end{figure}
 
-In \autoref{fig:function-definition} we can see that there are two different gateway URLs. The
-first one, \texttt{provider.gateway}, is used by the \texttt{faas-cli} command line tool in order to
-know where to deploy the function to. The second one,
-\texttt{functions.filter.environment.gateway\_url} is the URL the gateway can be reached from inside
-the cluster and the one passed to the \textit{OpenFaaS Watchdog}. Furthermore, the function template
-is specified using \texttt{functions.filter.lang}, the path the the function's source code is given
-by \\ \texttt{functions.filter.handler} and the name of the \textit{Docker} image is specified by \\
+In \autoref{fig:function-definition} we can see that there are two different gateway URLs. The first
+one, \texttt{provider.gateway}, is used by the \texttt{faas-cli} command line tool in order to know
+where to deploy the function to. The second one, \texttt{functions.filter.environment.gateway\_url}
+is the URL the gateway can be reached from inside the cluster and the one passed to the
+\textit{OpenFaaS Watchdog}. Furthermore, the function template is specified using
+\texttt{functions.filter.lang}, the path the the function's source code is given by \\
+\texttt{functions.filter.handler} and the name of the \textit{Docker} image is specified by \\
 \texttt{functions.filter.image}.
 
 Assuming the definition file shown in \autoref{fig:function-definition} is called
@@ -90,3 +90,64 @@ support for creating statically linked binaries. Thankfully, there exists a \tex
 called \texttt{rust-musl-builder} \cite{rust-musl-builder} for this exact reason. Using the
 \texttt{rust-musl-builder} image, we could reduce the average image size for our functions to around
 \SI{15}{\mega\byte}, a sixth of their original size.
+
+\subsubsection{The \texttt{database} Function}
+
+One of the core building blocks of our project is the database, which stores information about
+devices and is used for persistently storing the data received from those devices. For this reason,
+naturally we needed a function which allows us to interact with the database.
+
+We used the \href{https://github.com/mongodb/mongo-rust-driver}{\texttt{mongodb-rust-driver}}, a
+Rust library for interfacing with a MongoDB database. In order to reduce latency, OpenFaaS keeps
+functions running for a specified amount of time before considering them unused and terminating
+them. This means that we only need to establish a connection to our database once, when the function
+container is first started. Since the initial startup is handled by the function template and not
+the function handler, we used the
+\href{https://github.com/rust-lang-nursery/lazy-static.rs}{\texttt{laze\_static}} to lazily
+initialize a static variable holding our database connection.
+
+The actual function handler first parses a \textit{JSON} request containing either an
+\texttt{insert}, \texttt{insert\_or\_update}, \texttt{find}, \texttt{aggregate} or \texttt{update}
+action. These actions are then converted from \texttt{JSON} to \texttt{BSON} (Binary JSON), the
+format MongoDB and by extension the MongoDB Rust driver uses. This allows other functions to call
+this function in order to interact with the database instead of duplicating this logic in every
+function which needs to access the database.
+
+\subsubsection{The \texttt{register-device} Function}
+
+The \texttt{register-device} function is used to, as the name implies, register new devices. This
+function is triggered when a new message is posted to the \texttt{register-device} Kafka topic. The
+function handler parses the message, which must contain a device ID and the device's name. If this
+is the case, it then calls the \texttt{database} function in order to insert a new device or update
+an existing device's name.
+
+\subsubsection{The \texttt{log-data} Function}
+
+Similarly to the \texttt{register-device} function, the \texttt{log-data} function is triggered when
+a new message is posted to the \texttt{log-data} topic. A message is expected to contain a device
+ID, the data type (e.g. humidity, pressure, etc.), the time the data was recorded as well as the
+data itself. After parsing the message in the correct format, the function validates that the data
+type is contained in a list of supported types, otherwise it responds with \textit{400 Bad Request}
+error code. Afterwards, the \texttt{database} function is called in order to add the data type to
+the list of supported data types of the given device. Then, another call to the \texttt{database}
+function is made to insert the data in the collection for the corresponding data type.
+
+\subsubsection{The \texttt{devices} Function}
+
+The \texttt{devices} is probably the simplest function in our project. It calls the
+\texttt{database} function to retrieve a list of all registered devices and their corresponding data
+types, converts the list from \textit{BSON} to \textit{JSON} and then returns it. It is used by the
+\textit{UI} for displaying a list of all devices.
+
+\subsubsection{The \texttt{filter} Function}
+
+% TODO
+
+\subsubsection{The \texttt{ui} Function}
+
+Unlike all other functions, the \texttt{ui} function is not a \textit{Rust} function. Instead, it
+utilises the new \textit{OpenFaaS Watchdog} mode called \texttt{static}. With it, we can create a
+function solely consisting of static files. In the case of the \texttt{ui} function, these static
+files are an \texttt{index.html}, a \texttt{style.css} and a \texttt{bundle.js}. Since our UI is
+written purely in \textit{JavaScript}, we can use a single \texttt{webpack} command to produce all
+these files. This process is explained in more detail in \autoref{sec:webpack}.
