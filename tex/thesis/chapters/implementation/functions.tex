@@ -104,7 +104,7 @@ them. This means that we only need to establish a connection to our database onc
 container is first started. Since the initial startup is handled by the function template and not
 the function handler, we used the
 \href{https://github.com/rust-lang-nursery/lazy-static.rs}{\texttt{laze\_static}} to lazily
-initialize a static variable holding our database connection.
+initialise a static variable holding our database connection.
 
 The actual function handler first parses a \textit{JSON} request containing either an
 \texttt{insert}, \texttt{insert\_or\_update}, \texttt{find}, \texttt{aggregate} or \texttt{update}

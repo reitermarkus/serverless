@@ -1,0 +1,21 @@
+\subsection{Rakefile}
+
+“Ruby is a dynamic, open source programming language with a focus on simplicity and productivity. It
+has an elegant syntax that is natural to read and easy to write.” \cite{ruby} Ruby is also
+\textit{cross-platform} and has an optional build system with the name \textit{Rake}, that is
+similar in usability to \textit{Make} with the difference that the code for its tasks is still
+\textit{Ruby}. And with that being said \textit{Ruby} and \textit{Rake} are the ideal candidates for
+our deployment script. The aim for our script was that with one command the whole stack would be
+correctly configured and deployed. This can be done with a simple \lstinline{rake deploy}.
+
+The command first checks if the \textit{docker swarm} is active. The \textit{swarm} has to be
+active, in order that functions even can be deployed. In the next step a loop goes over all
+functions and invokes the \textit{faas-cli} for the actual deployment of the function. If the swarm
+however is indeed not ready \lstinline{rake deploy} invokes a \textit{sub-task} that orchestrates
+\textit{docker} to setup a \textit{swarm} with necessary credentials and secrets. In the same step
+all kind of environment variables have to be set for \textit{MongoDB}, \textit{Kafka} and finally
+the actual deployment of the stack commences and all services will be initialised. The final step of
+the \lstinline{rake deploy} task depends on the platform the script is executed. On \textit{Windows}
+\lstinline{rake db:restore} will be invoked, which tries to restore the \textit{MongoDB} database,
+because \textit{docker volumes} do not behave the way they should in correlation to\textit{MongoDB}
+on that platform.
