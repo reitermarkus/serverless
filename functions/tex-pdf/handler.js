@@ -7,7 +7,7 @@ const fetchPdf = (url, fileName) => new Promise(async (resolve, reject) => {
     const directory = await unzipper.Open.buffer(buffer.data)
     const file = directory.files.find(d => d.path === `thesis/${fileName}`)
     const fileBuffer = await file.buffer()
-    resolve(fileBuffer.toString('base64'))
+    resolve(fileBuffer)
   } catch (err) {
     reject(err.message)
   }
@@ -25,7 +25,6 @@ const getLatestBuildFromAzure = async () => {
 }
 
 module.exports = async (event, context) => {
-
   const headers = []
   headers['content-disposition'] = `inline; filename="thesis.pdf"`
   headers['Content-Type'] = 'application/pdf'

@@ -2,8 +2,8 @@ FROM openfaas/of-watchdog:0.7.6 as watchdog
 
 FROM node:13.8.0-alpine as builder
 
-COPY --from=watchdog /fwatchdog /fwatchdog
-RUN chmod +x /fwatchdog
+COPY --from=watchdog /fwatchdog /usr/bin/fwatchdog
+RUN chmod +x /usr/bin/fwatchdog
 
 RUN apk --no-cache add curl ca-certificates \
     && addgroup -S app && adduser -S -g app app
