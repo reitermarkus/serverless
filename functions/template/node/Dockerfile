@@ -20,7 +20,7 @@ WORKDIR /home/app
 COPY package.json ./
 
 # This ordering means the npm installation is cached for the outer function handler.
-RUN npm i
+RUN npm i --only=production
 
 # Copy outer function handler
 COPY index.js ./
@@ -32,7 +32,7 @@ WORKDIR /home/app/function
 
 COPY function/*.json ./
 
-RUN npm i || :
+RUN npm i --only=production || :
 
 # COPY function files and folders
 COPY function/ ./

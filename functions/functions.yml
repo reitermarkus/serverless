@@ -61,7 +61,7 @@ functions:
   tex-pdf:
     lang: node
     handler: ./tex-pdf
-    image: tex-pdf:latest
+    image: docker.pkg.github.com/reitermarkus/serverless/tex-pdf:latest
     environment:
       write_debug: 'true'
       gateway_url: http://gateway:8080
