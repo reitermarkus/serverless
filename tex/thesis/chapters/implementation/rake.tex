@@ -19,3 +19,24 @@ the \lstinline{rake deploy} task depends on the platform the script is executed.
 \lstinline{rake db:restore} will be invoked, which tries to restore the \textit{MongoDB} database,
 because \textit{docker volumes} do not behave the way they should in correlation to\textit{MongoDB}
 on that platform.
+
+In this final stage of our project building functions is not that important anymore but at one point
+we had to build functions a lot in order to test their correctness. To aid this process we have the
+\textit{Rake task} \lstinline{rake build:functions}. When simply called without parameters, it builds
+all functions with the \textit{faas-cli sub-command build}. Internally the \textit{faas-cli} then builds
+a \textit{Docker} image among other things. \lstinline{rake build:functions} with parameters. As an
+example we call \lstinline{rake build:functions['ui']} to only build the \textit{UI} function.
+
+Because we like to upload our updated Docker images on \textit{GitHub registry} for more convenience
+when deploying the stack, we decided to automate this process with the \textit{Rake task}
+\lstinline{rake build:push}. It iterates over all functions in a very similar way to \\
+\lstinline{rake build:functions} does, with the exception of invoking the \textit{faas-cli} with the
+\textit{push} \textit{sub-command} instead of \textit{build}. The \lstinline{rake build:push}
+command is also used in the \textit{Azure Pipelines} job \textit{functions}
+\autoref{sec:azure-function}.
+
+With have also some \textit{Rake task} that are not directly related to the \textit{OpenFaaS} stack.
+Among those is the task \lstinline{rake tex}, which invokes \textit{latexmk} on both the
+presentation and thesis. Finally we have the handy \textit{Rake namespace} \lstinline{db}, where we
+have tasks to restore and dump our \textit{MongoDB} database.
+

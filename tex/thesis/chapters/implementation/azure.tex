@@ -7,10 +7,14 @@ per job for open source projects. \cite{azure-pipelines-devop}
 In our case we used the \textit{CI} platform for 6 jobs, that are \textit{app}, \textit{rpi}
 \textit{functions}, \textit{ui}, \textit{spellcheck} and \textit{tex}.
 
+\subsubsection{The \texttt{app} job}
+
 In \textit{app} we build and test our \textit{Flutter mobile application}. For the \textit{vmImage}
 the job will run on we have to choose \textit{macOS} in order to build the application for
 \textit{Android} and \textit{iOS} since \textit{Apple} restricts building of \textit{iOS apps} to
 \textit{macOS}.
+
+\subsubsection{The \texttt{rpi} job}
 
 The \textit{rpi} job is responsible for building and testing the application, that will be deployed
 on the \textit{Rasperry Pi} in order to measure sensor data. The program is written in
@@ -23,6 +27,9 @@ from the instruction set used in the virtual machines of \textit{Azure}. A simpl
 application is for this reason not possible. In order to run the program on the \textit{Rasperry
 PI}, the application actually has to be cross compiled with the correct toolchain
 \textit{armv7-unknown-linux-gnueabi}.
+
+\subsubsection{The \texttt{function} job}
+\label{sec:azure-function}
 
 With the \textit{functions} job we build all the \textit{OpenFaaS} functions in the pipeline. It is
 also arguably the most complex job since it requires multiple steps. First off in order to deploy
@@ -43,8 +50,12 @@ registry instead of building them each time.
   \caption{Images of all functions in \textit{GitHub Package registry} on \url{https://github.com/reitermarkus/serverless/packages}}
 \end{figure}
 
+\subsubsection{The \texttt{UI} job}
+
 The \textit{UI} job is among the fastest running jobs as it only has to build the website with
 \textit{WebPack}.
+
+\subsubsection{The \texttt{spellcheck} job}
 
 On the other hand the \textit{spellcheck} job is much more interesting and also is generally way
 more handy. The main purpose of it is, to check if the spelling conforms with \textit{aspell's}
@@ -83,6 +94,8 @@ mistakes).
   \end{lstlisting}
   \caption{Modified output of \textit{aspell}. The script fails as there are spelling mistakes.}
 \end{figure}
+
+\subsubsection{The \texttt{tex} job}
 
 The last function is \textit{tex}, which builds the initial presentation and the thesis on each
 commit. To accomplish this we use the \textit{mirisbowring/texlive\_ctan\_full Docker image}. This
