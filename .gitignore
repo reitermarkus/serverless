@@ -23,8 +23,6 @@ faas
 functions/build
 functions/ui/*
 
-deploy_rs_docker
-
 node_modules
 
 !tex/assets/implementation-diagram.pdf
