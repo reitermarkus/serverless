@@ -70,10 +70,9 @@ The script then essentially fails if there is an output and passes if there is n
 mistakes).
 
 \begin{figure}[H]
-  \begin{lstlisting}[language=bash, basicstyle=\small\ttfamily]
+  \begin{lstlisting}[language=bash, basicstyle=\footnotesize\ttfamily]
     thesis/chapters/background.tex
     ----
-    87:32 ce
     90:19 Cricle
     91:19 Anageles
 
@@ -81,10 +80,7 @@ mistakes).
     ----
     78:8 openfaas
     82:4 lang
-    82:15 http
     88:14 url
-    104:25 yml
-    108:26 yml
 
     thesis/chapters/implementation/ui.tex
     ----
@@ -92,7 +88,7 @@ mistakes).
 
     ##[error]Bash exited with code '1'.
   \end{lstlisting}
-  \caption{Modified output of \textit{aspell}. The script fails as there are spelling mistakes.}
+  \caption{Modified output of \textit{aspell}. The script fails, as there are spelling mistakes.}
 \end{figure}
 
 \subsubsection{The \texttt{tex} job}
