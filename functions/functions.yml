@@ -58,3 +58,10 @@ functions:
       RUST_LOG: info
       write_debug: 'true'
       gateway_url: http://gateway:8080
+  tex-pdf:
+    lang: node
+    handler: ./tex-pdf
+    image: tex-pdf:latest
+    environment:
+      write_debug: 'true'
+      gateway_url: http://gateway:8080

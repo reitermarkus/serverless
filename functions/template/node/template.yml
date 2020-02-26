@@ -1,0 +1,7 @@
+language: node
+fprocess: node index.js
+build_options:
+  - name: debug
+    packages: ['development']
+  - name: release
+    packages: ['production']

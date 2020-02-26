@@ -1,0 +1,11 @@
+{
+  "name": "tex-pdf",
+  "version": "1.0.0",
+  "main": "handler.js",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "axios": "^0.19.2",
+    "unzipper": "^0.10.9"
+  }
+}
