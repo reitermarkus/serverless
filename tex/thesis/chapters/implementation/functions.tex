@@ -170,9 +170,18 @@ given time span, using the \textit{\$match} pipeline operator.
 
 \subsubsection{The \texttt{ui} Function}
 
-Unlike all other functions, the \texttt{ui} function is not a \textit{Rust} function. Instead, it
+Unlike many other functions, the \texttt{ui} function is not a \textit{Rust} function. Instead, it
 utilises the new \textit{OpenFaaS Watchdog} mode called \texttt{static}. With it, we can create a
 function solely consisting of static files. In the case of the \texttt{ui} function, these static
 files are an \texttt{index.html}, a \texttt{style.css} and a \texttt{bundle.js}. Since our UI is
 written purely in \textit{JavaScript}, we can use a single \texttt{webpack} command to produce all
 these files. This process is explained in more detail in \autoref{sec:webpack}.
+
+\subsubsection{The \texttt{tex-pdf} Function}
+
+Like The \textit{ui} function, the \texttt{tex-pdf} function is also not a \textit{Rust} function.
+This function is sort of a bonus it is not required for the stack itself at all. \texttt{tex-pdf}
+essentially queries the latest successful build from \textit{Azure}, tries to unpack the
+\textit{PDF} in the \textit{thesis} artefact and finally display it in the browser. Therefore always
+the latest version of the thesis will be served with the function and the user does not have to
+compile the document with a \textit{LaTeX toolchain} itself.
