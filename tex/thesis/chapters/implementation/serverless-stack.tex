@@ -39,21 +39,12 @@ use our example store function \texttt{figlet}
   $ faas store deploy figlet --annotation topic="faas-request"
 \end{lstlisting}
 
-The deployment aspect is the same as before therefore the interesting part is the
+The deployment aspect is the same as before therefore the interesting part is the \\
 \texttt{-{}-annotation} flag, where \texttt{topic="faas-request"} is the \textit{Kafka} topic the
 function is supposed to listen to and act on. We subsequently can look for the result in the logs of
 the connector service. \\
 While the feature of deploying functions from the store is really nice, it is not suitable for our
-use case, as we highly depend on custom written functions. For this reason we decided to automate
-the process of deploying functions by extending our deploy script.
-
-On every start it essentially calls:
-
-\begin{lstlisting}[language=bash]
-  $ faas-cli deploy -f "function"
-\end{lstlisting}
-
-for each function.
+use case, as we highly depend on custom written functions.
 
 \begin{figure}[H]
   \centering
