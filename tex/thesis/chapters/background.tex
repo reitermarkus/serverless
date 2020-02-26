@@ -1,21 +1,23 @@
 \section{Background}
 
 In this part we try to make the reader more familiar with the individual technologies and their
-respective terms, that will be used throughout the thesis. Firstly we start by discussing the main
-topic: Serverless Computing, we then will go on in more detail about \textit{Docker} and our
-specific use case.
+respective terms that will be used throughout the thesis. Firstly we start by discussing the main
+topic, \textit{Serverless Computing}, we will then go on in more detail about \textit{Docker} and
+our specific use case.
 
 \subsection{Serverless Computing}
 
 Serverless computing is a new emerging paradigm for deploying applications into the cloud. It gained
 in popularity in recent years largely due to shift of enterprise application deployment in
-containers and microservices. Serverless Computing offers developers a simplified programming model
-for creating cloud applications while minimising operational concerns. \cite{servprog}
+containers and microservices. \textit{Serverless Computing} offers developers a simplified
+programming model for creating cloud applications while minimising operational concerns.
+\cite{servprog}
 
 The term “serverless” can be confusing, since physical server hardware is of course still needed in
 order to run applications. The main point is that the application user or developer does not need to
-manage scaling, plan for variable capacity or maintain any other aspect of the servers. All of this
-is provided as a service from the cloud provider. \cite{wikiservcomp}
+manage scaling, plan for variable capacity or maintain any other aspect of the servers. The
+management of all of these things is provided as a service from the cloud provider.
+\cite{wikiservcomp}
 
 \subsubsection{Layers of Cloud Computing}
 
@@ -29,23 +31,24 @@ is provided as a service from the cloud provider. \cite{wikiservcomp}
 Historically, each new paradigm in the space of cloud computing has brought with it a new layer of
 abstraction. First, there was the move from managing physical hardware in a data centre to being
 able to rent infrastructure from a cloud provider. This layer, called IaaS (Infrastructure as a
-Service), shifted the need for the customer to manage hardware infrastructure to the cloud provider.
-This change also improved scalability as customers could now rent infrastructure on a pay-as-you-go
-basis instead of paying for servers which would be idle most of the time.
+Service), shifted the need for the customer to manage hardware infrastructure onto the cloud
+provider. This change also improved scalability as customers could now rent infrastructure based on
+the pay-as-you-go principle instead of paying for large servers which would be idle most of the
+time.
 
 With IaaS, the customer is still responsible for managing the setup of the rented infrastructure,
 i.e. installing the necessary dependencies needed to run a given application. Naturally, the next
 layer of abstraction is to provide the customer with an environment suited to run an application
-without the need to manually install a programming language and any dependencies. This layer is
+without the need to manually install a programming language or any dependencies. This layer is
 called PaaS (Platform as a Service). Using this layer of abstraction, the user does have to worry
 neither about managing the underlying hardware nor about managing the operating system the
 application is running on.
 
 Now, in the era of serverless computing, there is yet again a new layer of abstraction. Called FaaS
-(Function as a Service), this layer provides a runtime environment for a given language in order to
-run functions. An application deployed in a FaaS environment consists of multiple functions
-interacting with one another whereas in a PaaS environment, an application is deployed as a single
-unit.
+(Function as a Service), this layer provides a runtime environment for a given language in which to
+run individual functions in. An application deployed in a FaaS environment consists of multiple
+functions interacting with one another whereas in a PaaS environment, an application is deployed as
+a single unit.
 
 \subsection{Docker}
 
@@ -54,8 +57,8 @@ self-contained and provide an isolated environment for software to run in. A con
 configuration files and dependencies as well as the software itself, which makes it highly portable.
 In the case of \textit{Docker}, these stand-alone container images can then be executed by the
 \textit{Docker Engine}, which turns the stored images into running containers. For this reason,
-every container image contains a customisable entry point command which is executed when the
-container is started.
+every container image contains a customisable \textit{entry point} command which is executed when
+the container is started.
 
 \begin{figure}[H]
   \centering
@@ -64,11 +67,11 @@ container is started.
 \end{figure}
 
 \textit{Docker} containers are standardised, which means they can run virtually anywhere the
-\textit{Docker Engine} is supported, be it on Linux, Windows, in data centres or the cloud. Compared
-to virtual machines, containers are very lightweight since they share the host machine's system
-kernel and thus don't require a separate operating system for each application. Despite not using a
-separate operating, containers are completely isolated from the host system as well as other
-containers by default.
+\textit{Docker Engine} is supported, be it on Linux, Windows, in data centres or in the cloud.
+Compared to virtual machines, containers are very lightweight since they share the host machine's
+system kernel and thus don't require a separate operating system for each application. Despite not
+using a separate operating system, containers are completely isolated from the host system as well
+as other containers by default.
 
 Furthermore, since containers usually don't contain a full operating system, startup times are also
 much faster compared to virtual machines, which have to completely boot the entire operating system
@@ -76,14 +79,14 @@ from scratch in addition to starting the application. \cite{docker-container}
 
 \subsection{OpenFaaS}
 
-“OpenFaaS - Serverless Functions Made Simple”. As the slogan already entails, \textit{OpenFaaS} is a
+“OpenFaaS – Serverless Functions Made Simple”. As the slogan already entails, \textit{OpenFaaS} is a
 framework for the deployment of serverless functions. In contrast to competing hosted products like
-\textit{AWS Lambda} or \textit{Azure Cloud Functions} it offers a lot more flexibility in the way
-functions are written and hardware resources are managed. In fact any programming language that one
-can think of can be used to write functions for \textit{OpenFaaS}, as long as they are provided with
-a \textit{Dockerfile}. Deploying \textit{OpenFaaS}'s stack in a cluster is easy as well, as the
-framework poses itself to have first class support for \textit{Docker Swarm} and being
-\textit{Kubernetes} native. \cite{openfaas-docs}
+\textit{AWS Lambda} or \textit{Azure Cloud Functions}, it offers a lot more flexibility regarding
+the way functions are written and hardware resources are managed. In fact, any programming language
+imaginable can be used to write functions for \textit{OpenFaaS}, as long as that language can run or
+be compiled in a \textit{Docker} container. Deploying an \textit{OpenFaaS} stack in a cluster is
+easy as well, as the framework poses itself for having first class support for \textit{Docker Swarm}
+and being \textit{Kubernetes} native. \cite{openfaas-docs}
 
 \begin{figure}[H]
   \centering
@@ -93,41 +96,42 @@ framework poses itself to have first class support for \textit{Docker Swarm} and
 
 \subsection{MongoDB}
 
-\textit{MongoDB} is a document database, that is scalable and flexible. \textit{MongoDB}'s data is
- stored in flexible, JSON-like documents, making it easy to work with. The document database offers
- powerful ways to access and analyse data with features like ad hoc querying and real time
- aggregation. Since \textit{MongoDB} is a distributed database at its core, high availability and
- horizontal scaling are already built in. Furthermore due to its “real-time” nature \textit{MongoDB}
- lends itself very well for IoT applications.  \cite{mongodb-description}
+\textit{MongoDB} is a document database that is scalable and flexible. The data in a
+ \textit{MongoDB} database is stored in flexible, \textit{JSON}-like documents, making it easy to
+ work with. The document database offers powerful ways to access and analyse data with features like
+ ad hoc querying and real time aggregation. Since \textit{MongoDB} is a distributed database at its
+ core, high availability and horizontal scaling are already built in. Furthermore, due to its
+ “real-time” nature, \textit{MongoDB} lends itself very well for \textit{IoT} applications.
+ \cite{mongodb-description}
 
  \begin{figure}[H]
   \centering
   \begin{lstlisting}[basicstyle=\small]
-    {
-      _id: '5cf0029caff5056591b0ce7d',
-      name: 'Jane Wu',
-      address: {
-        street: '1 Circle Rd',
-        city: 'Los Angeles',
-      }
-    }
+{
+  _id: '5cf0029caff5056591b0ce7d',
+  name: 'Jane Wu',
+  address: {
+    street: '1 Circle Rd',
+    city: 'Los Angeles',
+  }
+}
   \end{lstlisting}
-  \caption{\textit{MongoDB JSON} document. (adapted from \cite{mongodb-description})}
+  \caption{A \textit{MongoDB} document (adapted from \cite{mongodb-description}).}
 \end{figure}
 
 \subsection{Apache ZooKeeper}
 
 \textit{ZooKeeper} is a service for centrally managing configuration, naming, handling distributed
 synchronisation and providing group services. Many distributed applications need access to some or
-all of these kinds of services, so \textit{ZooKeeper} is a great way to avoid reinventing the wheel.
-This is especially true given the fact that these highly distributed scenarios bring with them a
-vast amount of potential bugs and race conditions every time these services would have to be
-implemented from scratch. It is incredibly hard to get these things completely right the first time,
-and by using \textit{ZooKeeper} all of these potential problems are nullified and a lot of time can
-be saved which can be spent developing the actual application logic rather than spending it on
-debugging synchronisation problems or managing configuration across a distributed network.
-Particularly in the long run, using \textit{ZooKeeper} helps reduce unforeseen complexity for
-applications continuously increasing in size.
+all of these kinds of services, so \textit{ZooKeeper} is a great way to avoid reinventing the wheel
+in that respect. This is especially true given the fact that these highly distributed scenarios
+bring with them a vast amount of potential bugs and race conditions every time these services would
+have to be implemented from scratch. It is incredibly hard to get these things completely right the
+first time and by using \textit{ZooKeeper}, all of these potential problems are nullified and a lot
+of time can be saved which can consequently be spent developing the actual application logic rather
+than spending it on debugging synchronisation problems or managing configuration across a
+distributed network. Particularly in the long run, using \textit{ZooKeeper} helps reduce unforeseen
+complexity for applications continuously increasing in size.
 \cite{zookeeper-homepage}
 
 \subsection{Apache Kafka}
@@ -147,14 +151,15 @@ chronologically.
   \centering
   \adjincludegraphics[max width=\textwidth]{kafka-apis}
   \caption{Visualisation of \textit{Kafka} APIs \cite{kafka-complete-introduction}}
+  \label{fig:kafka-apis}
 \end{figure}
 
-There are four core APIs provided by \textit{Kafka}. The Producer and Consumer APIs are used to
-either post records to a topic or to receive records from a topic, respectively. Then there is the
-Streams API, which is used essentially to tie an application in between one or multiple input
-streams and producing one or multiple output streams. Lastly, there is the Connector API, which
-allows linking \textit{Kafka} to external systems. This is essential for connecting serverless
-functions to streams.
+As seen in \autoref{fig:kafka-apis}, there are four core APIs provided by \textit{Kafka}. The
+Producer and Consumer APIs are used to either post records to a topic or to receive records from a
+topic, respectively. Then there is the Streams API, which is used to essentially tie an application
+in between one or multiple input streams and one or multiple output streams. Lastly, there is the
+Connector API, which allows linking \textit{Kafka} to external systems, this is essential for
+connecting serverless functions to streams.
 \cite{kafka-introduction}
 
 \subsection{Rust}
@@ -163,22 +168,22 @@ functions to streams.
 \textit{Mozilla}. The basic idea of the language is to offer low level system access with focus on
 security, performance and concurrency. \cite{rustbook1, forkjoin}
 
-In a way \textit{Rust} is an alternative to \textit{C}/\textit{C++} with the difference of it having
-support for high level programming language concepts like pattern matching, closures and safe memory
-management. \cite{rustbook1, forkjoin}
+In a way, \textit{Rust} is an alternative to \textit{C}/\textit{C++} with the difference of it
+having support for high level programming language concepts like pattern matching, closures and safe
+memory management. \cite{rustbook1, forkjoin}
 
 Memory management actually differs quite considerably compared to conventional languages like
-\textit{Java} or \textit{C}/\textit{C++}. \textit{Rust} does not use a garbage collector.
-Furthermore, thanks to the ownership model, memory does not need to be freed manually, avoiding
-common pitfalls like a double-free error.
+\textit{Java} or \textit{C}/\textit{C++}. \textit{Rust} does not use a garbage collector, in fact,
+thanks its ownership model, memory does not need to be freed manually at all, avoiding common
+pitfalls like a double-free error.
 
 Like many other modern programming languages, \textit{Rust} has its own package manager, called
 \textit{Cargo}. To some extent, \textit{Cargo} can be compared with \textit{NPM} from the
-\textit{JavaScript} ecosystem. However the amount of packages (a.k.a \textit{Crates}) available in
+\textit{JavaScript} ecosystem. However the amount of packages (a.k.a. \textit{Crates}) available in
 \textit{Rust} is substantially lower compared to \textit{NPM} as \textit{Rust} is a much younger
 language with a smaller community.
 
-Due to \textit{Rust}'s strong emphasis on ownership and typing many concurrency issues are already
+Due to \textit{Rust}'s strong emphasis on ownership and typing, many concurrency issues are already
 caught at compile time. Data races are prevented as it is impossible to have multiple shared
 references to a variable without synchronisation. This concept is also referred as “fearless
 concurrency”. \cite{rustbook2}
@@ -186,32 +191,32 @@ concurrency”. \cite{rustbook2}
 \subsection{Flutter}
 
 \textit{Flutter} is a \textit{UI} toolkit from \textit{Google} for building natively compiled mobile
-applications. With the same code base the application can also be deployed on web and desktop.
-\textit{Flutter} offers many features that make the developing experience easier like
+applications. With the same code base, the application can also be deployed on web and desktop.
+\textit{Flutter} offers many features that make the development experience easier, like
 \textit{Stateful Hot Reload} and filtering application specific error messages on \textit{Android}
-by default. Although \textit{Flutter} is a cross platform framework it is said to still rival native
-performance on \textit{Android} and \textit{iOS} by directly transforming \textit{Flutter} code into
-native code.
+by default. Although \textit{Flutter} is a cross platform framework, it is said to still rival
+native performance on \textit{Android} and \textit{iOS} by directly transforming \textit{Flutter}
+code into native code.
 \cite{flutter}
 
-\textit{Flutter} uses \textit{Dart} as its programming language. So the before mentioned \textit{Flutter}
+\textit{Flutter} uses \textit{Dart} as its programming language. So the aforementioned \textit{Flutter}
 code is actually \textit{Dart} code. \textit{Dart} itself has many language extensions that are well
-suited for mobile application development. For example the language offers a mature and complete
+suited for mobile application development. For example, the language offers a mature and complete
 \textit{async-await} implementation with isolate-based concurrency support. Furthermore its syntax
-is familiar and seems inspired by other popular modern languages. As mentioned before
-\textit{Flutter} transpiles its code to the platform's native instruction set. On mobile this is
-native \textit{ARM} code and on the web it transforms to \textit{JavaScript}. \cite{dart}
+is familiar and seems inspired by other popular modern languages. As mentioned before, \textit{Dart}
+code is transpiled to the platform's native instruction set, this means native \textit{ARM} code on
+mobile devices and \textit{JavaScript} on the web. \cite{dart}
 
 \subsection{Azure Pipelines}
 
-\textit{Azure Pipelines} is a continuous integration (CI) service provided by Microsoft which is
+\textit{Azure Pipelines} is a CI (continuous integration) service provided by Microsoft which is
 used to automatically build and test projects. Given that all major platforms, i.e. Linux, macOS and
 Windows, are supported, projects written in virtually any language can be built and tested. In
-addition to continuous integration, \textit{Azure Pipelines} also offers continuous delivery (CD),
-which can be used to directly publish any build artifacts, e.g. compiled binaries. Like many other
+addition to continuous integration, \textit{Azure Pipelines} also offers CD (continuous delivery),
+which can be used to directly publish any build artefacts, e.g. compiled binaries. Like many other
 CI providers, \textit{Azure Pipelines} provides a free plan for open-source projects.
 \cite{azure-pipelines}
 
 Continuous integration is a very important measure for ensuring that new changes to a project don't
-break existing functionality. Without it, those breaking changes would result in much more work when
-they come to light in the future, possibly even by introducing seemingly unrelated changes.
+break existing functionality. Without CI testing, those breaking changes would result in much more
+work when they come to light in the future.
