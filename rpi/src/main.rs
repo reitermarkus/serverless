@@ -142,15 +142,11 @@ struct KafkaRestError {
 
 impl fmt::Display for KafkaRestError {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    write!(f, "{}", self.description())
+    self.message.fmt(f)
   }
 }
 
 impl Error for KafkaRestError {
-  fn description(&self) -> &str {
-    &self.message
-  }
-
   fn cause(&self) -> Option<&dyn Error> {
     None
   }

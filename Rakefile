@@ -266,3 +266,107 @@ end
 
 desc 'compile all documents'
 task :tex => DOCUMENTS.map { |doc| "tex:#{doc}" }
+
+namespace :rpi do
+  TARGET = 'armv7-unknown-linux-gnueabihf'
+
+  task :build do
+    cd 'rpi' do
+      sh 'cross', 'build', '--release', '--target', TARGET
+    end
+  end
+
+  task :deploy, [:ip] => :build do |task, args|
+    ip = args.ip
+    local_ip = `hostname`
+
+    cd 'rpi' do
+      sh 'scp', "target/#{TARGET}/release/sensors", "pi@#{ip}:/tmp/"
+      sh 'ssh', "pi@#{ip}", '--', <<~SH
+        set -euo pipefail
+
+        sudo timedatectl set-timezone Europe/Vienna
+
+        if ! dpkg -s dnsutils >/dev/null; then
+          sudo apt-get update
+          sudo apt-get install -y dnsutils
+        fi
+
+        hostname="$(dig -4 +short -x "$(hostname -I | awk '{print $1}')")"
+        hostname="${hostname%%.local.}"
+
+        if [ -n "${hostname}" ]; then
+          echo "${hostname}" | sudo tee /etc/hostname >/dev/null
+        fi
+
+        sudo raspi-config nonint do_i2c 0
+
+        if ! cat /etc/modules | grep -q i2c-bcm2708; then
+          echo 'i2c-bcm2708' | sudo tee -a /etc/modules
+        fi
+
+        if ! cat /etc/modules | grep -q i2c-dev; then
+          echo 'i2c-dev' | sudo tee -a /etc/modules
+        fi
+
+        if ! dpkg -s watchdog >/dev/null; then
+          sudo apt-get update
+          sudo apt-get install -y watchdog
+        fi
+
+        if ! cat /etc/modules | grep -q bcm2835_wdt; then
+          echo 'bcm2835_wdt' | sudo tee -a /etc/modules
+        fi
+
+        if ! [ -f /etc/watchdog.conf.sample ]; then
+          sudo cp /etc/watchdog.conf /etc/watchdog.conf.sample
+        fi
+
+        gateway_ip="$(ip route | awk '/^default via ([^\s]+) / { print $3 }')"
+
+        [ -n "${gateway_ip}" ]
+
+        sudo tee /etc/watchdog.conf <<CFG
+        watchdog-device	= /dev/watchdog
+        watchdog-timeout = 10
+        interval = 2
+        max-load-1 = 24
+        ping = ${gateway_ip}
+        CFG
+
+        sudo systemctl enable watchdog.service
+
+        sudo mkdir -p /etc/systemd/system/sensors.service.d
+        sudo touch /etc/systemd/system/sensors.service.d/override.conf
+
+        sudo tee /etc/systemd/system/sensors.service <<CFG
+        [Unit]
+        Description=sensors
+        StartLimitIntervalSec=0
+
+        [Service]
+        Type=simple
+        Environment=I2C_DEVICE=/dev/i2c-1
+        Environment=KAFKA_HOST=#{local_ip}
+        Environment=KAFKA_PORT=8082
+        Environment=RUST_LOG=info
+        ExecStart=/usr/local/bin/sensors
+        Restart=always
+        RestartSec=1
+
+        [Install]
+        WantedBy=multi-user.target
+        CFG
+
+        sudo cp -f /tmp/sensors /usr/local/bin/sensors
+        sudo systemctl enable sensors
+        sudo systemctl restart sensors
+      SH
+    end
+  end
+
+  task :log, [:ip] do |task, args|
+    ip = args.ip
+    sh 'ssh', "pi@#{ip}", '-t', 'journalctl', '-f', '-u', 'sensors'
+  end
+end

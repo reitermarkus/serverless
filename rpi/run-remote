@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-ip="${1}"
-
-ssh pi@"${ip}" -t journalctl -f -u sensors.service
