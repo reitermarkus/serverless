@@ -1,1 +1,22 @@
 \subsection{Kafka}
+
+In our serverless stack, \textit{Apache Kafka} is the first point of contact for our edge devices
+(Raspberry Pis and Smartphones). Additionally, the stack includes \textit{Apache Zookeeper}
+(explained in \autoref{sec:background-zookeeper}), which \textit{Kafka} uses to register itself.
+This way, other services can connect to Zookeeper instead of connecting to Kafka directly, which is
+needed when running multiple \textit{Kafka} instances in a cluster.
+
+Since we wanted to use a unified API to post data to Kafka, our stack also includes \textit{Kafka
+Rest}, which provides a \textit{ReST} (\textit{Representational State Transfer}) API endpoint for
+the \textit{Kafka} core APIs explained in \autoref{sec:background-kafka}. The \textit{ReST} API is
+subsequently used by the mobile application as well as the Raspberry Pi application to post sensor
+data.
+
+Another building block we need in our stack is the \textit{OpenFaaS Kafka Connector}, which is used
+to forward messages from one or multiple topics to the \textit{OpenFaaS Gateway}. In our specific
+case, we have two topics that are forwarded: \texttt{sensor} and \texttt{register-device}.
+
+One more useful thing we have included in our stack is the \textit{Kafka Topics UI}. The
+\textit{Topics UI} provides an overview of all topics and a table of all messages in a given topic.
+Having this information is very helpful when debugging in order to know whether a device is posting
+data at all or to the correct topic.
