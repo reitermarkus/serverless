@@ -20,6 +20,12 @@ services:
       basic_auth: "${BASIC_AUTH:-true}"
       secret_mount_path: "/run/secrets/"
       scale_from_zero: "false"
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', 'http://127.0.0.1:8080/healthz']
+      interval: 10s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
     deploy:
       resources:
         # limits:   # Enable if you want to limit memory usage
