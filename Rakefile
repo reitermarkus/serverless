@@ -8,6 +8,7 @@ require 'yaml'
 require 'net/http'
 require 'json'
 require 'etc'
+require 'benchmark'
 
 def dev?
   !ENV['PRODUCTION']
@@ -133,6 +134,46 @@ namespace :deploy do
     sh 'docker', 'stack', 'deploy', '--compose-file', 'faas/deploy.yml', 'func'
 
     Rake::Task['db:restore'].invoke('faas/db-dump.gz') if windows? && File.exist?('faas/db-dump.gz')
+  end
+
+  task :bench_deploy do
+    def prune_images
+      %w[
+        docker.pkg.github.com/reitermarkus/serverless/database:latest
+        docker.pkg.github.com/reitermarkus/serverless/log-data:latest
+        docker.pkg.github.com/reitermarkus/serverless/filter:latest
+        docker.pkg.github.com/reitermarkus/serverless/register-device:latest
+        docker.pkg.github.com/reitermarkus/serverless/ui:latest
+        docker.pkg.github.com/reitermarkus/serverless/devices:latest
+        docker.pkg.github.com/reitermarkus/serverless/tex-pdf:latest
+      ].each do |f|
+        puts "Removing image for \"#{f}\"."
+        stdout, *_ = Open3.capture3('docker', 'images', '--format', '{{.ID}}', f)
+        id = stdout.chomp
+        sh 'docker', 'image', 'rm', id, '-f'
+      end
+    end
+
+    Benchmark.bm(30) do |bm|
+      sh 'docker', 'swarm', 'leave', '-f' if swarm_active?
+      prune_images
+
+      bm.report('Deploy building functions') do
+        Rake::Task['deploy:swarm'].invoke
+        Rake::Task['build:functions'].invoke('devices')
+        Rake::Task['deploy:functions'].invoke('devices')
+      end
+
+      Rake::Task['deploy:swarm'].reenable
+      Rake::Task['deploy:functions'].reenable
+      sh 'docker', 'swarm', 'leave', '-f' if swarm_active?
+      prune_images
+
+      bm.report('Deploy fetching functions') do
+        Rake::Task['deploy:swarm'].invoke
+        Rake::Task['deploy:functions'].invoke('log-data')
+      end
+    end
   end
 end
 
@@ -359,6 +400,8 @@ namespace :rpi do
         CFG
 
         sudo cp -f /tmp/sensors /usr/local/bin/sensors
+        sudo chmod +x /usr/local/bin/sensors
+
         sudo systemctl enable sensors
         sudo systemctl restart sensors
       SH
