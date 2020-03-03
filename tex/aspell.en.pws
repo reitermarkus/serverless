@@ -59,3 +59,6 @@ NUC
 ARMv
 BEH
 BCM
+subtask
+subcommand
+namespace
