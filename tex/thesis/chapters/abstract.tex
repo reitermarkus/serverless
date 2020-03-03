@@ -1,1 +1,31 @@
 \section*{Abstract}
+
+Cloud computing in the grand scheme of things is still a relative new development, which has seen
+rapid growth in recent years and with that has seen a lot of technologies around it. One of those is
+the concept of \textit{Serverless Computing} or \textit{Function as a Service (FaaS)}. Due to its
+versatile nature, a lot of big players in the cloud computing field jumped on it and have their own
+implementation in their portfolio.
+
+Same as with the \textit{cloud}, the \textit{Internet of Things (IoT)} has also seen large adoption
+in many aspects of life and are an integral part of it. May it be for household appliances or in the
+industry. \textit{IoT} devices can be found everywhere.
+
+This bachelor tries to show the usefulness of \textit{Serverless Computing} in conjunction with
+\textit{IoT} devices by building a infrastructure to host these \textit{serverless functions}, where
+then all \textit{IoT} devices can send their data to. While not a classic \textit{IoT} device there
+is also support for phones on both \textit{Android} and \textit{iOS} to transmit data. This data is
+then further used for analytics and visualised with graphs in a \textit{Web UI}. In order to achieve
+this we decided to use the framework \textit{OpenFaaS} to realise the hosting function platform.
+Furthermore \textit{Kafka} is used to manage all incoming requests from devices. \textit{Kafka} also
+handles the forwarding of requests to functions. For persistence of sensor data we have the
+\textit{NoSQL} database \textit{MongoDB}. The database is of great health when confronted with data
+of \textit{IoT} devices. Having a stack like this also means to deal with a lot of configuration. To
+aid the process of deployment with a \textit{Rake} script which makes everything runnable with only
+one command and finally \textit{Azure Pipelines} as our verification tool. With it we can test all
+parts of our stack and even push the images of functions to a online registry, which makes
+deployment even faster.
+
+In the final chapter of the thesis we also have results regarding function by measuring the latency
+of requests. In addition to that we also provide benchmarks for the startup time of our whole stack,
+where we compare the time to be up and running by building all function on the target machine first,
+with the optimized way of fetching all function images from the registry.
