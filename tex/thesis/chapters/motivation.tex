@@ -6,49 +6,49 @@ computing.
 \subsection{Flexibility}
 
 Using a serverless approach for building software inherently provides more flexibility than the
-traditional approach using a monolithic architecture. This applies to both the development process
-itself as well as the much more diverse deployment options. Traditionally, you would have to choose
-a single programming language for a project since using multiple would increase complexity of both
-the development phase as well as the deployment strategy. Also, the initial setup of a single server
-and its ongoing maintenance cost using only one language is much easier than having to maintain a
-server running multiple different languages. In this regard, serverless computing provides much
-greater flexibility.
+traditional approach of using a monolithic architecture. This applies to both the development
+process itself as well as the much more diverse deployment options presented by serverless
+computing. Traditionally, you would have to choose a single programming language for a project since
+using multiple would increase complexity of both the development phase as well as the deployment
+strategy. Also, the initial setup of a single server and its ongoing maintenance for use with only a
+single language is much easier than having to maintain a server running multiple different
+languages. In this regard, serverless computing provides much greater flexibility.
 
-A program is built from separate functions interacting with one another. These
-functions usually communicate via a JSON API. Functions are programming language agnostic, so as
-long as the language you are using can invoke a web request to call another function, you can use it
-to develop a function. This gives the developer the freedom to choose the best language for a given
-task, rather than sticking to a single language which might not be ideal for some specific tasks.
-Additionally, deployment of functions is managed by the serverless stack, so there is no
-maintenance overhead after the serverless stack is deployed.
+A serverless program is built from separate functions interacting with one another. These functions
+usually communicate via a JSON API. Functions are programming language agnostic, so as long as the
+language you are using can invoke or receive web requests, you can use it to develop a function.
+This gives the developer the freedom to choose the best language for a given task, rather than
+sticking to a single language which might not be ideal for some specific tasks. Additionally,
+deployment of functions is managed by the serverless stack, so once the serverless stack is
+deployed, there is no more maintenance overhead.
 
 Every function is a self-contained unit of execution, usually in the form of a container which can
 be deployed on the serverless stack. This means that the programming language runtime environment
-and all dependencies are therefore also contained in that same container. This allows the developer
-to not only use different programming languages but also different versions of the same language
-without any maintenance difficulties compared to doing the same on a single server.
+and all dependencies are contained in a single container. This allows the developer to not only use
+different programming languages but also different versions of the same language without any
+maintenance difficulties or conflicts compared to doing the same on a single server.
 
 \subsection{Modularity}
 
 The traditional approach of a monolithic architecture is by nature error prone and not failure
-tolerant. If one component crashes all other components on that server might go down as well. With
-serverless functions this problem can be avoided as every function is an individual item and
+tolerant. If one component crashes, all other components on that server might go down as well. With
+serverless functions, this problem can be avoided as every function is an individual item and
 therefore isolated from other functions. This fact makes maintaining systems much easier as problems
-are faster and more efficiently identifiable. Testing is also simpler as one can write tests per
-function instead of chunks in a larger code segment.
+are faster and more efficient to identify. Testing is also simpler as tests can be written for
+individual functions instead of for chunks in a larger code base.
 
 \subsection{Efficiency}
 
 Traditional software stacks often require considerable hardware in order to run software
 efficiently. In our thesis we try to show that rich functionality on the server side can also be
 achieved without expensive hardware with the power of serverless computing. Since the heavy lifting
-is done by the serverless stack and the clients in our case only have to read sensor data, invoke
+is done by the serverless stack and the clients in our case only have to read sensor data and invoke
 web requests, almost any cheap micro-controller is sufficient for processing.
 
 \subsection{Portability}
 
-One of the advantages of serverless computing is portability as one can easily transfer all
-functions from one provider to another provider. In our case however we try to take things further as
-not only the functions are portable, the whole stack in a sense is portable. Every major component
-of the stack is composed of containers, which means as long as \textit{Docker} is installed on the
-host machine the stack should be able to install.
+Another one of the advantages of serverless computing is portability as one can easily transfer all
+functions from one provider to another. In our case however, we try to take things further as not
+only the functions are portable, the whole stack in a sense is portable. Every major component of
+the stack is composed of containers, which means as long as \textit{Docker} is installed on the host
+machine, the stack should be able to run on it.
