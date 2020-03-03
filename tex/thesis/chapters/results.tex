@@ -1,1 +1,79 @@
 \section{Results}
+
+\subsection{Benchmarks}
+
+For our test setup, we deployed our stack on an \textit{Intel NUC}, which is a fairly inexpensive
+mini PC. With the following benchmarks we want to show what such an inexpensive machine is capable
+of when coupled with other inexpensive IoT devices (e.g. Raspberry Pis).
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|l|l|r||}
+    \hline
+    Name                  & Model  & Processor                                                                 & Memory              \\ \hline
+    \textit{Intel NUC}    & 8I5BEH & Intel Core i5-8259U @ \SI{2.30}{\giga\hertz}                              & \SI{16}{\giga\byte} \\ \hline
+    \textit{Raspberry Pi} & 3 B+   & Broadcom BCM2837B0, Cortex-A53 (ARMv8) 64-bit SoC @ \SI{1.4}{\giga\hertz} & \SI{1}{\giga\byte}  \\ \hline
+    Desktop PC            & –      & Intel Core i9-7900X @ \SI{4.7}{\giga\hertz}                               & \SI{64}{\giga\byte} \\ \hline
+  \end{tabular}
+  \caption{Hardware used for Benchmark}
+  \label{tab:benchmark-hardware}
+\end{table}
+
+The specific hardware we used for benchmarking is listed in \autoref{tab:benchmark-hardware} above.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|r|r|}
+    \hline
+    Number of Sensors & Messages per Second \\ \hline
+                    1 &                7.55 \\ \hline
+                    8 &               49.20 \\ \hline
+  \end{tabular}
+  \caption{Benchmark for Messages per Second from a Raspberry Pi to a NUC}
+  \label{tab:benchmark-nuc-raspberry-pi}
+\end{table}
+
+In \autoref{tab:benchmark-nuc-raspberry-pi}, we see the benchmark data for the \texttt{log-data}
+function. For this benchmark, we set the Raspberry Pi to not use any delay between measurements. We
+also disabled the \texttt{CPU Load Aggregate} sensor, since this has an inherent delay of one second
+due to the fact that it calculates the load average for a given duration. The Raspberry Pi
+application collects the data for all sensors in each iteration, which means that we can actually
+get much more throughput with eight sensors than with a single sensor. Thus, we can further conclude
+that the time to produce a measurement is negligible compared to the network latency.
+
+In order to test this theory, we decided to use parallel \texttt{curl} requests.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|r|r|}
+    \hline
+    Number of concurrent Requests & Messages per Second \\ \hline
+                                1 &                61.2 \\ \hline
+                               10 &               239.0 \\ \hline
+                               20 &               322.4 \\ \hline
+                               50 &               379.5 \\ \hline
+  \end{tabular}
+  \caption{Benchmark for Messages per Second from a Desktop PC to a NUC}
+  \label{tab:benchmark-nuc-curl}
+\end{table}
+
+Each \texttt{curl} request in \autoref{tab:benchmark-nuc-curl} contains a single sensor record which
+corresponds to the case in \autoref{tab:benchmark-nuc-raspberry-pi} with a single sensor. By looking
+at this data, we can see that in the case of a single sensor, clearly the Raspberry Pi is the
+bottleneck, not the \textit{NUC}. It is safe to assume that the NUC is able to handle approximately
+400 request per second.
+
+Assuming that it is the case that a \textit{NUC} can handle 400 requests per second, we can deduce
+that a \textit{NUC} is able to process streams from between
+
+$\frac{400}{7.55} \times 1 \approx 53$
+
+and
+
+$\frac{400}{49.20} \times 8 \approx 65$
+
+sensors.
+
+This being a synthetic benchmark, it is likely that in a real world scenario, where sensor data is
+sent only every \textit{x} seconds, the number of supported sensors is actually in the 100s instead
+of only in the 10s.
