@@ -29,7 +29,7 @@ The specific hardware we used for benchmarking is listed in \autoref{tab:benchma
                     1 &                7.55 \\ \hline
                     8 &               49.20 \\ \hline
   \end{tabular}
-  \caption{Benchmark for Messages per Second from a Raspberry Pi to a NUC}
+  \caption{Benchmark for Messages per Second from a Raspberry Pi to a \whitelist{NUC}}
   \label{tab:benchmark-nuc-raspberry-pi}
 \end{table}
 
@@ -53,15 +53,15 @@ In order to test this theory, we decided to use parallel \texttt{curl} requests.
                                20 &               322.4 \\ \hline
                                50 &               379.5 \\ \hline
   \end{tabular}
-  \caption{Benchmark for Messages per Second from a Desktop PC to a NUC}
+  \caption{Benchmark for Messages per Second from a Desktop PC to a \whitelist{NUC}}
   \label{tab:benchmark-nuc-curl}
 \end{table}
 
 Each \texttt{curl} request in \autoref{tab:benchmark-nuc-curl} contains a single sensor record which
 corresponds to the case in \autoref{tab:benchmark-nuc-raspberry-pi} with a single sensor. By looking
 at this data, we can see that in the case of a single sensor, clearly the Raspberry Pi is the
-bottleneck, not the \textit{NUC}. It is safe to assume that the NUC is able to handle approximately
-400 request per second.
+bottleneck, not the \textit{NUC}. It is safe to assume that the \textit{NUC} is able to handle
+approximately 400 request per second.
 
 Assuming that it is the case that a \textit{NUC} can handle 400 requests per second, we can deduce
 that a \textit{NUC} is able to process streams from between
