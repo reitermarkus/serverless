@@ -3,10 +3,6 @@ version: '3.4'
 services:
   gateway:
     image: openfaas/gateway:0.18.10
-    depends_on:
-      - faas-swarm
-      - queue-worker
-      - nats
     ports:
       - 8080:8080
     networks:
@@ -110,8 +106,6 @@ services:
 
   queue-worker:
     image: openfaas/queue-worker:0.9.0
-    depends_on:
-      - nats
     networks:
       - functions
     environment:
@@ -211,8 +205,6 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:${CONFLUENT_PLATFORM_VERSION:-5.4.0}
-    depends_on:
-      - zookeeper
     hostname: kafka
     environment:
       KAFKA_BROKER_ID: 1
@@ -232,10 +224,6 @@ services:
 
   kafka-rest:
     image: confluentinc/cp-kafka-rest:${CONFLUENT_PLATFORM_VERSION:-5.4.0}
-    depends_on:
-      - kafka
-      - schema-registry
-      - zookeeper
     hostname: kafka-rest
     environment:
       ACCESS_CONTROL_ALLOW_ORIGIN_DEFAULT: '*'
@@ -266,8 +254,6 @@ services:
 
   kafka-topics-ui:
     image: landoop/kafka-topics-ui:0.9.4
-    depends_on:
-      - kafka-rest
     environment:
       - KAFKA_REST_PROXY_URL=http://kafka-rest:8082
       - PROXY=true
