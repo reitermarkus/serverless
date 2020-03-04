@@ -12,7 +12,6 @@ Kubernetes
 UI
 UIs
 MarkoJS
-ForegroundService
 Webpack
 rsync
 toolchain
@@ -46,19 +45,10 @@ transpiles
 transpiled
 scalable
 hoc
-artifacts
-ZooKeeper
 photoresistor
 photoresistor's
-Rakefile
 incrementing
 benchmarking
-SoC
-Broadcom
-NUC
-ARMv
-BEH
-BCM
 subtask
 subcommand
 namespace
