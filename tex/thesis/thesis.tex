@@ -13,11 +13,16 @@
 
 \usepackage[export]{adjustbox}
 
-\lstset{basicstyle=\ttfamily,
-  breaklines = true,
-  showstringspaces = false,
-  commentstyle=\color{red},
-  keywordstyle=\color{blue}
+\lstset{
+  basicstyle         = \ttfamily,
+  breaklines         = true,
+  showstringspaces   = false,
+  commentstyle       = \color{red},
+  keywordstyle       = \color{blue},
+  rangeprefix        = \#\#\#\ ,
+  rangebeginsuffix   = \ begin,
+  rangeendsuffix     = \ end,
+  includerangemarker = false,
 }
 
 \usepackage[
@@ -26,6 +31,7 @@
 ]{biblatex}
 \bibliography{thesis}
 
+\usepackage[toc,page]{appendix}
 \usepackage{bookmark}
 \usepackage{hyperref}
 \usepackage{caption}
@@ -55,7 +61,7 @@
   \input{legal.tex}
 
   \newpage
-  \input{./chapters/abstract.tex}
+  \input{chapters/abstract.tex}
 
   \newpage
   \tableofcontents
@@ -68,21 +74,24 @@
   \listofcodes
 
   \newpage
-  \input{./chapters/preface.tex}
+  \input{chapters/preface.tex}
 
   \newpage
-  \input{./chapters/introduction.tex}
+  \input{chapters/introduction.tex}
   \newpage
-  \input{./chapters/background.tex}
+  \input{chapters/background.tex}
   \newpage
-  \input{./chapters/motivation.tex}
+  \input{chapters/motivation.tex}
   \newpage
-  \input{./chapters/implementation.tex}
+  \input{chapters/implementation.tex}
   \newpage
-  \input{./chapters/results.tex}
+  \input{chapters/results.tex}
   \newpage
-  \input{./chapters/conclusion.tex}
+  \input{chapters/conclusion.tex}
 
   \newpage
   \printbibliography
+
+  \newpage
+  \input{appendix.tex}
 \end{document}

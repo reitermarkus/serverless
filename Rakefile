@@ -72,7 +72,10 @@ namespace :build do
   end
 end
 
+### namespace deploy begin begin
 namespace :deploy do
+### namespace deploy begin end
+  ### functions begin
   desc 'deploy functions'
   task :functions do |task, args|
     functions = args.extras
@@ -91,7 +94,9 @@ namespace :deploy do
       end
     end
   end
+  ### functions end
 
+  ### swarm begin
   desc 'deploy swarm'
   task :swarm => :'db:credentials' do
     user = 'admin'
@@ -135,6 +140,7 @@ namespace :deploy do
 
     Rake::Task['db:restore'].invoke('faas/db-dump.gz') if windows? && File.exist?('faas/db-dump.gz')
   end
+  ### swarm end
 
   task :bench_deploy do
     def prune_images
@@ -175,7 +181,9 @@ namespace :deploy do
       end
     end
   end
+### namespace deploy end begin
 end
+### namespace deploy end end
 
 desc 'build functions'
 task :build => :'build:functions'

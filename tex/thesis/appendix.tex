@@ -1,0 +1,26 @@
+\appendix
+\appendixpage
+\addappheadtotoc
+
+\section{Rakefile}
+
+\subsection{\texttt{deploy:functions}}
+\lstinputlisting[
+  language   = Ruby,
+  linerange  = {
+    namespace\ deploy\ begin,
+    functions,
+    namespace\ deploy\ end
+  },
+]{../../Rakefile}
+
+\newpage
+\subsection{\texttt{deploy:swarm}}
+\lstinputlisting[
+  language  = Ruby,
+  linerange = {
+    namespace\ deploy\ begin,
+    swarm,
+    namespace\ deploy\ end
+  },
+]{../../Rakefile}
