@@ -17,6 +17,9 @@
 *.bcf
 *.run.xml
 *.xdv
+*.lof
+*.lot
+*.locode
 
 #FaaS
 faas

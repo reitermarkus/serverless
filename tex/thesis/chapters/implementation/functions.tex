@@ -30,7 +30,7 @@ Another part needed for building a function is a definition file containing the 
 and all other data needed to deploy the functions. One essential part of this definition file is the
 gateway URL, which the \textit{OpenFaaS Watchdog} uses to connect to the \textit{OpenFaaS} gateway.
 
-\begin{figure}[H]
+\begin{code}[H]
   \centering
   \begin{lstlisting}
 version: 1.0
@@ -48,10 +48,10 @@ functions:
       gateway_url: http://gateway:8080
   \end{lstlisting}
   \caption{A definition file for a Rust function called \texttt{filter}.}
-  \label{fig:function-definition}
-\end{figure}
+  \label{code:function-definition}
+\end{code}
 
-In \autoref{fig:function-definition} we can see that there are two different gateway URLs. The first
+In \autoref{code:function-definition} we can see that there are two different gateway URLs. The first
 one, \texttt{provider.gateway}, is used by the \texttt{faas-cli} command line tool in order to know
 where to deploy the function to. The second one, \texttt{functions.filter.environment.gateway\_url}
 is the URL the gateway can be reached from inside the cluster and the one passed to the
@@ -60,7 +60,7 @@ is the URL the gateway can be reached from inside the cluster and the one passed
 \texttt{functions.filter.handler} and the name of the \textit{Docker} image is specified by \\
 \texttt{functions.filter.image}.
 
-Assuming the definition file shown in \autoref{fig:function-definition} is called
+Assuming the definition file shown in \autoref{code:function-definition} is called
 \texttt{filter.yml}, we can build the function using the following command:
 
 \begin{lstlisting}[language=bash]
@@ -151,7 +151,7 @@ calculate the difference between \texttt{begin} and \texttt{end} and then calcul
 \texttt{step} by dividing the difference by \texttt{interval}. We then loop, starting from
 \texttt{begin} until we reach \texttt{end}, incrementing by \texttt{step} in each iteration.
 
-\begin{figure}[H]
+\begin{code}[H]
   \begin{lstlisting}
 '$match': {
   'time': {
@@ -162,10 +162,10 @@ calculate the difference between \texttt{begin} and \texttt{end} and then calcul
   \end{lstlisting}
   \caption{A \textit{MongoDB} \texttt{\$match} statement filtering records with a \texttt{time}
   field containing a date between Feb. 26, 2020 18:23 and Feb. 26, 2020 21:53.}
-  \label{fig:mongodb-match}
-\end{figure}
+  \label{code:mongodb-match}
+\end{code}
 
-As seen in \autoref{fig:mongodb-match}, with \textit{MongoDB} it is very easy to retrieve records for a
+As seen in \autoref{code:mongodb-match}, with \textit{MongoDB} it is very easy to retrieve records for a
 given time span, using the \textit{\$match} pipeline operator.
 
 \subsubsection{The \texttt{ui} Function}
