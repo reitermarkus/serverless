@@ -11,12 +11,12 @@ contains the source code, so depending on the programming language, it either ha
 moved to the correct location straight away. Additionally, the \texttt{Dockerfile} has to install
 the \textit{OpenFaaS Watchdog}. The \textit{OpenFaaS Watchdog} is a service which is used to connect
 the function to the \textit{OpenFaaS} gateway. Historically, the watchdog would pass requests to the
-function via \textit{Standard Input} and the return the function's \textit{Standard Output} as the
+function via \textit{Standard Input} and return the function's \textit{Standard Output} as the
 response. With this method however, the function could not control any aspect of the \textit{HTTP}
 request and response. The new version of the \textit{OpenFaaS Watchdog} offers a few more operation
 modes. The first, called \texttt{http}, forwards the received request to a specified port in the
 function. This means that function templates using this mode have to be written in such a way that
-they include an web server. This way the function can consume the \textit{HTTP} request directly,
+they include a web server. This way the function can consume the \textit{HTTP} request directly,
 which also makes calling functions easier since they can use standard \textit{HTTP} methods and
 status codes. Another new mode is \texttt{static}, which can be used to create very simple functions
 serving static files. \cite{of-watchdog} The \texttt{template.yml} file contains the metadata for
@@ -74,18 +74,18 @@ faas-cli deploy -f filter.yml
 \end{lstlisting}
 
 We chose to write all of our functions in Rust. When we first started, there was not yet an official
-\textit{OpenFaaS} function template for Rust, so we had to create our own. For our custom template,
-we used the builder pattern our \texttt{Dockerfile}. In our case this meant we would first compile
-the Rust function using the official \textit{Docker} image for \textit{Rust}. This image is based on
-\textit{Debian}, which means that we could then copy the compiled function into a bare
+\textit{OpenFaaS} function template for Rust, so we had to create our own. For our custom template -
+\texttt{Dockerfile} -, we used the builder pattern. In our case this meant, that we would first
+compile the Rust function using the official \textit{Docker} image for \textit{Rust}. This image is
+based on \textit{Debian}, which means that we could then copy the compiled function into a bare
 \textit{Debian} image which doesn't include the \textit{Rust} compiler, therefore saving space. This
 resulted in each function image being around \SI{90}{\mega\byte} in size. Still, this was too much
 for a simple function in our opinion.
 
 It is possible to write a \texttt{Dockerfile} without using any base image, using the \texttt{FROM
 scratch} directive. For this to work, however, we need to generate a statically compiled version of
-our functions since there is no operating system providing libraries. By extension, this meant we
-had to replace our compile step, since the official \texttt{Rust} docker image does not provide
+our functions since there is no operating system providing libraries. By extension, this meant, that
+we had to replace our compile step, since the official \texttt{Rust} docker image does not provide
 support for creating statically linked binaries. Thankfully, there exists a \textit{Docker} image
 called \texttt{rust-musl-builder} \cite{rust-musl-builder} for this exact reason. Using the
 \texttt{rust-musl-builder} image, we could reduce the average image size for our functions to around
@@ -115,7 +115,7 @@ function which needs to access the database.
 
 \subsubsection{The \texttt{register-device} Function}
 
-The \texttt{register-device} function is used to, as the name implies, register new devices. This
+The \texttt{register-device} function is used, as the name implies, to register new devices. This
 function is triggered when a new message is posted to the \texttt{register-device} Kafka topic. The
 function handler parses the message, which must contain a device ID and the device's name. If this
 is the case, it then calls the \texttt{database} function in order to insert a new device or update
@@ -180,8 +180,8 @@ these files. This process is explained in more detail in \autoref{sec:webpack}.
 \subsubsection{The \texttt{tex-pdf} Function}
 
 Like The \textit{ui} function, the \texttt{tex-pdf} function is also not a \textit{Rust} function.
-This function is sort of a bonus it is not required for the stack itself at all. \texttt{tex-pdf}
+This function is sort of a bonus, it is not required for the stack itself at all. \texttt{tex-pdf}
 essentially queries the latest successful build from \textit{Azure}, tries to unpack the
 \textit{PDF} in the \textit{thesis} artefact and finally display it in the browser. Therefore always
 the latest version of the thesis will be served with the function and the user does not have to
-compile the document with a \textit{LaTeX toolchain} itself.
+compile the document with a \textit{LaTeX toolchain}.
