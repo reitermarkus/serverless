@@ -20,6 +20,23 @@ of when coupled with other inexpensive IoT devices (e.g. Raspberry Pis).
 \end{table}
 
 The specific hardware we used for benchmarking is listed in \autoref{tab:benchmark-hardware} above.
+The desktop PC and the \textit{NUC} were both connected via ethernet to a \SI{1}{\giga\bit} network
+switch. The \textit{Raspberry Pi} was connected via WiFi to an access point connected to the same
+switch. \autoref{tab:benchmark-network-speed} shows the link speed between the hardware components
+as tested with \texttt{iperf3}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|r|}
+    \hline
+    Connection                         & Speed \\ \hline
+    NUC $\leftrightarrow$ Desktop PC   & \SI{940}{\mega\bit\per\second} \\ \hline
+    NUC $\leftrightarrow$ Raspberry Pi & \SI{55}{\mega\bit\per\second} \\ \hline
+  \end{tabular}
+  \caption{Link speed between hardware components}
+  \label{tab:benchmark-network-speed}
+\end{table}
+
 
 \begin{table}[H]
   \centering
