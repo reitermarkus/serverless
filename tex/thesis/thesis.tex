@@ -7,18 +7,26 @@
 \usepackage{csquotes}
 \usepackage[english]{babel}
 
-\usepackage{xcolor}
+\usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{float}
 \usepackage{listings}
 
 \usepackage[export]{adjustbox}
 
+% http://latexcolor.com
+\definecolor{gray}{rgb}{0.5, 0.5, 0.5}
+\definecolor{ceruleanblue}{rgb}{0.16, 0.32, 0.75}
+\definecolor{green(ncs)}{rgb}{0.0, 0.62, 0.42}
+\definecolor{auburn}{rgb}{0.43, 0.21, 0.1}
+
 \lstset{
   basicstyle         = \ttfamily,
   breaklines         = true,
   showstringspaces   = false,
-  commentstyle       = \color{red},
-  keywordstyle       = \color{blue},
+  identifierstyle    = \color{auburn},
+  commentstyle       = \color{gray},
+  keywordstyle       = \color{ceruleanblue},
+  stringstyle        = \color{green(ncs)},
   rangeprefix        = \#\#\#\ ,
   rangebeginsuffix   = \ begin,
   rangeendsuffix     = \ end,

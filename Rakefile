@@ -113,7 +113,7 @@ namespace :deploy do
     end
 
     hostname = Socket.gethostname
-    puts "Setting Kafka hostname to “#{hostname}”…"
+    puts "Setting Kafka hostname to '#{hostname}'."
     ENV['KAFKA_PUBLIC_HOSTNAME'] = hostname
 
     ENV['BASIC_AUTH'] = dev? ? 'false' : 'true'
@@ -135,7 +135,7 @@ namespace :deploy do
     mkdir_p db_dir
     ENV['DATABASE_DIR'] = db_dir
 
-    puts 'Deploying stack…'
+    puts 'Deploying stack.'
     sh 'docker', 'stack', 'deploy', '--compose-file', 'faas/deploy.yml', 'func'
 
     Rake::Task['db:restore'].invoke('faas/db-dump.gz') if windows? && File.exist?('faas/db-dump.gz')
