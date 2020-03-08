@@ -1,20 +1,20 @@
 \subsection{Serverless Stack}
 
-Arguably the main part of our Bachelor thesis is the serverless stack hence it's also in the title
-of the project. When doing research for our Bachelor project, thinking about the serverless stack
-was one of the first things we did. We came across many different serverless frameworks.
-\textit{OpenWhisk}, \textit{Fission} and \textit{Kubeless} just to name a few. While all of those
-seem to have their benefits, none of them seemed to be as versatile as \textit{OpenFaaS}.
+Arguably, the main part of our thesis is the serverless stack hence it's also in the title of the
+project. When doing research for our project, thinking about the serverless stack was one of the
+first things we did. We came across many different serverless frameworks. \textit{OpenWhisk},
+\textit{Fission} and \textit{Kubeless} just to name a few. While all of those seem to have their
+benefits, none of them seemed to be as versatile as \textit{OpenFaaS}.
 
 \textit{OpenFaaS} poses itself to have first class support for \textit{Docker Swarm} and being
 \textit{Kubernetes} native. The former was particularly interesting for us as this meant that we
 could test the framework without having to install any external tool except for  \textit{Docker}.
 
 Running was as simple as cloning the \textit{OpenFaaS} repository, calling \texttt{docker swarm
-init} and executing the provided initialisation script. Deploying an actual function is equally as
+init} and executing the provided initialisation script. Deploying an actual function is equally
 simple. One has the option to either deploy a function from the store through the nicely designed
 \textit{OpenFaaS} gateway on port 8080 or with the preferred way, which is using the
-\textit{faas-cli}.
+\texttt{faas-cli} command line tool.
 
 Deploying a function from the store with it would look as follows:
 
@@ -22,7 +22,7 @@ Deploying a function from the store with it would look as follows:
 faas store deploy figlet
 \end{lstlisting}
 
-where \texttt{figlet} is the name of the function in the store.
+Here, \texttt{figlet} is the name of the function in the store.
 
 After gaining a grasp of how the platform works, we decided to put our own spin on it by firstly
 modifying the given deploy script to our needs and porting it from \textit{Bash} to \textit{Rust}
@@ -39,12 +39,12 @@ use our example store function \texttt{figlet}:
 faas store deploy figlet --annotation topic="faas-request"
 \end{lstlisting}
 
-The deployment aspect is the same as before therefore the interesting part is the \\
+The deployment aspect is the same as before, therefore the interesting part is the \\
 \texttt{-{}-annotation} flag, where \texttt{topic="faas-request"} is the \textit{Kafka} topic the
 function is supposed to listen to and act on. We subsequently can look for the result in the logs of
 the connector service. \\
 While the feature of deploying functions from the store is really nice, it is not suitable for our
-use case, as we highly depend on custom written functions.
+use case, as we highly depend on custom functions written by ourselves.
 
 \begin{figure}[H]
   \centering
