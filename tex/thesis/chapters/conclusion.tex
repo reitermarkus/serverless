@@ -1,7 +1,7 @@
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
 
-As in the thesis explained, building a infrastructure like the one we have, is not a trivial task
+As explained in the thesis, building an infrastructure like the one we have is not a trivial task
 and requires an extensive amount of research. The final result then however shows the flexibility
 and benefits of our stack and by extension of \textit{Serverless Computing}. It is trivial to switch
 the programming environment as one only has to write a new function and provide a corresponding
@@ -10,22 +10,22 @@ as well, since it offers high scalability and parallelism of invocations, which 
 support an arbitrary amount of devices and is mostly only limited by the hardware it is running on.
 While \textit{Kafka} adds a bit of overhead, its managing capabilities are especially useful in the
 case of a high amount of connected clients. The choice of a host for persisting data in a project
-like this is also very important. \textit{MongoDB} proves to be capable in that regard. With its
-\textit{JSON} inspired documents, it makes processing easy for devices with low hardware
-specifications as representing data with \textit{JSON} is straight forward. Unfortunately the same
-cannot be said, when dealing with mobile applications in a \textit{cross platform} way. The
-\textit{cross platform} aspect in our project basically limits itself to the user interface. Newer
+like this is also very important. \textit{MongoDB} proves to be capable in that regard. Its
+\textit{JSON} inspired documents make it easy for devices with low hardware specifications to
+process data as representing data with \textit{JSON} is straight forward. Unfortunately the same
+cannot be said when dealing with mobile applications in a \textit{cross platform} way. The
+\textit{cross platform} aspect in our project is essentially limited to the user interface. Newer
 versions of both \textit{Android} and \textit{iOS} do not work well when confronted with the
 requirement of always having to send data in the background, as both platforms impose energy saving
-restrictions to a degree and therefore prevent the application from working as intended.
+restrictions and therefore prevent the application from working as intended.
 
-Ultimately is our project more supposed to act as a proof of concept and give an insight what could
+Ultimately, our project is supposed to act more as a proof of concept and give an insight what could
 be possible with this kind of technology. Although the mobile application is not ideal from a
-usability standpoint as mentioned before, from the standpoint of our \textit{OpenFaaS} stack however
-they are also a success as they show the capability of the infrastructure of dealing with various
-different devices. Our project can be therefore used as a basis of future work as there is still
-room for improvement especially in the latency department. The technology of \textit{Serverless
-Computing} seems to be more akin to deployment of a larger scale where many devices send data at the
-same time. Optimising throughput is not the only thing, that still can be done. Security aspects
-like roles and authorisation could also be imposed in order to control who and which device can call
-a function.
+usability standpoint as mentioned before. From the standpoint of our \textit{OpenFaaS} stack
+however, it is also a success as it shows the capability of the infrastructure of dealing with
+various different devices. Our project can therefore be used as a basis for future work as there is
+still room for improvement, especially in the latency department. The technology of
+\textit{Serverless Computing} seems to be more suited for deployment on a larger scale where many
+devices send data at the same time. Optimising throughput is not the only thing that still can be
+done. Security aspects like roles and authorisation could also be imposed in order to control who
+and which device is allowed to call a function.
