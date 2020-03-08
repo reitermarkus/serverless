@@ -20,14 +20,14 @@ have a fully supported \textit{Android} version and also an \textit{iOS} version
 functionality.
 
 Finding the ideal tool for our job of creating an application supporting both \textit{iOS} and
-\textit{Android} seemed at first pretty easy. We chose to use \textit{React Native} as we both
-already have experience with \textit{React} itself and the approach to \textit{UI design} seemed
-equally elegant.
+\textit{Android} seemed at first pretty easy. We chose to use \textit{React Native}
+\cite{react-native} as we both already have experience with \textit{React} \cite{react} itself and
+the approach to \textit{UI design} in \textit{React Native} seemed equally elegant.
 
 Getting started with \textit{React Native} was rather fast and effortless, the same however could
 not be said anymore once we progressed further with the project. At first things were looking good
-as the UI did properly respond to data from sensors / CPU but as we added more and more data for
-display, the UI got more and more sluggish to the point that it could not be considered usable
+as the UI did properly respond to data from sensors but as we added more and more data for
+display, the UI got more and more sluggish, to the point that it could not be considered usable
 anymore. Unfortunately this was not the only problem.
 
 By nature the application relies heavily on \textit{native code}. The main culprit for this is the
@@ -52,12 +52,12 @@ some time to get used to and be productive with. After a while however the proce
 part of the \textit{React Native} application could almost fully be reused for the \textit{Flutter}
 version of the app. The surprisingly easy to use \textit{bridge} between native code and
 \textit{Dart} in \textit{Flutter} made the transition from \textit{React Native} regarding native
-code on \textit{Android} painless.
+code on \textit{Android} hassle free.
 
 One of the reasons we first chose to use \textit{React Native} was the extensive community support.
 Getting sensor data from almost all supported sensors on \textit{iOS} was as simple as including a
 package. The same cannot be said about \textit{Flutter}. For that reason we also had to write some
-native code for \textit{iOS} which splits the code base further.
+native code for \textit{iOS}, which splits the code base even further.
 
 The finished application now contains four Views:
 
@@ -89,7 +89,7 @@ The finished application now contains four Views:
   server and the \textit{URL} where the server is located.}
 \end{figure}
 
-The most important part about the application however is sending data to a \textit{Kafka} topic
-which then invokes a \textit{serverless function}. To achieve this we wrap all data into categories
-and send them to the specific topic in \textit{Kafka} via \textit{JSON}. The task of the
-\textit{serverless function} is then to push the data into our \textit{MongoDB} database.
+The most important part about the application however is sending data to a \textit{Kafka} topic.
+\textit{Kafka} then invokes a \textit{serverless function}. The task of the \textit{serverless
+function} is then to push the data into our \textit{MongoDB} database. To achieve this we wrap all
+data into categories and send them to the specific topic in \textit{Kafka} via \textit{JSON}.
