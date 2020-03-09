@@ -10,7 +10,7 @@ In our case we used the \textit{CI} platform for 6 jobs, that are \textit{app}, 
 \subsubsection{The \texttt{app} job}
 
 In \textit{app} we build and test our \textit{Flutter mobile application}. For the \textit{vmImage}
-the job will run on we have to choose \textit{macOS} in order to build the application for
+the job will run on, we have to choose \textit{macOS} in order to build the application for
 \textit{Android} and \textit{iOS} since \textit{Apple} restricts building of \textit{iOS apps} to
 \textit{macOS}.
 
@@ -26,7 +26,7 @@ multiple steps. \textit{Rasperry Pis} use \textit{ARM} as there instruction set 
 from the instruction set used in the virtual machines of \textit{Azure}. A simple compile of the
 application is for this reason not possible. In order to run the program on the \textit{Rasperry
 PI}, the application actually has to be cross compiled with the correct toolchain
-\textit{armv7-unknown-linux-gnueabi}.
+\texttt{armv7-unknown-linux-gnueabi}.
 
 \subsubsection{The \texttt{function} job}
 \label{sec:azure-function}
