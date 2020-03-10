@@ -51,12 +51,13 @@ functions:
   \label{code:function-definition}
 \end{code}
 
-In \autoref{code:function-definition} we can see that there are two different gateway URLs. The first
-one, \texttt{provider.gateway}, is used by the \texttt{faas-cli} command line tool in order to know
-where to deploy the function to. The second one, \texttt{functions.filter.environment.gateway\_url}
-is the URL the gateway can be reached from inside the cluster and the one passed to the
-\textit{OpenFaaS Watchdog}. Furthermore, the function template is specified using
-\texttt{functions.filter.lang}, the path the the function's source code is given by \\
+In \autoref{code:function-definition} we can see that there are two different gateway URLs. The
+first one, \texttt{provider.gateway}, is used by the \texttt{faas-cli} command line tool in order to
+know where to deploy the function to. The second one,
+\texttt{functions.filter.environment.gateway\_url} is the URL the gateway can be reached from inside
+the cluster and the one passed to the \textit{OpenFaaS Watchdog}. Furthermore, the function template
+is specified using \texttt{functions.filter.lang}, the path the function's source code is given by
+\\
 \texttt{functions.filter.handler} and the name of the \textit{Docker} image is specified by \\
 \texttt{functions.filter.image}.
 

@@ -22,7 +22,7 @@ on the \textit{Rasperry Pi} in order to measure sensor data. The program is writ
 sufficient. Unfortunately \textit{Azure Pipelines} virtual machines do not have \textit{Rust}
 installed by default, therefore we have to rely on a template provided by the \textit{Rust Cargo
 team} \cite{rust-cargo}. This \textit{Azure Pipelines} job however is not trivial and requires
-multiple steps. \textit{Rasperry Pis} use \textit{ARM} as there instruction set and therefore differ
+multiple steps. \textit{Rasperry Pis} use \textit{ARM} as their instruction set and therefore differ
 from the instruction set used in the virtual machines of \textit{Azure}. A simple compile of the
 application is for this reason not possible. In order to run the program on the \textit{Rasperry
 PI}, the application actually has to be cross compiled with the correct toolchain
@@ -33,16 +33,16 @@ PI}, the application actually has to be cross compiled with the correct toolchai
 
 With the \textit{functions} job we build all the \textit{OpenFaaS} functions in the pipeline. It is
 also arguably the most complex job since it requires multiple steps. First off in order to deploy
-functions in \textit{OpenFaaS} the \textit{OpenFaaS CLI} is required and for that reason it has to
-be installed as well. Since our whole deploy script is written \textit{Ruby} or more specifically in
-\textit{Rake} we also need to install that. The next step is the most important one of this job, the
-actual build of the functions. Compiling \textit{Rust} is rather slow and therefore occupies about
-20 minutes on \textit{Azure} for building all functions. Build those functions, however is not only
-time consuming on the \textit{CI} platform. Deploying the whole stack on our test device, the
-\textit{Intel NUC} also takes some time, mainly because of function compiling. For this reason we
-have a further step in the \textit{functions} job, which pushes all images to the \textit{GitHub
-Package registry}. Every subsequent fresh deploy then only needs to pull the images from the
-registry instead of building them each time.
+functions in \textit{OpenFaaS} the \textit{OpenFaaS CLI} \cite{faas-cli} is required and for that
+reason it has to be installed as well. Since our whole deploy script is written in \textit{Ruby} or
+more specifically in \textit{Rake} we also need to install that. The next step is the most important
+one of this job, the actual build of the functions. Compiling \textit{Rust} is rather slow and
+therefore occupies about 20 minutes on \textit{Azure} for building all functions. Building those
+functions, however is not only time consuming on the \textit{CI} platform. Deploying the whole stack
+on our test device, the \textit{Intel NUC} also takes some time, mainly because of function
+compiling. For this reason we have a further step in the \textit{functions} job, which pushes all
+images to the \textit{GitHub Package registry} \cite{github-registry}. Every subsequent fresh deploy
+then only needs to pull the images from the registry instead of building them each time.
 
 \begin{figure}[H]
   \centering
@@ -57,17 +57,16 @@ The \textit{UI} job is among the fastest running jobs as it only has to build th
 
 \subsubsection{The \texttt{spellcheck} job}
 
-On the other hand the \textit{spellcheck} job is much more interesting and also is generally way
-more handy. The main purpose of it is, to check if the spelling conforms with \textit{aspell's}
-British English dictionary. Unfortunately in our case the default output of \textit{aspell} is too
-basic and for this reason we need a script (modified version of \cite{aspell-awk}) to make it more
-useful. By default \textit{aspell} only outputs errors without any more context. However we would
-like to have it a bit more verbose. Because \textit{aspell's} support for \textit{LaTeX} is not
-quite as good as we would like it to be, we first have to remove all content inside of
-\textit{lstlisting} commands. The next step is to then check all \textit{LaTeX} documents with
-\textit{aspell} and finally we pipe that output into \textit{Awk} to get line number information.
-The script then essentially fails if there is an output and passes if there is none (no spelling
-mistakes).
+On the other hand the \textit{spellcheck} job is much more interesting. The main purpose of it is,
+to check if the spelling conforms with \textit{aspell's} British English dictionary. Unfortunately
+in our case the default output of \textit{aspell} is too basic and for this reason we need a script
+(modified version of \cite{aspell-awk}) to make it more useful. By default \textit{aspell} only
+outputs errors without any more context. However we would like to have it a bit more verbose.
+Because \textit{aspell's} support for \textit{LaTeX} is not quite as good as we would like it to be,
+we first have to remove all content inside of \textit{lstlisting} commands. The next step is to
+check all \textit{LaTeX} documents with \textit{aspell} and finally we pipe that output into
+\textit{Awk} to get line number information. The script then essentially fails if there is an output
+and passes if there is none (no spelling mistakes).
 
 \begin{figure}[H]
   \begin{lstlisting}[language=bash, basicstyle=\footnotesize\ttfamily]
@@ -94,10 +93,11 @@ mistakes).
 \subsubsection{The \texttt{tex} job}
 
 The last function is \textit{tex}, which builds the initial presentation and the thesis on each
-commit. To accomplish this we use the \textit{mirisbowring/texlive\_ctan\_full Docker image}. This
-image provides as with a complete \textit{LaTeX} environment without much configuration hassle.
-After a successful build we make use of the \textit{continues delivery} aspect of \textit{Azure
-Pipelines} by hosting the compiled \textit{LaTeX} document as an artefact on \textit{Azure}.
+commit. To accomplish this we use the \textit{mirisbowring/texlive\_ctan\_full Docker image}
+\cite{tex-hub}. This image provides us with a complete \textit{LaTeX} environment without much
+configuration hassle. After a successful build we make use of the \textit{continues delivery} aspect
+of \textit{Azure Pipelines} by hosting the compiled \textit{LaTeX} document as an artefact on
+\textit{Azure}.
 
 \begin{figure}[H]
   \centering
