@@ -1,0 +1,32 @@
+\makeatletter
+\@ifclassloaded{beamer}{
+  \usetheme{metropolis}
+
+  \usepackage{fontspec}
+  \defaultfontfeatures{Ligatures=TeX}
+
+  \usefonttheme{professionalfonts}
+  \usepackage[familydefault,light]{Chivo}
+}{
+  \linespread{1.25}
+}
+\makeatother
+
+\usepackage{graphicx}
+\usepackage{graphbox}
+\graphicspath{ {../assets/} }
+
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{nameref}
+
+\usepackage[
+  binary-units = true,
+  per-mode     = symbol,
+]{siunitx}
+
+\newcommand{\whitelist}[1]{#1}
+
+\title{IoT Data Analytics \\ using Serverless Computing}
+\author{Michael Kaltschmid \& Markus Reiter}
+\date{}

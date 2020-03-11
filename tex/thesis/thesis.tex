@@ -1,7 +1,5 @@
 \documentclass[a4paper,12pt,parskip]{scrartcl}
 
-\linespread{1.25}
-
 \usepackage{lmodern}
 
 \usepackage{csquotes}
@@ -41,28 +39,10 @@
 
 \usepackage[toc,page]{appendix}
 \usepackage{bookmark}
-\usepackage{hyperref}
 \usepackage{caption}
-\usepackage{cleveref}
-\usepackage{nameref}
-
-\usepackage[
-  binary-units = true,
-  per-mode     = symbol,
-]{siunitx}
-
-\usepackage{graphicx}
-\usepackage{graphbox}
-\graphicspath{ {../assets/} }
-
 \DeclareCaptionType{code}[Code Listing][List of Code Listings]
 
-\newcommand{\whitelist}[1]{#1}
-
-\title{IoT Data Analytics \\ using Serverless Computing}
-
-\author{Michael Kaltschmid \& Markus Reiter}
-\date{}
+\input{../common.tex}
 
 \begin{document}
   \maketitle
