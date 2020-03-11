@@ -7,4 +7,8 @@ push @generated_exts, 'xdv';
 
 $bibtex_use = 2;
 
-@default_files = ('presentation/presentation.tex', 'thesis/thesis.tex');
+@default_files = (
+  'initial-presentation/initial-presentation.tex',
+  'final-presentation/final-presentation.tex',
+  'thesis/thesis.tex'
+);

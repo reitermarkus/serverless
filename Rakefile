@@ -270,7 +270,7 @@ namespace :db do
   end
 end
 
-DOCUMENTS = %w[presentation thesis].freeze
+DOCUMENTS = %w[initial-presentation final-presentation thesis].freeze
 
 namespace :tex do
   DOCUMENTS.each do |doc|
@@ -280,11 +280,6 @@ namespace :tex do
 
       cd 'tex' do
         sh 'latexmk', '-cd', "#{doc}/#{doc}.tex", *watch_arg
-
-        cd 'thesis' do
-          sh 'ls', '-a'
-          sh 'pwd'
-        end
       end
     end
   end
