@@ -12,7 +12,6 @@
 \RequirePackage{amssymb}
 \RequirePackage{amsthm}
 \RequirePackage{floatflt}
-\RequirePackage[latin1]{inputenc}
 \RequirePackage[%
  bookmarks,%
  plainpages=false,%
@@ -87,8 +86,8 @@
 \renewcommand\appendix{%
  \backmatter
  \phantomsection{\addcontentsline{toc}{chapter}{\bibname}}
- \bibliographystyle{plain}
- \bibliography{\@bibfile}
+% \bibliographystyle{plain}
+% \bibliography{\@bibfile}
  \@OLDappendix
 }
 
@@ -152,29 +151,29 @@
  \renewcommand*{\@makefnmark}{\rlap\@oldmakefnmark}
 
  \begin{floatingfigure}[l]{35mm}
-  \includegraphics{uibk-logo.pdf}
+  \includegraphics[width=10em]{uibk-logo.pdf}
  \end{floatingfigure}
  \ \vspace{-2.4em}
 
  \begin{flushright}
-  {\sf
-   {\LARGE \university}
-   \vspace{\stretch{1}}
-   {\textbf {\large \institute \ }}
-   \vspace{\stretch{2}}
-   {\LARGE \\ \textbf{\@title} \\ \ }
-   \vspace{\stretch{1}}
-   {\textbf {\large \\ \kindname \\ \ }}
-   {\large \\ \@publishers \\ \ }
-   \vspace{\stretch{1}}
-   {\bfseries
-    {\large \\ \@author \\
-     \ifx\@matriculationnumber\@empty{}\else{\@matriculationnumber}\fi
-    \ }
+   {\normalfont \sffamily
+     {\LARGE \university}
+     \vspace{\stretch{1}}
+     {\textbf {\large \institute \ }}
+     \vspace{\stretch{2}}
+     {\LARGE \\ \textbf{\@title} \\ \ }
+     \vspace{\stretch{1}}
+     {\textbf {\large \\ \kindname \\ \ }}
+     {\large \\ \@publishers \\ \ }
+     \vspace{\stretch{1}}
+     {\bfseries
+       {\large \\ \@author \\
+         \ifx\@matriculationnumber\@empty{}\else{\@matriculationnumber}\fi
+       \ }
+     }
+     \vspace{\stretch{1}}
+     {\large \\ Innsbruck \\ \today{} \\ \ }
    }
-   \vspace{\stretch{1}}
-   {\large \\ Innsbruck \\ \today{} \\ \ }
-  }
  \end{flushright}
 
  \setcounter{footnote}{0}%
