@@ -28,5 +28,4 @@ functions/ui/*
 
 node_modules
 
-!tex/assets/implementation-diagram.pdf
-!tex/assets/wiring.pdf
+!tex/assets/*.pdf
