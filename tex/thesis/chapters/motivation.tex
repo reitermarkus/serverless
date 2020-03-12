@@ -15,20 +15,6 @@ strategy. Also, the initial setup of a single server and its ongoing maintenance
 single language is much easier than having to maintain a server running multiple different
 languages. In this regard, serverless computing provides much greater flexibility.
 
-A serverless program is built from separate functions interacting with one another. These functions
-usually communicate via a JSON API. Functions are programming language agnostic, so as long as the
-language you are using can invoke or receive web requests, you can use it to develop a function.
-This gives the developer the freedom to choose the best language for a given task, rather than
-sticking to a single language which might not be ideal for some specific tasks. Additionally,
-deployment of functions is managed by the serverless stack, so once the serverless stack is
-deployed, there is no more maintenance overhead.
-
-Every function is a self-contained unit of execution, usually in the form of a container which can
-be deployed on the serverless stack. This means that the programming language runtime environment
-and all dependencies are contained in a single container. This allows the developer to not only use
-different programming languages but also different versions of the same language without any
-maintenance difficulties or conflicts compared to doing the same on a single server.
-
 \section{Modularity}
 
 The traditional approach of a monolithic architecture is by nature error prone and not failure

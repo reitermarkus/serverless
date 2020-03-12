@@ -15,10 +15,10 @@ containers and microservices. \textit{Serverless Computing} offers developers a 
 programming model for creating cloud applications while minimising operational concerns.
 \cite{servprog}
 
-The term “serverless” can be confusing, since physical server hardware is of course still needed in
-order to run applications. The main point is that the application user or developer does not need to
-manage scaling, plan for variable capacity or maintain any other aspect of the servers. The
-management of all of these things is provided as a service from the cloud provider.
+The name “serverless computing” is not quite fitting, since physical server hardware is of course
+still needed in order to run applications. The main point is that the application user or developer
+does not need to manage scaling, plan for variable capacity or maintain any other aspect of the
+servers. The management of all of these things is provided as a service from the cloud provider.
 \cite{wikiservcomp}
 
 \subsection{Layers of Cloud Computing}
@@ -51,6 +51,22 @@ Now, in the era of serverless computing, there is yet again a new layer of abstr
 run individual functions in. An application deployed in a FaaS environment consists of multiple
 functions interacting with one another whereas in a PaaS environment, an application is deployed as
 a single unit.
+
+\subsection{Functions}
+
+A serverless program is built from separate functions interacting with one another. These functions
+usually communicate via a JSON API. Functions are programming language agnostic, so as long as the
+language you are using can invoke or receive web requests, you can use it to develop a function.
+This gives the developer the freedom to choose the best language for a given task, rather than
+sticking to a single language which might not be ideal for some specific tasks. Additionally,
+deployment of functions is managed by the serverless stack, so once the serverless stack is
+deployed, there is no more maintenance overhead.
+
+Every function is a self-contained unit of execution, usually in the form of a container which can
+be deployed on the serverless stack. This means that the programming language runtime environment
+and all dependencies are contained in a single container. This allows the developer to not only use
+different programming languages but also different versions of the same language without any
+maintenance difficulties or conflicts compared to doing the same on a single server.
 
 \section{Docker}
 
