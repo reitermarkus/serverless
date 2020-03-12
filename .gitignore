@@ -18,6 +18,7 @@
 *.run.xml
 *.xdv
 *.lof
+*.lol
 *.lot
 *.locode
 

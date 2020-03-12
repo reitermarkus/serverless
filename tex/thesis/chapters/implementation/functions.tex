@@ -1,4 +1,4 @@
-\subsection{Functions}
+\section{Functions}
 
 With the OpenFaaS framework, every function consists of three parts: a function template, the
 function's source code and a definition file.
@@ -92,7 +92,7 @@ called \texttt{rust-musl-builder} \cite{rust-musl-builder} for this exact reason
 \texttt{rust-musl-builder} image, we could reduce the average image size for our functions to around
 \SI{15}{\mega\byte}, a sixth of their original size.
 
-\subsubsection{The \texttt{database} Function}
+\subsection{The \texttt{database} Function}
 
 One of the core building blocks of our project is the database, which stores information about
 devices and is used for persistently storing the data received from those devices. For this reason,
@@ -114,7 +114,7 @@ format MongoDB and by extension the MongoDB Rust driver uses. This allows other 
 this function in order to interact with the database instead of duplicating this logic in every
 function which needs to access the database.
 
-\subsubsection{The \texttt{register-device} Function}
+\subsection{The \texttt{register-device} Function}
 
 The \texttt{register-device} function is used, as the name implies, to register new devices. This
 function is triggered when a new message is posted to the \texttt{register-device} Kafka topic. The
@@ -122,7 +122,7 @@ function handler parses the message, which must contain a device ID and the devi
 is the case, it then calls the \texttt{database} function in order to insert a new device or update
 an existing device's name.
 
-\subsubsection{The \texttt{log-data} Function}
+\subsection{The \texttt{log-data} Function}
 
 Similarly to the \texttt{register-device} function, the \texttt{log-data} function is triggered when
 a new message is posted to the \texttt{log-data} topic. A message is expected to contain a device
@@ -133,14 +133,14 @@ error code. Afterwards, the \texttt{database} function is called in order to add
 the list of supported data types of the given device. Then, another call to the \texttt{database}
 function is made to insert the data in the collection for the corresponding data type.
 
-\subsubsection{The \texttt{devices} Function}
+\subsection{The \texttt{devices} Function}
 
 The \texttt{devices} is probably the simplest function in our project. It calls the
 \texttt{database} function to retrieve a list of all registered devices and their corresponding data
 types, converts the list from \textit{BSON} to \textit{JSON} and then returns it. It is used by the
 \textit{UI} for displaying a list of all devices.
 
-\subsubsection{The \texttt{filter} Function}
+\subsection{The \texttt{filter} Function}
 
 Another function that is used by the \textit{UI} is the filter function. Given a device ID, it
 returns the logged data for a specified data type. The function supports calculating averages for a
@@ -169,7 +169,7 @@ calculate the difference between \texttt{begin} and \texttt{end} and then calcul
 As seen in \autoref{code:mongodb-match}, with \textit{MongoDB} it is very easy to retrieve records for a
 given time span, using the \textit{\$match} pipeline operator.
 
-\subsubsection{The \texttt{ui} Function}
+\subsection{The \texttt{ui} Function}
 
 Unlike many other functions, the \texttt{ui} function is not a \textit{Rust} function. Instead, it
 utilises the new \textit{OpenFaaS Watchdog} mode called \texttt{static}. With it, we can create a
@@ -178,7 +178,7 @@ files are an \texttt{index.html}, a \texttt{style.css} and a \texttt{bundle.js}.
 written purely in \textit{JavaScript}, we can use a single \texttt{webpack} command to produce all
 these files. This process is explained in more detail in \autoref{sec:webpack}.
 
-\subsubsection{The \texttt{tex-pdf} Function}
+\subsection{The \texttt{tex-pdf} Function}
 
 Like The \textit{ui} function, the \texttt{tex-pdf} function is also not a \textit{Rust} function.
 This function is sort of a bonus, it is not required for the stack itself at all. \texttt{tex-pdf}

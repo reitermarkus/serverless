@@ -1,10 +1,10 @@
-\section{Motivation}
+\chapter{Motivation}
 \label{sec:motivation}
 
 In this section, we describe our motivation for exploring IoT data analysis using serverless
 computing.
 
-\subsection{Flexibility}
+\section{Flexibility}
 
 Using a serverless approach for building software inherently provides more flexibility than the
 traditional approach of using a monolithic architecture. This applies to both the development
@@ -29,7 +29,7 @@ and all dependencies are contained in a single container. This allows the develo
 different programming languages but also different versions of the same language without any
 maintenance difficulties or conflicts compared to doing the same on a single server.
 
-\subsection{Modularity}
+\section{Modularity}
 
 The traditional approach of a monolithic architecture is by nature error prone and not failure
 tolerant. If one component crashes, all other components on that server might go down as well. With
@@ -38,7 +38,7 @@ therefore isolated from other functions. This fact makes maintaining systems muc
 are faster and more efficient to identify. Testing is also simpler as tests can be written for
 individual functions instead of for chunks in a larger code base.
 
-\subsection{Efficiency}
+\section{Efficiency}
 
 Traditional software stacks often require considerable hardware in order to run software
 efficiently. In our thesis we try to show that rich functionality on the server side can also be
@@ -46,7 +46,7 @@ achieved without expensive hardware with the power of serverless computing. Sinc
 is done by the serverless stack and the clients in our case only have to read sensor data and invoke
 web requests, almost any cheap micro-controller is sufficient for processing.
 
-\subsection{Portability}
+\section{Portability}
 
 Another one of the advantages of serverless computing is portability as one can easily transfer all
 functions from one provider to another. In our case however, we try to take things further as not

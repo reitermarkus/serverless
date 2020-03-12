@@ -1,4 +1,4 @@
-\subsection{Serverless UI}
+\section{Serverless UI}
 
 Another instrumental part of the project is the UI. Without any form of visualisation our whole data
 gathering process would not be of much use. For this reason we decided early on what kind of front
@@ -7,14 +7,14 @@ end web development stack we would use. Since both us are familiar with \textit{
 \textit{virtual DOM} to render \textit{UI} elements and to update \textit{UI} elements reactively on
 UI change. However we still decided on using \textit{MarkoJS} \cite{marko}.
 
-\subsubsection{MarkoJS}
+\subsection{MarkoJS}
 
 \textit{MarkoJS} shares many of the same benefits as \textit{React} with some added flexibility like
 \textit{concise HTML syntax} which makes the whole \textit{markup} more readable and easier to
 write. It also has the ability to use conventional control flow structures like \textit{if} or
 \textit{for} directly in the \textit{markup}.
 
-\subsubsection{Babel}
+\subsection{Babel}
 
 \textit{MarkoJS} is most and foremost a \textit{JavaScript} framework and due to the nature of the
 before mentioned features, \textit{transpiling} is inevitable. \textit{Transpiling} means to
@@ -24,7 +24,7 @@ technology \textit{Babel} \cite{babel}. With \textit{Babel} \textit{transpiling}
 necessary definitions are in a \textit{webpack.config.babel.js} file which brings us to the next
 essential tool \textit{Webpack}.
 
-\subsubsection{Webpack}
+\subsection{Webpack}
 \label{sec:webpack}
 
 “Webpack is a module bundler. Its main purpose is to bundle JavaScript files for usage in a browser,
@@ -39,13 +39,13 @@ all files through certain optimisation plugins on release build, which can bring
 the \textit{code bundle} quite considerably. \textit{Webpack} is also able to transform
 \textit{SASS} into \textit{CSS}.
 
-\subsubsection{SASS}
+\subsection{SASS}
 
 \textit{SASS} \cite{sass} is a superset of \textit{CSS} with many additional features like
 variables, functions, nesting and exporting/importing files. We make heavy use of those features to
 structure and modularise our \textit{CSS} code.
 
-\subsubsection{UI}
+\subsection{UI}
 
 The \textit{UI} itself uses a basic layout where all sensor devices registered in the database are
 listed on the side in a so called \textit{sidebar}. The user then can click on each individual

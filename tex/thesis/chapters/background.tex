@@ -1,4 +1,4 @@
-\section{Background}
+\chapter{Background}
 \label{sec:background}
 
 In this part we try to make the reader more familiar with the individual technologies and their
@@ -6,7 +6,7 @@ respective terms that will be used throughout the thesis. Firstly we start by di
 topic, \textit{Serverless Computing}, we will then go on in more detail about \textit{Docker} and
 our specific use case.
 
-\subsection{Serverless Computing}
+\section{Serverless Computing}
 
 Serverless computing is a new emerging paradigm for deploying applications into the cloud. It gained
 in popularity in recent years largely due to shift of enterprise application deployment in
@@ -20,7 +20,7 @@ manage scaling, plan for variable capacity or maintain any other aspect of the s
 management of all of these things is provided as a service from the cloud provider.
 \cite{wikiservcomp}
 
-\subsubsection{Layers of Cloud Computing}
+\subsection{Layers of Cloud Computing}
 
 \begin{figure}[H]
   \centering
@@ -51,7 +51,7 @@ run individual functions in. An application deployed in a FaaS environment consi
 functions interacting with one another whereas in a PaaS environment, an application is deployed as
 a single unit.
 
-\subsection{Docker}
+\section{Docker}
 
 Docker is a technology which is used to run software packaged into containers. Containers are
 self-contained and provide an isolated environment for software to run in. A container includes all
@@ -78,7 +78,7 @@ Furthermore, since containers usually don't contain a full operating system, sta
 much faster compared to virtual machines, which have to completely boot the entire operating system
 from scratch in addition to starting the application. \cite{docker-container}
 
-\subsection{OpenFaaS}
+\section{OpenFaaS}
 
 “OpenFaaS – Serverless Functions Made Simple”. As the slogan already entails, \textit{OpenFaaS} is a
 framework for the deployment of serverless functions. In contrast to competing hosted products like
@@ -95,7 +95,7 @@ and being \textit{Kubernetes} native. \cite{openfaas-docs}
   \caption{\textit{OpenFaaS} workflow \cite{openfaas-docs}}
 \end{figure}
 
-\subsection{MongoDB}
+\section{MongoDB}
 
 \textit{MongoDB} is a document database that is scalable and flexible. The data in a
 \textit{MongoDB} database is stored in flexible, \textit{JSON}-like documents, making it easy to
@@ -120,7 +120,7 @@ core, high availability and horizontal scaling are already built in. Furthermore
   \caption{A \textit{MongoDB} document (adapted from \cite{mongodb-description}).}
 \end{code}
 
-\subsection{Apache \whitelist{ZooKeeper}}
+\section{Apache \whitelist{ZooKeeper}}
 \label{sec:background-zookeeper}
 
 \textit{ZooKeeper} is a service for centrally managing configuration, naming, handling distributed
@@ -136,7 +136,7 @@ distributed network. Particularly in the long run, using \textit{ZooKeeper} help
 complexity for applications continuously increasing in size.
 \cite{zookeeper-homepage}
 
-\subsection{Apache Kafka}
+\section{Apache Kafka}
 \label{sec:background-kafka}
 
 \textit{Apache Kafka} is a distributed streaming platform. The first of its three key capabilities
@@ -165,7 +165,7 @@ Connector API, which allows linking \textit{Kafka} to external systems, this is 
 connecting serverless functions to streams.
 \cite{kafka-introduction}
 
-\subsection{Rust}
+\section{Rust}
 
 \textit{Rust} is a new strongly typed open source programming language supported by
 \textit{Mozilla}. The basic idea of the language is to offer low level system access with focus on
@@ -191,7 +191,7 @@ caught at compile time. Data races are prevented as it is impossible to have mul
 references to a variable without synchronisation. This concept is also referred as “fearless
 concurrency”. \cite{rustbook2}
 
-\subsection{Flutter}
+\section{Flutter}
 
 \textit{Flutter} is a \textit{UI} toolkit from \textit{Google} for building natively compiled mobile
 applications. With the same code base, the application can also be deployed on web and desktop.
@@ -210,7 +210,7 @@ is familiar and seems inspired by other popular modern languages. As mentioned b
 code is transpiled to the platform's native instruction set, this means native \textit{ARM} code on
 mobile devices and \textit{JavaScript} on the web. \cite{dart}
 
-\subsection{Azure Pipelines}
+\section{Azure Pipelines}
 
 \textit{Azure Pipelines} is a CI (continuous integration) service provided by Microsoft which is
 used to automatically build and test projects. Given that all major platforms, i.e. Linux, macOS and

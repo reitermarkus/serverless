@@ -1,4 +1,4 @@
-\subsection{Raspberry Pi}
+\section{Raspberry Pi}
 
 In order for us to gather data, we decided on using multiple \textit{Raspberry Pis} with different
 sensors attached to them. We chose the \textit{Raspberry Pi} because it is backed by a huge
@@ -8,7 +8,7 @@ Pi} in \textit{Rust}. This way we could validate our \textit{Rust} code by compa
 code written in other programming languages, most commonly \textit{Python} or \textit{C} in the case
 of the \textit{Raspberry Pi}.
 
-\subsubsection{\textit{Rust} on the \textit{Raspberry Pi}}
+\subsection{\textit{Rust} on the \textit{Raspberry Pi}}
 
 For our first “Hello, world!” program which would run on the \textit{Raspberry Pi}, we took the
 simplest approach at the time. We would write the code on our development machines and synchronise
@@ -19,7 +19,7 @@ at which it simply wasn't feasible anymore to compile directly using the inadequ
 \textit{Raspberry Pi}. A single build was approaching a compile time of around five minutes on every
 single small change to the code, so we had to start looking for alternatives.
 
-\subsubsection{Cross Compilation}
+\subsection{Cross Compilation}
 
 Soon after we realised that compiling directly on the \textit{Raspberry Pi} was not a good solution,
 we had to find a way to cross compile for the \textit{Raspberry Pi}. This was further complicated by
@@ -69,7 +69,7 @@ another virtual volume which is not bound to a directory on the host, which effe
 non-Linux binaries from being accessible inside the \textit{Docker} container. After this change, we could
 finally compile our program on both \textit{macOS} and \textit{Windows}.
 
-\subsubsection{Sensors}
+\subsection{Sensors}
 
 For the actual collection of data, we of course needed to implement some sensors. The first sensor
 we implemented is the widely used \textit{BMP180}, a digital sensor which acts as a combination of a
