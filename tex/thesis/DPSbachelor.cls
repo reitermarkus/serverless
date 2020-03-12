@@ -21,8 +21,6 @@
   pdfborder={0 0 0},%
 ]{hyperref}
 \DeclareOption{english}{\AtBeginDocument{\selectlanguage{english}}}
-\DeclareOption{german}{\AtBeginDocument{\selectlanguage{ngerman}}}
-\ExecuteOptions{german}
 \ProcessOptions\relax
 
 \RequirePackage{caption}
@@ -30,18 +28,13 @@
 
 \AtBeginDocument{%
   \global\newbox\absbox%
-  \renewcommand\abstractname{%
-    \iflanguage{english}{Abstract}{Zusammenfassung }%
-  }
-  \newcommand\ackname{%
-    \iflanguage{english}{Acknowledgments}{Danksagung}%
-  }
+  \renewcommand\abstractname{Abstract}
+  \newcommand\ackname{Acknowledgments}
   \definetoday
 }
 
 \newcommand\definetoday{%
-  \renewcommand*\today{%
-    \iflanguage{english}{%
+  \renewcommand*\today{
       \number\day\space \ifcase\month\or%
         January\or%
         February\or%
@@ -56,22 +49,6 @@
         November\or%
         December\or%
       \fi\space \number\year
-    }{%
-     \number\day.~\ifcase\month\or%
-       J\"anner\or%
-       Februar\or%
-       M\"arz\or%
-       April\or%
-       Mai\or%
-       Juni\or%
-       Juli\or%
-       August\or%
-       September\or%
-       Oktober\or%
-       November\or%
-       Dezember%
-      \fi\space \number\year
-    }%
   }
 }
 
@@ -95,23 +72,10 @@
   \@OLDappendix
 }
 
-\newcommand\kindname{%
-  \iflanguage{english}{Bachelor~Thesis}{Bachelorarbeit}%
-}
-
-\newcommand\supervisorname{%
-  \iflanguage{english}{Supervisor}{Betreuer}%
-}
-
-\newcommand\university{%
-  \iflanguage{english}{Leopold--Franzens--University \\ Innsbruck \\ }
-  {Leopold--Franzens--Universität \\ Innsbruck \\ }
-}
-
-\newcommand\institute{%
-  \iflanguage{english}{Institute of Computer Science \\ Research Group DPS \\ (Distributed and Parallel Systems) \\}
-  {Institut für Informatik \\ Forschungsgruppe DPS \\ (Distributed and Parallel Systems) \\}%
-}
+\newcommand\kindname{Bachelor~Thesis}
+\newcommand\supervisorname{Supervisor}
+\newcommand\university{Leopold--Franzens--University \\ Innsbruck \\ }
+\newcommand\institute{Institute of Computer Science \\ Research Group DPS \\ (Distributed and Parallel Systems) \\}
 
 \subject{\kindname}
 
