@@ -2,6 +2,7 @@
 \ProvidesClass{DPSbachelor}[2007/09/19 DPS bachelor theses document class]
 \newif\if@mainmatter\@mainmattertrue
 \LoadClass[a4paper,12pt,abstracton,parskip,twoside]{scrreprt}
+\raggedbottom
 \RequirePackage[english]{babel}
 \RequirePackage{a4}
 \RequirePackage{graphicx}
