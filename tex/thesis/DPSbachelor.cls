@@ -24,6 +24,9 @@
 \ExecuteOptions{german}
 \ProcessOptions\relax
 
+\RequirePackage{caption}
+\DeclareCaptionType{code}[Code Listing][List of Code Listings]
+
 \AtBeginDocument{%
   \global\newbox\absbox%
   \renewcommand\abstractname{%
@@ -221,7 +224,7 @@
   \@OLDtableofcontents
   \listoffigures
   \listoftables
-  \lstlistoflistings
+  \listofcodes
   \cleardoublepage
   \mainmatter
   \pagestyle{scrheadings}
