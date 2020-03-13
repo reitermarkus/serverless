@@ -4,29 +4,31 @@
 In recent years, the number of IoT (Internet of Things) devices has been growing continuously.
 Naturally, all of these devices generate a lot of data. This usually happens asynchronously, which
 means that a normal server processing this data would either be under or overutilised. A well known
-method to deal with problem is to use the edge-fog-cloud approach to process data earlier, either on
-an edge device itself or on a fog device instead of doing all processing in the cloud. This can have
-noticable performance benefits. This is where serverless computing comes into play. In contrast to
-traditional software development where the software is centred around a single server delivering all
-of the functionality, serverless computing is based around the idea of splitting this functionality
-into separate functions. This is especially beneficial when dealing with many IoT devices, since
-functions can be scaled individually according to the current utilisation and can be started on
-demand. This results in more efficient usage of resources and improved modularity.
+method to deal with this kind of problem is to use the \textit{edge-fog-cloud} approach to process
+data earlier, either on an edge device itself or on a fog device instead of doing all processing in
+the cloud, which can have noticeable performance benefits. This is where \textit{serverless
+computing} comes into play. In contrast to traditional software development where the software is
+centred around a single server delivering all of the functionality. \textit{Serverless computing} is
+based around the idea of splitting this functionality into separate functions, which is especially
+beneficial when dealing with many IoT devices, since functions can be scaled individually according
+to the current utilisation and can be started on demand. This results in more efficient usage of
+resources and improved modularity.
 
 Today IoT devices can be found in household appliances like washing machines, fridges, televisions,
 garage doors and many more. For this thesis, their application for the purpose of data collection
 was our primary focus. A big advantage to using IoT devices is the low cost of some of the
-do-it-yourself and open-source solutions, which can be achieved with a micro-controller such as the
-Raspberry Pi and readily available off-the-shelf sensors.
+do-it-yourself and \textit{open source} solutions, which can be achieved with a
+\textit{micro-controller} such as the \textit{Raspberry Pi} and readily available
+\whitelist{off-the-shelf} sensors.
 
-In this thesis, we explore the possibility of combining both serverless computing and IoT for the
-purpose of analysing sensor data. More specifically, we want to test the limits of cheap IoT
-hardware in a serverless context. Furthermore, we want to subsequently visualise the collected data
-in an intuitive user interface that can be displayed on any device.
+In this thesis, we explore the possibility of combining both \textit{serverless computing} and IoT
+for the purpose of analysing sensor data. More specifically, we want to test the limits of cheap IoT
+hardware in a \textit{serverless} context. Furthermore, we want to subsequently visualise the
+collected data in an intuitive user interface that can be displayed on any device.
 
 The end result of this thesis is a system which can be used to collect sensor data from IoT devices
-using a serverless architecture and an accompanying web interface to visualise the collected data.
-In the following sections we explain the technologies used, a more detailed explanation about the
-motivation for using serverless computing as well as how the different parts of our project were
-implemented. Finally, we provide some results on how our system performs when running on affordable
-hardware.
+using a \textit{serverless} architecture and an accompanying web interface to visualise the
+collected data. In the following sections we explain the technologies used, a more detailed
+explanation about the motivation for using \textit{serverless computing} as well as how the
+different parts of our project were implemented. Finally, we provide some results on how our system
+performs when running on affordable hardware.
