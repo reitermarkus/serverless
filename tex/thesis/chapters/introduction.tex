@@ -23,12 +23,23 @@ do-it-yourself and \textit{open source} solutions, which can be achieved with a
 
 In this thesis, we explore the possibility of combining both \textit{serverless computing} and IoT
 for the purpose of analysing sensor data. More specifically, we want to test the limits of cheap IoT
-hardware in a \textit{serverless} context. Furthermore, we want to subsequently visualise the
-collected data in an intuitive user interface that can be displayed on any device.
+hardware in a \textit{serverless} context. In order to achieve this, we decided to use the
+\textit{OpenFaaS} framework to realise the platform for hosting functions. Furthermore,
+\textit{Apache Kafka} is used to manage all incoming requests from devices. \textit{Kafka} also
+handles the forwarding of requests to functions. For persistence of sensor data, we are using the
+\textit{NoSQL} database \textit{MongoDB}, which is of great help when confronted with data of
+\textit{IoT} devices. Having a stack like this also means dealing with a lot of configuration. To
+aid this process, we also developed a \textit{Rake} script which makes everything runnable with only
+one command. And finally, we are using \textit{Azure Pipelines} as our verification tool to test all
+parts of our stack and push our \textit{serverless functions} to an online registry, which makes
+deployment even faster. Furthermore, we want to subsequently visualise the collected data in an
+intuitive user interface that can be displayed on any device.
 
 The end result of this thesis is a system which can be used to collect sensor data from IoT devices
 using a \textit{serverless} architecture and an accompanying web interface to visualise the
-collected data. In the following sections we explain the technologies used, a more detailed
+collected data. In the following sections we explain the technologies we used, a more detailed
 explanation about the motivation for using \textit{serverless computing} as well as how the
-different parts of our project were implemented. Finally, we provide some results on how our system
-performs when running on affordable hardware.
+different parts of our project were implemented.
+
+Ultimately, we present results including benchmarks for running our stack on affordable hardware,
+showing just how cost-effective and yet powerful a serverless stack can be.

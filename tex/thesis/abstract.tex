@@ -4,30 +4,12 @@ One of those is the concept of \textit{Serverless Computing} or \textit{Function
 (FaaS)}. Due to its versatile nature, a lot of big players in the cloud computing field jumped on it
 and have their own implementation in their portfolio.
 
-\\
-
 Likewise, the \textit{Internet of Things (IoT)} has also seen large adoption in many aspects of life
 and is an integral part of it. Be it for household appliances or in industrial applications,
 \textit{IoT} devices can be found everywhere.
-
-\\
 
 This bachelor thesis tries to show the usefulness of \textit{Serverless Computing} in conjunction
 with \textit{IoT} devices by building an infrastructure to host \textit{serverless functions} where
 all \textit{IoT} devices can then send their data to. While not a classic \textit{IoT} device, there
 is also support for both \textit{Android} and \textit{iOS} devices to transmit data. This data is
-then further used for analytics and visualised with graphs in a web interface. In order to achieve
-this we decided to use the \textit{OpenFaaS} framework to realise the hosting function platform.
-Furthermore, \textit{Kafka} is used to manage all incoming requests from devices. \textit{Kafka}
-also handles the forwarding of requests to functions. For persistence of sensor data we are using
-the \textit{NoSQL} database \textit{MongoDB}. The database is of great help when confronted with
-data of \textit{IoT} devices. Having a stack like this also means dealing with a lot of
-configuration. To aid this process, we also developed a \textit{Rake} script which makes everything
-runnable with only one command. And finally, we are using \textit{Azure Pipelines} as our
-verification tool to test all parts of our stack and push our \textit{serverless functions} to an
-online registry, which makes deployment even faster.
-
-\\
-
-In the final chapter of this thesis, we present results including benchmarks for running our stack
-on affordable hardware, showing just how cost-effective and yet powerful a serverless stack can be.
+then further used for analytics and visualised with graphs in a web interface.

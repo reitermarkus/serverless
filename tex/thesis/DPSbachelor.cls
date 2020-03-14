@@ -191,6 +191,8 @@
   \listoftables
   \listofcodes
   \cleardoublepage
+  \cleardoublepage
+  \input{preface.tex}
   \mainmatter
   \pagestyle{scrheadings}
   \setheadsepline{0.5pt}
