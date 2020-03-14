@@ -53,7 +53,7 @@ functions:
 
 In \autoref{code:function-definition} we can see that there are two different gateway URLs. The
 first one, \texttt{provider.gateway}, is used by the \texttt{faas-cli} command line tool in order to
-know where to deploy the function to. The second one,
+know where to deploy the function to. The second one, \\
 \texttt{functions.filter.environment.gateway\_url} is the URL the gateway can be reached from inside
 the cluster and the one passed to the \textit{OpenFaaS Watchdog}. Furthermore, the function template
 is specified using \texttt{functions.filter.lang}, the path the function's source code is given by
@@ -117,10 +117,10 @@ function which needs to access the database.
 \subsection{The \texttt{register-device} Function}
 
 The \texttt{register-device} function is used, as the name implies, to register new devices. This
-function is triggered when a new message is posted to the \texttt{register-device} Kafka topic. The
-function handler parses the message, which must contain a device ID and the device's name. If this
-is the case, it then calls the \texttt{database} function in order to insert a new device or update
-an existing device's name.
+function is triggered when a new message is posted to the \\
+\texttt{register-device} Kafka topic. The function handler parses the message, which must contain a
+device ID and the device's name. If this is the case, it then calls the \texttt{database} function
+in order to insert a new device or update an existing device's name.
 
 \subsection{The \texttt{log-data} Function}
 
