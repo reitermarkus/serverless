@@ -6,6 +6,6 @@
   "devDependencies": {},
   "dependencies": {
     "axios": "^0.19.2",
-    "unzipper": "^0.10.9"
+    "unzipper": "^0.10.10"
   }
 }
