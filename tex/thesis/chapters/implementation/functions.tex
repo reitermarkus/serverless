@@ -32,7 +32,7 @@ gateway URL, which the \textit{OpenFaaS Watchdog} uses to connect to the \textit
 
 \begin{code}[H]
   \centering
-  \begin{lstlisting}
+  \begin{lstlisting}[language=yaml]
 version: 1.0
 provider:
   name: openfaas
@@ -153,7 +153,7 @@ calculate the difference between \texttt{begin} and \texttt{end} and then calcul
 \texttt{begin} until we reach \texttt{end}, incrementing by \texttt{step} in each iteration.
 
 \begin{code}[H]
-  \begin{lstlisting}
+  \begin{lstlisting}[language=mongo]
 '$match': {
   'time': {
     '$gte': ISODate('2020-02-26T18:23:00.000Z'),

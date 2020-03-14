@@ -25,6 +25,112 @@
   per-mode     = symbol,
 ]{siunitx}
 
+\usepackage{listing}
+
+% http://latexcolor.com
+\definecolor{gray}{rgb}{0.5, 0.5, 0.5}
+\definecolor{ceruleanblue}{rgb}{0.16, 0.32, 0.75}
+\definecolor{green(ncs)}{rgb}{0.0, 0.62, 0.42}
+\definecolor{auburn}{rgb}{0.43, 0.21, 0.1}
+
+% https://tex.stackexchange.com/a/83100
+\colorlet{punct}{red!60!black}
+\definecolor{delim}{RGB}{20,105,176}
+
+\lstdefinelanguage{mongo} {
+  basicstyle        = \normalfont\ttfamily,
+  showstringspaces  = false,
+  breaklines        = true,
+  stringstyle       = \color{green(ncs)},
+  morestring        = *[b]{'},
+  morestring        = *[b]{"},
+  morestring        = *[b]{`},
+  literate          =
+    *{:}{{{\color{punct}{:}}}}{1}
+    {,}{{{\color{punct}{,}}}}{1}
+    {\{}{{{\color{delim}{\{}}}}{1}
+    {\}}{{{\color{delim}{\}}}}}{1}
+    {[}{{{\color{delim}{[}}}}{1}
+    {]}{{{\color{delim}{]}}}}{1},
+}
+
+% https://tex.stackexchange.com/a/152856
+\newcommand\YAMLcolonstyle{\color{red}\mdseries}
+\newcommand\YAMLkeystyle{\color{black}\bfseries}
+\newcommand\YAMLvaluestyle{\color{auburn}\mdseries}
+
+\lstdefinelanguage{yaml} {
+  keywords      = {true,false,null,y,n},
+  keywordstyle  = \color{gray},
+  basicstyle    = \normalfont\ttfamily,
+  sensitive     = false,
+  comment       = [l]{\#},
+  morecomment   = [s]{/*}{*/},
+  commentstyle  = \color{purple},
+  stringstyle   = \color{green(ncs)},
+  moredelim     = [l][\color{orange}]{\&},
+  moredelim     = [l][\color{magenta}]{*},
+  moredelim     = **[il][\YAMLcolonstyle{:}\YAMLvaluestyle]{:},
+  morestring    = [b]',
+  morestring    = [b]",
+}
+
+% http://mirrors.ibiblio.org/CTAN/macros/latex/contrib/listings/lstdrvrs.pdf
+
+\lstdefinelanguage{Ruby}
+  {morekeywords={__FILE__,__LINE__,BEGIN,END,alias,and,begin,break,
+  case,class,def,defined?,do,else,elsif,end,ensure,false,for,
+  if,in,module,next,nil,not,or,redo,rescue,retry,return,self,
+  super,then,true,undef,unless,until,when,while,yield,task,namespace,
+  cd,sh,rm_rf,cp_r,desc,puts,mkdir_p,each},
+  sensitive          = true,
+  morecomment        = [l]\#,
+  morecomment        = [l]\#\#,
+  morecomment        = [s]{=BEGIN}{=END},
+  morestring         = [b]',
+  morestring         = [b]’,
+  morestring         = [b]",
+  morestring         = [s]{\%q/}{/},
+  morestring         = [s]{\%q!}{!},
+  morestring         = [s]{\%q\{}{\}},
+  morestring         = [s]{\%q(}{)},
+  morestring         = [s]{\%q[}{]},
+  morestring         = [s]{\%q-}{-},
+  morestring         = [s]{\%Q/}{/},
+  morestring         = [s]{\%Q!}{!},
+  morestring         = [s]{\%Q\{}{\}},
+  morestring         = [s]{\%Q(}{)},
+  morestring         = [s]{\%Q[}{]},
+  morestring         = [s]{\%Q-}{-}
+  basicstyle         = \normalfont\ttfamily,
+  breaklines         = true,
+  showstringspaces   = false,
+  identifierstyle    = \color{auburn},
+  commentstyle       = \color{gray},
+  keywordstyle       = \color{ceruleanblue},
+  stringstyle        = \color{green(ncs)},
+  rangeprefix        = \#\#\#\ ,
+  rangebeginsuffix   = \ begin,
+  rangeendsuffix     = \ end,
+  includerangemarker = false,
+}[keywords,comments,strings]
+
+\lstdefinelanguage{bash} {
+  keywords           = {true,false,null,if,fi,esac,case,exec,echo},
+  keywordstyle       = \color{auburn},
+  basicstyle         = \normalfont\ttfamily,
+  morestring         = [b]',
+  morestring         = [b]’,
+  morestring         = [b]",
+  morecomment        = [l]\#,
+  morecomment        = [l]\#\#,
+  breaklines         = true,
+  showstringspaces   = false,
+  commentstyle       = \color{red},
+  keywordstyle       = \color{ceruleanblue},
+  stringstyle        = \color{green(ncs)},
+}
+
 \newcommand{\whitelist}[1]{#1}
 
 \title{IoT Data Analytics \\ using Serverless Computing}
