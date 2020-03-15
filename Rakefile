@@ -33,14 +33,12 @@ namespace :build do
   task :functions => :'build:ui' do |task, args|
     functions = args.extras
 
-    if functions.empty?
-      cd 'functions' do
+    cd 'functions' do
+      if functions.empty?
         sh 'faas-cli', 'build', '--build-option', (dev? ? 'debug' : 'release'), '-f', 'functions.yml', '--parallel', Etc.nprocessors.to_s
-      end
-    else
-      task.reenable
-      functions.each do |function|
-        cd 'functions' do
+      else
+        task.reenable
+        functions.each do |function|
           sh 'faas-cli', 'build', '--build-option', (dev? ? 'debug' : 'release'), '-f', 'functions.yml', '--filter', function
         end
       end
@@ -50,14 +48,12 @@ namespace :build do
   task :push => :'build:functions' do |task, args|
     functions = args.extras
 
-    if functions.empty?
-      cd 'functions' do
+    cd 'functions' do
+      if functions.empty?
         sh 'faas-cli', 'push', '-f', 'functions.yml', '--parallel', Etc.nprocessors.to_s
-      end
-    else
-      task.reenable
-      functions.each do |function|
-        cd 'functions' do
+      else
+        task.reenable
+        functions.each do |function|
           sh 'faas-cli', 'push', '-f', 'functions.yml', '--filter', function
         end
       end
@@ -80,15 +76,13 @@ namespace :deploy do
   task :functions do |task, args|
     functions = args.extras
 
-    if functions.empty?
-      Rake::Task['deploy:swarm'].invoke unless swarm_active?
+    cd 'functions' do
+      if functions.empty?
+        Rake::Task['deploy:swarm'].invoke unless swarm_active?
 
-      cd 'functions' do
         sh 'faas-cli', 'deploy', '-f', 'functions.yml', '--send-registry-auth'
-      end
-    else
-      functions.each do |function|
-        cd 'functions' do
+      else
+        functions.each do |function|
           sh 'faas-cli', 'deploy', '-f', 'functions.yml', '--send-registry-auth', '--filter', function
         end
       end
