@@ -4,8 +4,8 @@
 \section{Benchmarks}
 
 For our test setup, we deployed our stack on an \textit{Intel NUC}, which is a fairly inexpensive
-mini PC. With the following benchmarks we want to show what such an affordable machine is capable
-of when coupled with other cheap IoT devices (e.g. Raspberry Pis).
+mini PC. With the following benchmarks, we want to show what such an affordable machine is capable
+of when coupled with other cheap IoT devices, e.g. a Raspberry Pi.
 
 \begin{table}[H]
   \centering
@@ -34,7 +34,7 @@ as tested with \texttt{iperf3} \cite{iperf}.
     \textit{NUC} $\leftrightarrow$ Desktop PC   & \SI{940}{\mega\bit\per\second} \\ \hline
     \textit{NUC} $\leftrightarrow$ Raspberry Pi & \SI{55}{\mega\bit\per\second}  \\ \hline
   \end{tabular}
-  \caption{Link speed between hardware components}
+  \caption{Link speed between Hardware Components}
   \label{tab:benchmark-network-speed}
 \end{table}
 
@@ -53,14 +53,15 @@ as tested with \texttt{iperf3} \cite{iperf}.
 
 In \autoref{tab:benchmark-nuc-raspberry-pi}, we see the benchmark data for the \texttt{log-data}
 function. For this benchmark, we set the \textit{Raspberry Pi} to not use any delay between
-measurements. We also disabled the \texttt{CPU Load Aggregate} sensor, since this has an inherent
-delay of one second due to the fact that it calculates the load average for a given duration. The
-\textit{Raspberry Pi} application collects the data for all sensors in each iteration, which means
-that we can actually get much more throughput with eight sensors than with a single sensor. Thus, we
-can further conclude that the time to produce a measurement is negligible compared to the network
-latency.
+measurements instead of the usual measurement interval of \SI{15}{\second}. We also disabled the
+\texttt{CPU Load Aggregate} measurement, since this has an inherent delay of \SI{1}{\second} due to
+the fact that it calculates the load average for a given duration. The \textit{Raspberry Pi}
+application collects the data for all sensors in each iteration, which means that we can actually
+get much more throughput with eight sensors than with a single sensor. Thus, we can further
+conclude that the time to produce a measurement is negligible compared to the network latency.
 
-In order to test this theory, we decided to use parallel \texttt{curl} requests.
+In order to test this theory, we decided to use parallel \texttt{curl} requests from a more
+powerful computer to test the limit of the \textit{NUC}.
 
 \begin{table}[H]
   \centering
@@ -78,12 +79,12 @@ In order to test this theory, we decided to use parallel \texttt{curl} requests.
 
 Each \texttt{curl} request in \autoref{tab:benchmark-nuc-curl} contains a single sensor record which
 corresponds to the case in \autoref{tab:benchmark-nuc-raspberry-pi} with a single sensor. By looking
-at this data, we can see that in the case of a single sensor, clearly the \textit{Raspberry Pi} is
-the bottleneck, not the \textit{NUC}. It is safe to assume that the \textit{NUC} is able to handle
-approximately 400 requests per second.
+at this data, we can see when only sending data for a single sensor, the \textit{Raspberry Pi} is
+clearly the bottleneck, not the \textit{NUC}. It is safe to assume that the \textit{NUC} is able to
+handle approximately 400 requests per second.
 
-Assuming that it is the case that a \textit{NUC} can handle 400 requests per second, we can deduce
-that a \textit{NUC} is able to process streams from between
+With this assumption that a \textit{NUC} can handle 400 requests per second, we can deduce that our
+\textit{NUC} is able to process streams from between
 
 $\frac{400}{7.55} \times 1 \approx 53$
 
