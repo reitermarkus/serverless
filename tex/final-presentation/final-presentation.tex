@@ -4,6 +4,9 @@
 
 \input{../common.tex}
 
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+
 \begin{document}
   \maketitle
 
@@ -79,6 +82,71 @@
             \hspace*{2em}
             \includegraphics[align=c,height=2em]{light-sensor}
     \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Raspberry Pi Application: Overview}
+    \begin{itemize}
+      \item written entirely in Rust
+      \item cross-compiled for ARMv7
+      \item collects data from 8 sensors
+      \item posts sensor data as \textit{JSON} to \textit{Kafka Rest}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Raspberry Pi Application: Rust}
+    \begin{itemize}
+      \item native code, no interpreter overhead
+      \item low latency for sensor measurements
+      \item efficient processing of sensor data
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Raspberry Pi Application: Sensors}
+    \begin{tabularx}{\textwidth}{XC}
+      \begin{itemize}
+        \item built-in
+          \begin{itemize}
+            \item memory usage
+            \item CPU load
+            \item CPU temperature
+          \end{itemize}
+      \end{itemize}
+      &
+      \includegraphics[valign=t,width=5em]{rpi-cpu}
+      \\
+      \begin{itemize}
+        \item ADS1115 with photoresistor
+          \begin{itemize}
+            \item luminosity
+          \end{itemize}
+      \end{itemize}
+      &
+      \includegraphics[valign=t,width=5em]{light-sensor}
+    \end{tabularx}
+  \end{frame}
+
+  \begin{frame}{Raspberry Pi Application: Sensors}
+    \begin{tabularx}{\textwidth}{XC}
+      \begin{itemize}
+        \item BMP180
+          \begin{itemize}
+            \item air pressure
+            \item air temperature
+          \end{itemize}
+      \end{itemize}
+      &
+      \includegraphics[valign=t,width=5em]{barometric-sensor}
+      \\
+      \begin{itemize}
+        \item AM2320
+          \begin{itemize}
+            \item air humidity
+            \item air temperature
+          \end{itemize}
+      \end{itemize}
+      &
+      \includegraphics[valign=t,width=5em]{am2320}
+    \end{tabularx}
   \end{frame}
 
   \begin{frame}{Background - Docker}
