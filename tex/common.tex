@@ -25,7 +25,7 @@
   per-mode     = symbol,
 ]{siunitx}
 
-\usepackage{listing}
+\usepackage{listings}
 
 % http://latexcolor.com
 \definecolor{gray}{rgb}{0.5, 0.5, 0.5}
@@ -37,7 +37,7 @@
 \colorlet{punct}{red!60!black}
 \definecolor{delim}{RGB}{20,105,176}
 
-\lstdefinelanguage{mongo} {
+\lstdefinelanguage{mongo}{
   basicstyle        = \normalfont\ttfamily,
   showstringspaces  = false,
   breaklines        = true,
@@ -59,7 +59,7 @@
 \newcommand\YAMLkeystyle{\color{black}\bfseries}
 \newcommand\YAMLvaluestyle{\color{auburn}\mdseries}
 
-\lstdefinelanguage{yaml} {
+\lstdefinelanguage{yaml}{
   keywords      = {true,false,null,y,n},
   keywordstyle  = \color{gray},
   basicstyle    = \normalfont\ttfamily,
@@ -77,8 +77,8 @@
 
 % http://mirrors.ibiblio.org/CTAN/macros/latex/contrib/listings/lstdrvrs.pdf
 
-\lstdefinelanguage{Ruby}
-  {morekeywords={__FILE__,__LINE__,BEGIN,END,alias,and,begin,break,
+\lstdefinelanguage{Ruby}{
+  morekeywords       = {\_\_FILE\_\_,\_\_LINE\_\_,BEGIN,END,alias,and,begin,break,
   case,class,def,defined?,do,else,elsif,end,ensure,false,for,
   if,in,module,next,nil,not,or,redo,rescue,retry,return,self,
   super,then,true,undef,unless,until,when,while,yield,task,namespace,
@@ -116,7 +116,7 @@
   includerangemarker = false,
 }[keywords,comments,strings]
 
-\lstdefinelanguage{bash} {
+\lstdefinelanguage{bash}{
   keywords           = {true,false,null,if,fi,esac,case,exec,echo},
   keywordstyle       = \color{auburn},
   basicstyle         = \normalfont\ttfamily,
