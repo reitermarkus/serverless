@@ -13,9 +13,9 @@
       \item What is the Internet of things?
       \item What is serverless computing?
       \item Devices
-      \item Serverless Stack
-      \item Mobile Application
-      \item Web Application
+      \item Background
+      \item Implementation
+      \item Results
       \item Schedule
     \end{itemize}
   \end{frame}
@@ -81,7 +81,24 @@
     \end{itemize}
   \end{frame}
 
-  \begin{frame}{Serverless Stack - Rust}
+  \begin{frame}{Background - Docker}
+    \includegraphics[height=5em]{docker-logo}
+
+    \vspace*{1.5em}
+
+    \begin{itemize}
+      \item software packaged into containers
+      \item Docker containers are standardised
+      \item lightweight compared to Virtual Machines
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Background - Docker}
+    \vfill
+    \includegraphics[width=\textwidth]{docker-containerized-and-vm}
+  \end{frame}
+
+  \begin{frame}{Background - Rust}
     \includegraphics[height=6em]{rust-logo}
 
     \vspace*{1.5em}
@@ -93,11 +110,11 @@
     \end{itemize}
   \end{frame}
 
-  \begin{frame}{Serverless Stack - OpenFaaS}
+  \begin{frame}{Background - OpenFaaS}
     \includegraphics[width=\textwidth]{openfaas-stack}
   \end{frame}
 
-  \begin{frame}{Serverless Stack - Kafka / Zookeeper}
+  \begin{frame}{Background - Kafka / Zookeeper}
     \includegraphics[height=6em]{kafka-logo}
 
     \vspace*{1.5em}
@@ -108,7 +125,7 @@
     \end{itemize}
   \end{frame}
 
-  \begin{frame}{Serverless Stack - MongoDB}
+  \begin{frame}{Background - MongoDB}
     \includegraphics[height=5em]{mongodb-logo}
 
     \vspace*{1.5em}
@@ -116,31 +133,31 @@
     \begin{itemize}
       \item persistence layer for sensor data
       \item versatile due to its JavaScript origin
+      \item JSON-like documents
     \end{itemize}
   \end{frame}
 
-  \begin{frame}{Mobile Application}
-    \includegraphics[align=c,height=6em]{android-logo}
-    \hspace*{2em}
-    \includegraphics[align=c,height=4em]{ios-logo}
+  \begin{frame}{Background - Flutter}
+    \includegraphics[height=4.5em]{flutter-logo}
 
     \vspace*{2em}
 
     \begin{itemize}
-      \item cross platform using React Native
-      \item possible complications on iOS
+      \item cross platform UI framework from Google
+      \item Dart
+      \item compiles to platform native code
     \end{itemize}
   \end{frame}
 
-  \begin{frame}{Web Application}
+  \begin{frame}{Background - MarkoJS}
     \includegraphics[height=6em]{marko-logo}
 
     \vspace*{2em}
 
     \begin{itemize}
-      \item implemented in Marko
-      \item fetching data from MongoDB
-      \item reactive interface for all devices
+      \item Open Source client-side web framework from ebay
+      \item similar to React
+      \item support for concise syntax
     \end{itemize}
   \end{frame}
 
