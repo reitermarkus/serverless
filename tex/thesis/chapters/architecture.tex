@@ -1,0 +1,41 @@
+\chapter{Architecture}
+\label{sec:architecture}
+
+\begin{figure}[H]
+  \adjincludegraphics[max width=\textwidth]{architecture-diagram}
+  \caption{Diagram showing how the parts of our architecture work together.
+    \nocite{smartphone-icon, browser-icon}
+  }
+  \label{fig:architecture-diagram}
+\end{figure}
+
+Our task is to do IoT data analytics using serverless computing, therefore, as a first step, we
+started out by thinking about the underlying infrastructure. We decided on using \textit{Apache
+Kafka} for streaming, \textit{MongoDB} as our database, \textit{OpenFaaS} as the serverless platform
+and \textit{Rust} as the programming language for our serverless functions. The whole stack can then
+be initialised via a \textit{Ruby Rake} file, which acts as our main deployment script. In
+\autoref{fig:architecture-diagram}, you can see how all of the parts in our architecture work
+together. Note how the cloud parts are inside the the fog device part: In our test setup, our
+serverless stack is actually running on a fog device instead of in the cloud, which already
+highlights the flexibility of serverless computing.
+
+\section{How does it work?}
+
+Let us start with one of the edge devices in our architecture, a smartphone. A smartphone, (bottom
+left of \autoref{fig:architecture-diagram}) collects data from its internal sensors (e.g.
+temperature, gravity, orientation) and then sends it to a \textit{Kafka} message broker in order to
+be processed further. A Raspberry Pi (also bottom left of \autoref{fig:architecture-diagram})
+collects data from external sensors (e.g. air humidity, air pressure, luminosity) as well as
+internal sensors (e.g. CPU temperature, CPU load). Similarly to a smartphone, it sends the collected
+sensor data to a \textit{Kafka} message broker.
+
+The \textit{Kafka} message broker (left center in \autoref{fig:architecture-diagram}) then forwards
+this stream of sensor messages to the serverless stack (\textit{OpenFaaS} in top right corner of
+\autoref{fig:architecture-diagram}). Each sensor message is then processed by a log function in the
+serverless stack (\texttt{log-data}) which in turn calls the database function (\texttt{database}).
+The data is then persisted in a \textit{MongoDB} database (center of
+\autoref{fig:architecture-diagram}).
+
+The last step is to visualise the collected data, which is done with a web interface provided by the
+\texttt{ui} function. This interface can then be accessed by any web browser, as shown in the bottom
+right corner of \autoref{fig:architecture-diagram}.
