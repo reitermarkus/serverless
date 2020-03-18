@@ -4,18 +4,18 @@ While our technology stack for the most part was nice to work with, we still had
 problems. One of the most significant one was in relation to our \textit{MongoDB} database.
 \textit{MongoDB’s API design} is confusing to say the least. Questionable deprecation choices and
 multiple connect interfaces are the most rampant examples. Once we got past those issues and got a
-grasp how it all works, \textit{MongoDB} does seem to be a decent choice for our task at hand.
-Mainly because of its JSON-like document architecture. Posting the same \textit{JSON} uniformly from
-all devices to the \textit{Kafka RESt endpoint} is a fairly trivial task. The architecture of our
-\textit{sensordata} database is as follows: every sensor type has its own document with the device
-id of the sender, the time stamp when the sensor data was collected and a unique id per entry. The
-document is then named after the sensor type itself. Those documents differ depending on whether the
-sensor only emits one value or multiple values. An example for a single value sensor document would
-be \textit{pressure} and an example with multiple values would be \textit{orientation}, where the
-sensor collects its orientation value of the x,y and z axis. We also need one document for all the
-devices that are registered, called \textit{devices} with a unique id per entry, the name of the
-device and the supported sensor or data types. Devices have to be registered in order for the
-\textit{UI} to know which graphs it has to display for every device.
+grasp of how it all works, \textit{MongoDB} does seem to be a decent choice for our task at hand,
+mainly because of its JSON-like document architecture. Posting the same \textit{JSON} structure
+uniformly from all devices to the \textit{Kafka RESt endpoint} is a fairly trivial task. The
+architecture of our \texttt{sensordata} database is as follows: Every sensor type has its own
+collection with documents containing the device ID of the sender, the time stamp of when the sensor
+data was collected and a unique ID per entry. Those documents differ depending on whether the sensor
+only emits one value or multiple values. An example for a single value sensor document would be
+\textit{pressure} and an example with multiple values would be \textit{orientation}, where the
+sensor collects the value of the x, y and z axis. We also need one collection for all the devices
+that are registered, called \texttt{devices}, which contains documents with a unique ID per entry,
+the name of the device and the supported sensor types. Devices have to be registered in order for
+the \textit{UI} to know which graphs can be displayed for each device.
 
 \begin{code}[H]
   \centering
