@@ -81,10 +81,10 @@ Each \texttt{curl} request in \autoref{tab:benchmark-nuc-curl} contains a single
 corresponds to the case in \autoref{tab:benchmark-nuc-raspberry-pi} with a single sensor. By looking
 at this data, we can see when only sending data for a single sensor, the \textit{Raspberry Pi} is
 clearly the bottleneck, not the \textit{NUC}. It is safe to assume that the \textit{NUC} is able to
-handle approximately 400 requests per second.
+handle approximately 400~requests per second.
 
-With this assumption that a \textit{NUC} can handle 400 requests per second, we can deduce that our
-\textit{NUC} is able to process streams from between
+With this assumption that a \textit{NUC} can handle 400~requests per second, we can deduce that with
+our test setup, we are able to process streams from between
 
 $\frac{400}{7.55} \times 1 \approx 53$
 
@@ -95,5 +95,5 @@ $\frac{400}{49.20} \times 8 \approx 65$
 sensors.
 
 This being a synthetic benchmark, it is likely that in a real world scenario, where sensor data is
-sent only every \textit{x} seconds, the number of supported sensors is actually in the 100s instead
-of only in the 10s.
+sent only every \textit{x} seconds, the number of supported sensors is actually in the~100s instead
+of only in the~10s.

@@ -1,10 +1,10 @@
 \section{Azure Pipelines}
 
 In order to properly verify our results, we used \textit{Azure Pipelines} as our continuous
-integration service of choice. \textit{Azure Pipelines} offers 10 parallel jobs with unlimited time
+integration service of choice. \textit{Azure Pipelines} offers 10~parallel jobs with unlimited time
 per job for open source projects. \cite{azure-pipelines-devop}
 
-In our case we used the \textit{CI} platform for 6 jobs, that are \texttt{app}, \texttt{rpi}
+In our case we used the \textit{CI} platform for 6~jobs, that are \texttt{app}, \texttt{rpi}
 \texttt{functions}, \texttt{ui}, \texttt{spellcheck} and \texttt{tex}.
 
 \subsection{The \texttt{app} job}
@@ -37,7 +37,7 @@ functions in \textit{OpenFaaS}, the \textit{OpenFaaS CLI} \cite{faas-cli} is req
 reason it has to be installed as well. Since our whole deploy script is written in \textit{Ruby} or
 more specifically in \textit{Rake}, we also need to install that. The next step is the most important
 one of this job, the actual building of the functions. Compiling \textit{Rust} is rather slow and
-therefore occupies about 20 minutes on \textit{Azure} for building all functions. Building those
+therefore occupies about 20~minutes on \textit{Azure} for building all functions. Building those
 functions, however is not only time consuming on the \textit{CI} platform. Deploying the whole stack
 on our test device, the \textit{Intel NUC} also takes some time, mainly due to compiling functions.
 For this reason we have a further step in the \texttt{functions} job, which pushes all images to the
