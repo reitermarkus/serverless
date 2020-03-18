@@ -22,11 +22,12 @@ together.
 Let us start with one of the edge devices in our architecture, a smartphone. A smartphone, (bottom
 left of \autoref{fig:architecture-diagram}) collects data from its internal sensors (e.g.
 temperature, gravity, orientation) and then sends it to a \textit{Kafka} message broker in order to
-be processed further, for this we implemented a cross-platform mobile application. A Raspberry Pi
-(also bottom left of \autoref{fig:architecture-diagram}) collects data from external sensors (e.g.
-air humidity, air pressure, luminosity) as well as internal sensors (e.g. CPU temperature, CPU
-load). Similarly to a smartphone, it sends the collected sensor data to a \textit{Kafka} message
-broker. For the Raspberry Pi, we developed an application written in Rust.
+be processed further, for this we implemented a cross-platform mobile application. A
+\textit{Raspberry Pi} (also bottom left of \autoref{fig:architecture-diagram}) collects data from
+external sensors (e.g. air humidity, air pressure, luminosity) as well as internal sensors (e.g. CPU
+temperature, CPU load). Similarly to a smartphone, it sends the collected sensor data to a
+\textit{Kafka} message broker. For the \textit{Raspberry Pi}, we developed an application written in
+Rust.
 
 The \textit{Kafka} message broker (centre left in \autoref{fig:architecture-diagram}) then forwards
 this stream of sensor messages to the serverless stack (\textit{OpenFaaS} in top right corner of
@@ -42,10 +43,10 @@ the mobile application.
 
 \section{Hardware}
 
-Note how the cloud parts are inside the the fog device part: In our test setup, our serverless stack
-is actually running on a fog device instead of in the cloud, which already highlights the
-flexibility of serverless computing. The fog device in our case is an \whitelist{Intel NUC}
-(\autoref{fig:intel-nuc}), a mini PC.
+Note how the cloud parts are inside the fog device part in \autoref{fig:architecture-diagram}: In
+our test setup, our serverless stack is actually running on a fog device instead of in the cloud,
+which already highlights the flexibility of serverless computing. The fog device in our case is an
+\textit{Intel NUC} (\autoref{fig:intel-nuc}), a mini PC.
 
 \begin{figure}[H]
   \centering
@@ -54,8 +55,8 @@ flexibility of serverless computing. The fog device in our case is an \whitelist
   \label{fig:intel-nuc}
 \end{figure}
 
-A Raspberry Pi, arguably one of the most popular SoC (System-on-a-Chip) computers, functions as our
-edge device for collecting data from external sensors. Specifically, we are using a Raspberry Pi 3,
+A \textit{Raspberry Pi}, arguably one of the most popular SoC (System-on-a-Chip) computers, functions as our
+edge device for collecting data from external sensors. Specifically, we are using a \textit{Raspberry Pi} 3,
 as seen in \autoref{fig:raspberry-pi-3}.
 
 \begin{figure}[H]
