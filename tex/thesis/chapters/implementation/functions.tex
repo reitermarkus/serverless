@@ -47,7 +47,7 @@ functions:
       write_debug: 'true'
       gateway_url: http://gateway:8080
   \end{lstlisting}
-  \caption{A definition file for a Rust function called \texttt{filter}.}
+  \caption{A definition file for a \textit{Rust} function called \texttt{filter}.}
   \label{code:function-definition}
 \end{code}
 
@@ -74,21 +74,21 @@ Once built, the function can be deployed using an equally simple command:
 faas-cli deploy -f filter.yml
 \end{lstlisting}
 
-We chose to write all of our functions in Rust. When we first started, there was not yet an official
-\textit{OpenFaaS} function template for Rust, so we had to create our own. For our custom template -
-\texttt{Dockerfile} -, we used the builder pattern. In our case this meant, that we would first
-compile the Rust function using the official \textit{Docker} image for \textit{Rust}. This image is
-based on \textit{Debian}, which means that we could then copy the compiled function into a bare
-\textit{Debian} image which doesn't include the \textit{Rust} compiler, therefore saving space. This
-resulted in each function image being around \SI{90}{\mega\byte} in size. Still, this was too much
-for a simple function in our opinion.
+We chose to write all of our functions in \textit{Rust}. When we first started, there was not yet an
+official \textit{OpenFaaS} function template for \textit{Rust}, so we had to create our own. For our
+custom template - \texttt{Dockerfile} -, we used the builder pattern. In our case this meant, that
+we would first compile the \textit{Rust} function using the official \textit{Docker} image for
+\textit{Rust}. This image is based on \textit{Debian}, which means that we could then copy the
+compiled function into a bare \textit{Debian} image which doesn't include the \textit{Rust}
+compiler, therefore saving space. This resulted in each function image being around
+\SI{90}{\mega\byte} in size. Still, this was too much for a simple function in our opinion.
 
 It is possible to write a \texttt{Dockerfile} without using any base image, using the \texttt{FROM
 scratch} directive. For this to work, however, we need to generate a statically compiled version of
 our functions since there is no operating system providing libraries. By extension, this meant, that
-we had to replace our compile step, since the official \texttt{Rust} docker image does not provide
-support for creating statically linked binaries. Thankfully, there exists a \textit{Docker} image
-called \texttt{rust-musl-builder} \cite{rust-musl-builder} for this exact reason. Using the
+we had to replace our compile step, since the official \texttt{rust} \textit{Docker} image does not
+provide support for creating statically linked binaries. Thankfully, there exists a \textit{Docker}
+image called \texttt{rust-musl-builder} \cite{rust-musl-builder} for this exact reason. Using the
 \texttt{rust-musl-builder} image, we could reduce the average image size for our functions to around
 \SI{15}{\mega\byte}, a sixth of their original size.
 
@@ -99,20 +99,20 @@ devices and is used for persistently storing the data received from those device
 naturally we needed a function which allows us to interact with the database.
 
 We used the \href{https://github.com/mongodb/mongo-rust-driver}{\texttt{mongodb-rust-driver}}, a
-Rust library for interfacing with a MongoDB database. In order to reduce latency, OpenFaaS keeps
-functions running for a specified amount of time before considering them unused and terminating
-them. This means that we only need to establish a connection to our database once, when the function
-container is first started. Since the initial startup is handled by the function template and not
-the function handler, we used the
-\href{https://github.com/rust-lang-nursery/lazy-static.rs}{\texttt{laze\_static}} to lazily
+\textit{Rust} library for interfacing with a \textit{MongoDB} database. In order to reduce latency,
+\textit{OpenFaaS} keeps functions running for a specified amount of time before considering them
+unused and terminating them. This means that we only need to establish a connection to our database
+once, when the function container is first started. Since the initial startup is handled by the
+function template and not the function handler, we used the
+\href{https://github.com/rust-lang-nursery/lazy-static.rs}{\texttt{lazy\_static}} to lazily
 initialise a static variable holding our database connection.
 
 The actual function handler first parses a \textit{JSON} request containing either an
 \texttt{insert}, \texttt{insert\_or\_update}, \texttt{find}, \texttt{aggregate} or \texttt{update}
-action. These actions are then converted from \texttt{JSON} to \texttt{BSON} (Binary JSON), the
-format MongoDB and by extension the MongoDB Rust driver uses. This allows other functions to call
-this function in order to interact with the database instead of duplicating this logic in every
-function which needs to access the database.
+action. These actions are then converted from \texttt{JSON} to \texttt{BSON} (Binary \textit{JSON}),
+the format \textit{MongoDB} and by extension the \textit{MongoDB} \textit{Rust} driver uses. This
+allows other functions to call this function in order to interact with the database instead of
+duplicating this logic in every function which needs to access the database.
 
 \subsection{The \texttt{register-device} Function}
 
