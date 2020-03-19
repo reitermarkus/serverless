@@ -4,21 +4,21 @@
 Since we use many different technologies, we briefly present each of them in this section in order
 to make the reader more familiar with the individual technologies and their respective terms that
 will be used throughout the thesis. Firstly we start by discussing the main topic,
-Serverless Computing. We will then go on in more detail about \textit{Docker} and our
+serverless computing. We will then go on in more detail about \textit{Docker} and our
 specific use case.
 
 \section{Serverless Computing}
 
 Serverless computing is a new emerging paradigm for deploying applications into the cloud. It gained
 in popularity in recent years largely due to shift of enterprise application deployment in
-containers and microservices. Serverless Computing offers developers a simplified
+containers and microservices. Serverless computing offers developers a simplified
 programming model for creating cloud applications while minimising operational concerns.
 \cite{servprog}
 
-The name “serverless computing” is not quite fitting, since physical server hardware is of course
+The term “serverless computing” is not quite fitting, since physical server hardware is of course
 still needed in order to run applications. The main point is that the application user or developer
 does not need to manage scaling, plan for variable capacity or maintain any other aspect of the
-servers. The management of all of these things is provided as a service from the cloud provider.
+servers. The management of all these things is provided as a service from the cloud provider.
 \cite{wikiservcomp}
 
 \subsection{Layers of Cloud Computing}
@@ -34,20 +34,19 @@ Historically, each new paradigm in the space of cloud computing has brought with
 abstraction. First, there was the move from managing physical hardware in a data centre to being
 able to rent infrastructure from a cloud provider. This layer, called IaaS (Infrastructure as a
 Service), shifted the need for the customer to manage hardware infrastructure onto the cloud
-provider. This change also improved scalability as customers could now rent infrastructure based on
-the pay-as-you-go principle instead of paying for large servers which would be idle most of the
-time.
+provider. Scalability was also improved by this change, as customers could now rent infrastructure based on
+the pay-as-you-go principle instead of paying up front for large servers which would be idle most of
+the time.
 
 With IaaS, the customer is still responsible for managing the setup of the rented infrastructure,
 i.e. installing the necessary dependencies needed to run a given application. Naturally, the next
 layer of abstraction is to provide the customer with an environment suited to run an application
 without the need to manually install a programming language or any dependencies. This layer is
-called PaaS (Platform as a Service). Using this layer of abstraction, the user does have to worry
-neither about managing the underlying hardware nor about managing the operating system the
+called PaaS (Platform as a Service). Using PaaS, the user does neither have to worry about managing the underlying hardware nor about managing the operating system the
 application is running on.
 
-Now, in the era of serverless computing, there is yet again a new layer of abstraction. Called FaaS
-(Function as a Service), this layer provides a runtime environment for a given language in which to
+Now, in the era of serverless computing, there is yet again a new layer of abstraction. The FaaS
+(Function as a Service) layer provides a runtime environment for a given language in which to
 run individual functions in. An application deployed in a FaaS environment consists of multiple
 functions interacting with one another whereas in a PaaS environment, an application is deployed as
 a single unit.
@@ -55,10 +54,10 @@ a single unit.
 \subsection{Functions}
 
 A serverless program is built from separate functions interacting with one another. These functions
-usually communicate via a JSON API. Functions are programming language agnostic, so as long as the
+usually communicate via a \textit{JSON} API. Functions are programming language agnostic, so as long as the
 language you are using can invoke or receive web requests, you can use it to develop a function.
 This gives the developer the freedom to choose the best language for a given task, rather than
-sticking to a single language which might not be ideal for some specific tasks. Additionally,
+sticking to a single language which might not be ideal for specific tasks. Additionally,
 deployment of functions is managed by the serverless stack, so once the serverless stack is
 deployed, there is no more maintenance overhead.
 
@@ -70,7 +69,7 @@ any maintenance difficulties or conflicts compared to doing the same on a single
 
 \section{Docker}
 
-Docker is a technology which is used to run software packaged into containers. Containers are
+\textit{Docker} is a technology which is used to run software packaged into containers. Containers are
 self-contained and provide an isolated environment for software to run in. A container includes all
 configuration files and dependencies as well as the software itself, which makes it highly portable.
 In the case of \textit{Docker}, these stand-alone container images can then be executed by the
@@ -109,7 +108,7 @@ and being \textit{Kubernetes} native. \cite{openfaas-docs}
 \begin{figure}[H]
   \centering
   \adjincludegraphics[max width=\textwidth]{of-workflow}
-  \caption{\textit{OpenFaaS} workflow \cite{openfaas-docs}}
+  \caption{\textit{OpenFaaS} Workflow \cite{openfaas-docs}}
 \end{figure}
 
 \section{MongoDB}
@@ -117,9 +116,9 @@ and being \textit{Kubernetes} native. \cite{openfaas-docs}
 \textit{MongoDB} is a document database that is scalable and flexible. The data in a
 \textit{MongoDB} database is stored in flexible, \textit{JSON}-like documents, making it easy to
 work with. The document database offers powerful ways to access and analyse data with features like
-ad hoc querying and real time aggregation. Since \textit{MongoDB} is a distributed database at its
+ad hoc querying and real-time aggregation. Since \textit{MongoDB} is a distributed database at its
 core, high availability and horizontal scaling are already built in. Furthermore, due to its
-“real-time” nature, \textit{MongoDB} lends itself very well for \textit{IoT} applications.
+real-time nature, \textit{MongoDB} lends itself very well for \textit{IoT} applications.
 \cite{mongodb-description}
 
 \begin{code}[H]
@@ -134,7 +133,7 @@ core, high availability and horizontal scaling are already built in. Furthermore
   }
 }
   \end{lstlisting}
-  \caption{A \textit{MongoDB} document (adapted from \cite{mongodb-description}).}
+  \caption{A \textit{MongoDB} Document (adapted from \cite{mongodb-description})}
 \end{code}
 
 \section{Apache \whitelist{ZooKeeper}}
@@ -163,7 +162,7 @@ essential. The final piece of the puzzle is the real-time processing of these st
 
 \textit{Kafka} is usually used to create real-time pipelines for passing data between distributed
 applications or to transform streams of data in real-time. \textit{Kafka} is deployed as a cluster
-on a single machine or on multiple servers and \textit{Kafka} groups streams into categories called
+on a single machine or on multiple servers. Streams are grouped into categories called
 “topics”. Each record consists of a key-value pair and a timestamp to provide the possibility to
 process streams chronologically.
 
@@ -178,7 +177,7 @@ As seen in \autoref{fig:kafka-apis}, there are four core APIs provided by \texti
 Producer and Consumer APIs are used to either post records to a topic or to receive records from a
 topic, respectively. Then there is the Streams API, which is used to essentially tie an application
 in between one or multiple input streams and one or multiple output streams. Lastly, there is the
-Connector API, which allows linking \textit{Kafka} to external systems, this is essential for
+Connector API, which allows linking \textit{Kafka} to external systems, this is crucial for
 connecting serverless functions to streams.
 \cite{kafka-introduction}
 
@@ -195,11 +194,11 @@ memory management. \cite{rustbook1, forkjoin}
 Memory management actually differs quite considerably compared to conventional languages like
 \textit{Java} or \textit{C}/\textit{C++}. \textit{Rust} does not use a garbage collector, in fact,
 thanks to its ownership model, memory does not need to be freed manually at all, avoiding common
-pitfalls like a double-free error.
+pitfalls like double-free errors.
 
 Like many other modern programming languages, \textit{Rust} has its own package manager, called
 \textit{Cargo}. To some extent, \textit{Cargo} can be compared with \textit{NPM} from the
-\textit{JavaScript} ecosystem. However the amount of packages (a.k.a. \textit{Crates}) available in
+\textit{JavaScript} ecosystem. However the amount of packages (a.k.a. \textit{Crates}) available for
 \textit{Rust} is substantially lower compared to \textit{NPM} as \textit{Rust} is a much younger
 language with a smaller community.
 
@@ -211,7 +210,7 @@ concurrency”. \cite{rustbook2}
 \section{Flutter}
 
 \textit{Flutter} is a \textit{UI} toolkit from \textit{Google} for building natively compiled mobile
-applications. With the same code base, the application can also be deployed on web and desktop.
+applications. With the same code base, the application can also be deployed as a web or desktop application.
 \textit{Flutter} offers many features that make the development experience easier, like
 \textit{Stateful Hot Reload} and filtering application specific error messages on \textit{Android}
 by default. Although \textit{Flutter} is a cross platform framework, it is said to still rival
@@ -223,17 +222,17 @@ code into native code.
 code is actually \textit{Dart} code. \textit{Dart} itself has many language extensions that are well
 suited for mobile application development. For example, the language offers a mature and complete
 \textit{async-await} implementation with isolate-based concurrency support. Furthermore its syntax
-is familiar and seems inspired by other popular modern languages. As mentioned before, \textit{Dart}
+feels familiar and seems inspired by other popular modern languages. As mentioned before, \textit{Dart}
 code is transpiled to the platform's native instruction set, this means native \textit{ARM} code on
 mobile devices and \textit{JavaScript} on the web. \cite{dart}
 
 \section{Azure Pipelines}
 
 \textit{Azure Pipelines} is a CI (continuous integration) service provided by Microsoft which is
-used to automatically build and test projects. Given that all major platforms, i.e. Linux, macOS and
-Windows, are supported, projects written in virtually any language can be built and tested. In
+used to automatically build and test projects. Given that all major platforms (i.e. Linux, macOS and
+Windows) are supported, projects written in virtually any language can be built and tested. In
 addition to continuous integration, \textit{Azure Pipelines} also offers CD (continuous delivery),
-which can be used to directly publish any build artefacts, e.g. compiled binaries. Like many other
+which can be used to directly publish build artefacts, e.g. compiled binaries. Like many other
 CI providers, \textit{Azure Pipelines} provides a free plan for open-source projects.
 \cite{azure-pipelines}
 
