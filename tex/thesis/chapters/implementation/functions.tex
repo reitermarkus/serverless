@@ -118,7 +118,7 @@ function which needs to access the database.
 
 The \texttt{register-device} function is used, as the name implies, to register new devices. This
 function is triggered when a new message is posted to the \\
-\texttt{register-device} Kafka topic. The function handler parses the message, which must contain a
+\texttt{register-device} \textit{Kafka} topic. The function handler parses the message, which must contain a
 device ID and the device's name. If this is the case, it then calls the \texttt{database} function
 in order to insert a new device or update an existing device's name.
 

@@ -3,11 +3,11 @@
 In our serverless stack, \textit{Apache Kafka} is the first point of contact for our edge devices
 (Raspberry Pis and Smartphones). Additionally, the stack includes \textit{Apache Zookeeper}
 (explained in \autoref{sec:background-zookeeper}), which \textit{Kafka} uses to register itself.
-This way, other services can connect to Zookeeper instead of connecting to Kafka directly, which is
+This way, other services can connect to Zookeeper instead of connecting to \textit{Kafka} directly, which is
 needed when running multiple \textit{Kafka} instances in a cluster.
 
 Since we wanted to use a unified API to post data to \textit{Kafka}, our stack also includes
-\textit{Kafka Rest}, which provides a \textit{REST} (\textit{Representational State Transfer}) API
+\textit{Kafka REST}, which provides a \textit{REST} (\textit{Representational State Transfer}) API
 endpoint for the \textit{Kafka} core APIs explained in \autoref{sec:background-kafka}. The
 \textit{REST} API is subsequently used by the mobile application as well as the \textit{Raspberry Pi}
 application to post sensor data.

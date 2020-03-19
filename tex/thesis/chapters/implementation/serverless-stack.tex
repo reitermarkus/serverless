@@ -29,10 +29,10 @@ modifying the given deploy script to our needs and porting it from \textit{Bash}
 for it to be cross platform. The next step then was to write our own configuration file for swarm
 deployment, namely \texttt{deploy.yml}. This \textit{YAML} file includes the configuration for
 \textit{Kafka}, \textit{Zookeeper}, \textit{MongoDB}, various services that are needed for
-\textit{OpenFaaS}, a bunch of gateways for visualisation and the \textit{Kafka-Connector}. All of
+\textit{OpenFaaS}, a bunch of gateways for visualisation and the \textit{Kafka Connector}. All of
 these service are \textit{Docker} images and can therefore be easily updated and extended.
-\textit{Kafka-Connector} is particularly interesting, because its main purpose is to call a
-serverless function on a Kafka topic change. To make a function react to a Kafka topic we can again
+\textit{Kafka Connector} is particularly interesting, because its main purpose is to call a
+serverless function on a \textit{Kafka} topic change. To make a function react to a \textit{Kafka} topic we can again
 use our example store function \texttt{figlet}:
 
 \begin{lstlisting}[language=bash]
