@@ -3,7 +3,7 @@
 
 As explained in the thesis, building an infrastructure like the one we have is not a trivial task
 and requires an extensive amount of research. The final result then however shows the flexibility
-and benefits of our stack and by extension of \textit{Serverless Computing}. It is trivial to switch
+and benefits of our stack and by extension of serverless computing. It is trivial to switch
 the programming environment as one only has to write a new function and provide a corresponding
 \textit{Dockerfile}. In terms of \textit{IoT} devices, \textit{FaaS} seems to be a fitting concept
 as well, since it offers high scalability and parallelism of invocations, which means the stack can
@@ -13,19 +13,26 @@ case of a high amount of connected clients. The choice of a host for persisting 
 like this is also very important. \textit{MongoDB} proves to be capable in that regard. Its
 \textit{JSON} inspired documents make it easy for devices with low hardware specifications to
 process data as representing data with \textit{JSON} is straight forward. Unfortunately the same
-cannot be said when dealing with mobile applications in a \textit{cross platform} way. The
-\textit{cross platform} aspect in our project is essentially limited to the user interface. Newer
+cannot be said when dealing with mobile applications in a cross platform way. The
+cross platform aspect in our project is essentially limited to the user interface. Newer
 versions of both \textit{Android} and \textit{iOS} do not work well when confronted with the
-requirement of always having to send data in the background, as both platforms impose energy saving
+requirement of always having to send data in the background. Both platforms impose energy saving
 restrictions and therefore prevent the application from working as intended.
 
 Ultimately, our project is supposed to act more as a proof of concept and give an insight what could
 be possible with this kind of technology. Although the mobile application is not ideal from a
-usability standpoint as mentioned before. From the standpoint of our \textit{OpenFaaS} stack
-however, it is also a success as it shows the capability of the infrastructure of dealing with
+usability standpoint as mentioned before, from the standpoint of our \textit{OpenFaaS} stack
+however, it is a success as it shows the capability of the infrastructure when dealing with
 various different devices. Our project can therefore be used as a basis for future work as there is
-still room for improvement, especially in the latency department. The technology of
-\textit{Serverless Computing} seems to be more suited for deployment on a larger scale where many
-devices send data at the same time. Optimising throughput is not the only thing that still can be
-done. Security aspects like roles and authorisation could also be imposed in order to control who
-and which device is allowed to call a function.
+still room for improvement.
+
+Despite our benchmarks showing that an \textit{Intel NUC} is able to handle approximately
+400~concurrent requests, this is still a comparatively small number when compared to the number
+of requests some web frameworks are able to handle, which is approaching 50000 concurrent requests.
+\cite{webframework-benchmarks} In that regard, there is definitely still room for improvement in
+the latency and throughput department since the technology of serverless computing seems to be more
+suited for deployment on a larger scale where many devices send data at the same time.
+
+Optimising latency and throughput is not the only thing that still can be improved, security
+aspects like roles and authorisation could also be imposed in order to control who and which
+device is allowed to call a function.
