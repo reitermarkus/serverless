@@ -4,14 +4,14 @@
 Since we use many different technologies, we briefly present each of them in this section in order
 to make the reader more familiar with the individual technologies and their respective terms that
 will be used throughout the thesis. Firstly we start by discussing the main topic,
-\textit{Serverless Computing}, we will then go on in more detail about \textit{Docker} and our
+Serverless Computing. We will then go on in more detail about \textit{Docker} and our
 specific use case.
 
 \section{Serverless Computing}
 
 Serverless computing is a new emerging paradigm for deploying applications into the cloud. It gained
 in popularity in recent years largely due to shift of enterprise application deployment in
-containers and microservices. \textit{Serverless Computing} offers developers a simplified
+containers and microservices. Serverless Computing offers developers a simplified
 programming model for creating cloud applications while minimising operational concerns.
 \cite{servprog}
 
@@ -64,9 +64,9 @@ deployed, there is no more maintenance overhead.
 
 Every function is a self-contained unit of execution, usually in the form of a container which can
 be deployed on the serverless stack. This means that the programming language runtime environment
-and all dependencies are contained in a single container. This allows the developer to not only use
-different programming languages but also different versions of the same language without any
-maintenance difficulties or conflicts compared to doing the same on a single server.
+and all dependencies are contained in a single container. The developer then has the ability to not
+only use different programming languages but also different versions of the same language without
+any maintenance difficulties or conflicts compared to doing the same on a single server.
 
 \section{Docker}
 
@@ -163,9 +163,9 @@ essential. The final piece of the puzzle is the real-time processing of these st
 
 \textit{Kafka} is usually used to create real-time pipelines for passing data between distributed
 applications or to transform streams of data in real-time. \textit{Kafka} is deployed as a cluster
-on a single machine or on multiple servers and groups streams into categories called “topics”. Each
-record consists of a key-value pair and a timestamp to provide the possibility to process streams
-chronologically.
+on a single machine or on multiple servers and \textit{Kafka} groups streams into categories called
+“topics”. Each record consists of a key-value pair and a timestamp to provide the possibility to
+process streams chronologically.
 
 \begin{figure}[H]
   \centering
