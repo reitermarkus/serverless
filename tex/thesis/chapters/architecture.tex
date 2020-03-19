@@ -19,13 +19,13 @@ together.
 
 \section{How does it work?}
 
-Let us start with one of the edge devices in our architecture, a smartphone. A smartphone, (bottom
+Let us start with one of the edge devices in our architecture, a smartphone. A smartphone (bottom
 left of \autoref{fig:architecture-diagram}) collects data from its internal sensors (e.g.
 temperature, gravity, orientation) and then sends it to a \textit{Kafka} message broker in order to
-be processed further, for this we implemented a cross-platform mobile application. A
+be processed further. For this, we implemented a cross-platform mobile application. A
 \textit{Raspberry Pi} (also bottom left of \autoref{fig:architecture-diagram}) collects data from
 external sensors (e.g. air humidity, air pressure, luminosity) as well as internal sensors (e.g. CPU
-temperature, CPU load). Similarly to a smartphone, it sends the collected sensor data to a
+temperature, CPU load). Similarly to the smartphone, it sends the collected sensor data to a
 \textit{Kafka} message broker. For the \textit{Raspberry Pi}, we developed an application written in
 Rust.
 
