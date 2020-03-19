@@ -5,7 +5,7 @@
 
 For our test setup, we deployed our stack on an \textit{Intel NUC}, which is a fairly inexpensive
 mini PC. With the following benchmarks, we want to show what such an affordable machine is capable
-of when coupled with other cheap IoT devices, e.g. a Raspberry Pi.
+of when coupled with other cheap IoT devices such as a \textit{Raspberry Pi}.
 
 \begin{table}[H]
   \centering
@@ -38,7 +38,6 @@ as tested with \texttt{iperf3} \cite{iperf}.
   \label{tab:benchmark-network-speed}
 \end{table}
 
-
 \begin{table}[H]
   \centering
   \begin{tabular}{|r|r|}
@@ -54,7 +53,7 @@ as tested with \texttt{iperf3} \cite{iperf}.
 In \autoref{tab:benchmark-nuc-raspberry-pi}, we see the benchmark data for the \texttt{log-data}
 function. For this benchmark, we set the \textit{Raspberry Pi} to not use any delay between
 measurements instead of the usual measurement interval of \SI{15}{\second}. We also disabled the
-\texttt{CPU Load Aggregate} measurement, since this has an inherent delay of \SI{1}{\second} due to
+\textit{CPU Load Aggregate} measurement, since this has an inherent delay of \SI{1}{\second} due to
 the fact that it calculates the load average for a given duration. The \textit{Raspberry Pi}
 application collects the data for all sensors in each iteration, which means that we can actually
 get much more throughput with eight sensors than with a single sensor. Thus, we can further
@@ -79,11 +78,11 @@ powerful computer to test the limit of the \textit{NUC}.
 
 Each \texttt{curl} request in \autoref{tab:benchmark-nuc-curl} contains a single sensor record which
 corresponds to the case in \autoref{tab:benchmark-nuc-raspberry-pi} with a single sensor. By looking
-at this data, we can see when only sending data for a single sensor, the \textit{Raspberry Pi} is
-clearly the bottleneck, not the \textit{NUC}. It is safe to assume that the \textit{NUC} is able to
-handle approximately 400~requests per second.
+at this data, we can see that when only sending data for a single sensor, the \textit{Raspberry Pi} is
+clearly the bottleneck, not the \textit{NUC}. Looking at the data in \autoref{tab:benchmark-nuc-curl},
+we can see a tendency towards 400~requests per second.
 
-With this assumption that a \textit{NUC} can handle 400~requests per second, we can deduce that with
+With the assumption that a \textit{NUC} can handle 400~requests per second, we can deduce that with
 our test setup, we are able to process streams from between
 
 $\frac{400}{7.55} \times 1 \approx 53$
@@ -94,6 +93,6 @@ $\frac{400}{49.20} \times 8 \approx 65$
 
 sensors.
 
-This being a synthetic benchmark, it is likely that in a real world scenario, where sensor data is
-sent only every \textit{x} seconds, the number of supported sensors is actually in the~100s instead
+This being a synthetic benchmark, it is likely that in a real world scenario, in which sensor data is
+sent only every few seconds, the number of supported sensors is actually in the~100s instead
 of only in the~10s.
