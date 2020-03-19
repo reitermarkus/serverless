@@ -6,11 +6,11 @@ In our serverless stack, \textit{Apache Kafka} is the first point of contact for
 This way, other services can connect to Zookeeper instead of connecting to Kafka directly, which is
 needed when running multiple \textit{Kafka} instances in a cluster.
 
-Since we wanted to use a unified API to post data to Kafka, our stack also includes \textit{Kafka
-Rest}, which provides a \textit{ReST} (\textit{Representational State Transfer}) API endpoint for
-the \textit{Kafka} core APIs explained in \autoref{sec:background-kafka}. The \textit{ReST} API is
-subsequently used by the mobile application as well as the Raspberry Pi application to post sensor
-data.
+Since we wanted to use a unified API to post data to \textit{Kafka}, our stack also includes
+\textit{Kafka Rest}, which provides a \textit{REST} (\textit{Representational State Transfer}) API
+endpoint for the \textit{Kafka} core APIs explained in \autoref{sec:background-kafka}. The
+\textit{REST} API is subsequently used by the mobile application as well as the \textit{Raspberry Pi}
+application to post sensor data.
 
 Another building block we need in our stack is the \textit{OpenFaaS Kafka Connector}, which is used
 to forward messages from one or multiple topics to the \textit{OpenFaaS Gateway}. In our specific
