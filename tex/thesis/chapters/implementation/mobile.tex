@@ -54,9 +54,9 @@ cross platform mobile application framework by \textit{Google}. \textit{Flutter}
 native code and therefore should have a performance advantage compared to \textit{React Native}.
 
 As with any new programming language, \textit{Dart} - the language behind \textit{Flutter} - took
-some time to get used to and be productive with. After a while however the process of designing
-\textit{UIs} with \textit{Flutter} and writing logic was rather seamless. Fortunately the native
-part of the \textit{React Native} application could almost fully be reused for the \textit{Flutter}
+some time to get used to and be productive with. After a while however the process of designing user
+interfaces with \textit{Flutter} and writing logic was rather seamless. Fortunately the native part
+of the \textit{React Native} application could almost fully be reused for the \textit{Flutter}
 version of the app. The surprisingly easy to use \textit{bridge} between native code and
 \textit{Dart} in \textit{Flutter} made the transition from \textit{React Native} regarding native
 code on \textit{Android} hassle free.
@@ -71,13 +71,13 @@ The finished application now contains five Views:
 \begin{figure}[H]
   \centering
   \includegraphics[height=20em]{mobile-device-info}
-  \caption{\textit{Device Info} contains various information about the running system.}
+  \caption{\texttt{Device Info} contains various information about the running system.}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[height=20em]{mobile-cpu}
-  \caption{\textit{CPU} shows the amount of cores available and the frequency they are currently
+  \caption{CPU shows the amount of cores available and the frequency they are currently
   running at, if they are running at all. This view, however, is only available on \textit{Android}
   due to limitations on retrieval of CPU information on \textit{iOS}.}
 \end{figure}
@@ -86,24 +86,24 @@ The finished application now contains five Views:
   \centering
   \includegraphics[height=20em]{mobile-sensors}
   \includegraphics[height=20em]{mobile-sensors-2}
-  \caption{\textit{Sensors} lists various sensors on both platforms.}
+  \caption{\texttt{Sensors} lists various sensors on both platforms.}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[height=20em]{mobile-ui}
   \includegraphics[height=20em]{mobile-ui-sensors}
-  \caption{\textit{Sensor UI} shows the \textit{web UI} (explained in \autoref{sec:ui}) embedded in the application.}
+  \caption{\texttt{Sensor UI} shows the UI (explained in \autoref{sec:ui}) embedded in the application.}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[height=20em]{mobile-settings}
-  \caption{\textit{Settings} gives the user the ability to modify the interval of sending data to the
-  server and the \textit{URL} where the server is located.}
+  \caption{\texttt{Settings} gives the user the ability to modify the interval of sending data to the
+  server and the URL where the server is located.}
 \end{figure}
 
 The most important part about the application however is sending data to a \textit{Kafka} topic.
-\textit{Kafka} then invokes a \textit{serverless function}. The task of the \textit{serverless
-function} is then to push the data into our \textit{MongoDB} database. To achieve this we wrap all
-data into categories and send them to the specific topic in \textit{Kafka} via \textit{JSON}.
+\textit{Kafka} then invokes a serverless function. The task of the serverless function is then to
+push the data into our \textit{MongoDB} database. To achieve this we wrap all data into categories
+and send them to the specific topic in \textit{Kafka} via \textit{JSON}.

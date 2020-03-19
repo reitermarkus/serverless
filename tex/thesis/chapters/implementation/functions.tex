@@ -138,11 +138,11 @@ function is made to insert the data in the collection for the corresponding data
 The \texttt{devices} is probably the simplest function in our project. It calls the
 \texttt{database} function to retrieve a list of all registered devices and their corresponding data
 types, converts the list from \textit{BSON} to \textit{JSON} and then returns it. It is used by the
-\textit{UI} for displaying a list of all devices.
+UI for displaying a list of all devices.
 
 \subsection{The \texttt{filter} Function}
 
-Another function that is used by the \textit{UI} is the filter function. Given a device ID, it
+Another function that is used by the UI is the filter function. Given a device ID, it
 returns the logged data for a specified data type. The function supports calculating averages for a
 specified number of time slices in a given interval. To do this, we call our \texttt{database}
 function with the \texttt{aggregate} function. In the request, we send the \texttt{begin},

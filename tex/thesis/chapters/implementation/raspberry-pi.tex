@@ -30,16 +30,16 @@ We then found the \texttt{cross} \cite{cross} tool, which claimed to automatical
 corresponding toolchain and then run the cross compilation in a \textit{Docker} container, so this
 should have worked on both \textit{macOS} and \textit{Windows}. Right after we installed it using
 \texttt{cargo install cross}, we saw that \textit{macOS} and \textit{Windows} support was lacking.
-On both platforms, \textit{cross} tried to simply call \texttt{cargo} directly instead of running in a
-\textit{Docker} container. Since this tool still seemed to be the best solution we could find for
+On both platforms, \texttt{cross} tried to simply call \texttt{cargo} directly instead of running in
+a \textit{Docker} container. Since this tool still seemed to be the best solution we could find for
 our situation and since the tool is open-source, we decided to dig into the source code and add the
 missing \textit{macOS} and \textit{Windows} support ourselves.
 
-Getting \texttt{cross} to actually run a \textit{Docker} container on both of our platforms was quite easy,
-we only had to add two new definitions for \textit{Rust} toolchains in the source code of
-\texttt{cross}, one for \textit{macOS} (\texttt{x86\_64-apple-darwin}) and one for \textit{Windows}
-(\texttt{x86\_64-pc-windows-msvc}). The next problem we were facing was that inside of the
-\textit{Docker} container, the \texttt{CARGO\_HOME} directory was mounted, and with it, its
+Getting \texttt{cross} to actually run a \textit{Docker} container on both of our platforms was
+quite easy, we only had to add two new definitions for \textit{Rust} toolchains in the source code
+of \texttt{cross}, one for \textit{macOS} (\texttt{x86\_64-apple-darwin}) and one for
+\textit{Windows} (\texttt{x86\_64-pc-windows-msvc}). The next problem we were facing was that inside
+of the \textit{Docker} container, the \texttt{CARGO\_HOME} directory was mounted, and with it, its
 \texttt{bin} subdirectory. This meant that the \textit{Docker} container would first look in this
 directory instead of the respective toolchain root for the corresponding target's binaries. Since
 the binaries in \texttt{CARGO\_HOME/bin} are compiled for the host machine, these previously worked
@@ -73,7 +73,7 @@ finally compile our program on both \textit{macOS} and \textit{Windows}.
 
 For the actual collection of data, we of course needed to implement some sensors. The first sensor
 we implemented is the widely used \textit{BMP180}, a digital sensor which acts as a combination of a
-thermometer and barometer. The \textit{BMP180} communicates over the \textit{I\textsuperscript{2}C}
+thermometer and barometer. The \\ \textit{BMP180} communicates over the \textit{I\textsuperscript{2}C}
 bus. \textit{I\textsuperscript{2}C} is supported natively by most \textit{Linux} distributions,
 consequentially also by the \textit{Raspbian} operating system running on the \textit{Raspberry Pi}.
 We quickly found a \textit{Rust} library called \texttt{i2cdev}, which provides idiomatic wrapper functions
