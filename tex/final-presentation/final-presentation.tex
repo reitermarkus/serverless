@@ -152,76 +152,154 @@
     \end{tabularx}
   \end{frame}
 
-  \begin{frame}{Raspberry Pi Application -- Implementation}
-    \begin{itemize}
-      \item “Hello, world!”
-      \item code synchronised to Raspberry Pi
-      \item compiled directly on Raspberry Pi
-      \item \green{pro:} simple
-      \item \red{con:} slow
-    \end{itemize}
+  \begin{frame}{Raspberry Pi Application -- Workflow}
+    \begin{block}{“Hello, world!” program}
+      \begin{itemize}
+        \item develop on local machine
+        \item synchronise code to Raspberry Pi
+        \item compile and run directly on Raspberry Pi
+      \end{itemize}
+    \end{block}
+    \begin{block}{\green{Advantages}}
+      \begin{itemize}
+        \item simple
+      \end{itemize}
+    \end{block}
+    \begin{block}{\red{Disadvantages}}
+      \begin{itemize}
+        \item synchronisation needed on each change
+        \item slow compilation on Raspberry Pi
+      \end{itemize}
+    \end{block}
   \end{frame}
 
-  \begin{frame}{Raspberry Pi Application -- Implementation}
-    \begin{itemize}
-      \item more sensors, more dependencies
-      \item compile time approached 30 minutes for a fresh build
-      \item compile time approached 5 minutes for a single iteration
-      \item \green{solution:} cross-compilation
-    \end{itemize}
+  \begin{frame}{Raspberry Pi Application -- Workflow}
+    \begin{block}{More Sensors, More Dependencies}
+      \begin{itemize}
+        \item compile time approached 30 minutes for a fresh build
+        \item compile time approached 5 minutes for a single iteration
+      \end{itemize}
+    \end{block}
+
+    \visible<2-> {
+    \begin{block}{\green{Solution:} Cross Compilation}
+      \begin{itemize}
+        \item code can be compiled directly on local machine
+        \item no need to synchronise on each change
+        \item avoids slow compilation on Raspberry Pi
+      \end{itemize}
+    \end{block}
+    }
+
+    \visible<3-> {
+    \begin{block}{\red{Problem:}}
+      \begin{itemize}
+        \item most toolchains only available for Linux
+        \item no macOS or Windows support
+      \end{itemize}
+    \end{block}
+    }
   \end{frame}
 
-  \begin{frame}{Raspberry Pi Application -- Implementation}
-    \begin{itemize}
-      \item \texttt{cross} tool (\url{https://github.com/rust-embedded/cross})
-      \item uses Docker to compile for different targets
-      \item \green{pro:} “zero setup cross-compilation”
-      \item \green{pro:} wrapper for \texttt{cargo}
-      \item \green{pro:} arbitrary Rust version
-      \item \red{con:} no macOS or Windows support
-    \end{itemize}
-  \end{frame}
-
-  \begin{frame}{Raspberry Pi Application -- Implementation}
-    \includegraphics[valign=c,height=5em]{macos-logo}
-    \hspace*{1em}
-    \&
-    \hspace*{1em}
-    \includegraphics[valign=c,height=5em]{windows-logo}
-
-    \vspace*{1.5em}
-
-    \begin{itemize}
-      \item \green{solution:} implement macOS and Windows support for the \texttt{cross} tool
-    \end{itemize}
-  \end{frame}
-
-  \begin{frame}{Raspberry Pi Application -- Implementation}
-    \begin{itemize}
-      \item check host target
+  \begin{frame}{Raspberry Pi Application -- Cross Compilation}
+    \begin{block}{Alternatives}
+      \begin{itemize}
+        \item use Linux virtual machine for cross compilation
         \begin{itemize}
-          \item if supported, run \texttt{cargo} inside Docker container
-            \begin{itemize}
-              \item install needed toolchain (e.g. \texttt{armv7-unknown-linux-gnueabi}) using \texttt{rustup}
-              \item mount toolchain into container
-              \item mount cargo index into container
-              \item run \texttt{cargo} inside container
-            \end{itemize}
-          \item else, fall back to running \texttt{cargo} locally
+          \item \red{con:} duplicates Rust setup in virtual machine
+          \item \red{con:} adds unnecessary complexity
         \end{itemize}
-    \end{itemize}
+        \item use Docker container for cross compilation
+        \begin{itemize}
+          \item \red{con:} duplicates Rust setup in container
+          \item \red{con:} adds unnecessary complexity
+          \item \green{pro:} we are already using Docker in our project
+        \end{itemize}
+      \end{itemize}
+    \end{block}
+
+    \visible<2-> {
+    \begin{block}{Conclusion}
+      \begin{itemize}
+        \item Docker preferrable, but still not ideal
+      \end{itemize}
+    \end{block}
+    }
   \end{frame}
 
-  \begin{frame}{Raspberry Pi Application -- Implementation}
-    \begin{itemize}
-      \item add macOS and Windows target triples to supported hosts
-      \item \green{success:} Docker is actually invoked on macOS and on Windows
-      \item \red{problem:} compilation on macOS still not working
-         \begin{itemize}
-           \item Docker container (Linux) tries to execute macOS binary
-           \item \green{solution:} override mounted binary directory with empty directory
-         \end{itemize}
-    \end{itemize}
+  \begin{frame}{Raspberry Pi Application -- Cross Tool}
+    \begin{block}{Features}
+      \begin{itemize}
+        \item “zero setup cross-compilation”
+        \item uses Docker to compile for different targets
+        \item wrapper for \texttt{cargo}, Rust's built-in package manager and build system
+        \item arbitrary Rust version
+      \end{itemize}
+    \end{block}
+
+    \visible<2-> {
+    \begin{block}{\red{Problem}}
+      \begin{itemize}
+        \item no macOS or Windows support
+      \end{itemize}
+    \end{block}
+    }
+
+    \visible<3-> {
+    \begin{block}{\green{Solution}}
+      \begin{itemize}
+        \item implement macOS and Windows support
+      \end{itemize}
+    \end{block}
+    }
+  \end{frame}
+
+  \begin{frame}{Raspberry Pi Application -- How does Cross work?}
+    \begin{block}{Workflow}
+       \begin{itemize}
+         \item if host triple (e.g. \texttt{x86\_64-unknown-linux-gnu}) is supported
+           \begin{itemize}
+            \item install needed toolchain (e.g. \texttt{armv7-unknown-linux-gnueabi}) using \texttt{rustup}
+            \item check if container image for target exists
+            \item mount toolchain into container
+            \item mount \texttt{cargo} index into container
+            \item mount project directory into container
+            \item run \texttt{cargo} inside container
+           \end{itemize}
+         \item otherwise
+           \begin{itemize}
+             \item fall back to running \texttt{cargo} locally
+           \end{itemize}
+      \end{itemize}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}{Raspberry Pi Application -- Cross: Adding macOS and Windows Support}
+    \begin{block}{Fix}
+      \begin{itemize}
+        \item add macOS and Windows triples to supported host triples
+      \end{itemize}
+    \end{block}
+
+    \visible<2->{
+    \begin{block}{\green{Success}}
+      \begin{itemize}
+        \item Docker is actually invoked on macOS and on Windows
+      \end{itemize}
+    \end{block}
+    }
+
+    \visible<3->{
+    \begin{block}{\red{Problem}}
+      \begin{itemize}
+        \item compilation on macOS still not working
+          \begin{itemize}
+            \item \red{Problem:} Docker container (Linux) tries to execute macOS binary
+            \item \green{Solution:} override mounted binary directory with empty directory
+          \end{itemize}
+      \end{itemize}
+    \end{block}
+    }
   \end{frame}
 
   \begin{frame}{Background -- Docker}
