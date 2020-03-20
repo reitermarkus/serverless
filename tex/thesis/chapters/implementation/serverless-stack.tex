@@ -14,7 +14,7 @@ Running was as simple as cloning the \textit{OpenFaaS} repository, calling \text
 init} and executing the provided initialisation script. Deploying an actual function is equally
 simple. One has the option to either deploy a function from the store through the nicely designed
 \textit{OpenFaaS} gateway on port~8080 or with the preferred way, which is using the
-\texttt{faas-cli} command line tool.
+\texttt{faas} command line tool.
 
 Deploying a function from the store with it would look as follows:
 
@@ -25,11 +25,11 @@ faas store deploy figlet
 Here, \texttt{figlet} is the name of the function in the store.
 
 After gaining a grasp of how the platform works, we decided to put our own spin on it by firstly
-modifying the given deploy script to our needs and porting it from \textit{Bash} to \textit{Rust}
-for it to be cross platform. The next step then was to write our own configuration file for swarm
+modifying the given deploy script to our needs and porting it from \textit{Bash} to \textit{Ruby}
+for it to be more easily extendable. The next step then was to write our own configuration file for swarm
 deployment, namely \texttt{deploy.yml}. This \textit{YAML} file includes the configuration for
 \textit{Kafka}, \textit{Zookeeper}, \textit{MongoDB}, various services that are needed for
-\textit{OpenFaaS}, a bunch of gateways for visualisation and the \textit{Kafka Connector}. All of
+\textit{OpenFaaS}, a bunch of services for visualisation and the \textit{Kafka Connector}. All of
 these service are \textit{Docker} images and can therefore be easily updated and extended.
 \textit{Kafka Connector} is particularly interesting, because its main purpose is to call a
 serverless function on a \textit{Kafka} topic change. To make a function react to a \textit{Kafka} topic we can again
