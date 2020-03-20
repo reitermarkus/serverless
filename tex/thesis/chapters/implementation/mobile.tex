@@ -8,8 +8,8 @@ the general feasibility of the task at hand. It became quite apparent early on t
 design for the application is not possible on \textit{iOS}.
 
 The idea for the design of the app is actually rather simple. Get data from the device, no matter if
-the application is in foreground, background or the screen is off and the device subsequently
-basically being in standby. On \textit{Android} this can be realised easily with a so called
+the application is in the foreground, background or the screen is off and the device subsequently
+in standby mode. On \textit{Android} this can be realised easily with a so called
 \textit{ForegroundService}. On \textit{iOS} going for the same approach is difficult because of its
 restrictions on background tasks. While obviously applications like music players can run in the
 background on that platform, achieving the same for a highly battery intensive app like the one we
@@ -28,8 +28,8 @@ orientation, rotation rate, gravity, pressure and magnetic field.
 
 Finding the ideal tool for our job of creating an application supporting both \textit{iOS} and
 \textit{Android} seemed at first pretty easy. We chose to use \textit{React Native}
-\cite{react-native} as we both already have experience with \textit{React} \cite{react} itself and
-the approach to \textit{UI design} in \textit{React Native} seemed equally elegant.
+\cite{react-native} as we both already had experience with \textit{React} \cite{react} itself and
+the approach to UI design in \textit{React Native} seemed equally elegant.
 
 Getting started with \textit{React Native} was rather fast and effortless, the same however could
 not be said anymore once we progressed further with the project. At first things were looking good
@@ -37,9 +37,9 @@ as the UI did properly respond to data from sensors but as we added more and mor
 display, the UI got more and more sluggish, to the point that it could not be considered usable
 anymore. Unfortunately this was not the only problem.
 
-By nature the application relies heavily on \textit{native code}. The main culprit for this is the
+By nature the application relies heavily on native code. The main culprit for this is the
 \textit{ForegroundService} on \textit{Android}. \textit{React Native} has a so called
-\textit{bridge} for communication between \textit{native code} and the \textit{UI}. Our application
+\textit{bridge} for communication between native code and the UI. Our application
 uses that bridge heavily for retrieving information from the service and also to push data to the
 service.
 
@@ -54,7 +54,7 @@ cross platform mobile application framework by \textit{Google}. \textit{Flutter}
 native code and therefore should have a performance advantage compared to \textit{React Native}.
 
 As with any new programming language, \textit{Dart} - the language behind \textit{Flutter} - took
-some time to get used to and be productive with. After a while however the process of designing user
+some time to get used to and be productive with. After a while however, the process of designing user
 interfaces with \textit{Flutter} and writing logic was rather seamless. Fortunately the native part
 of the \textit{React Native} application could almost fully be reused for the \textit{Flutter}
 version of the app. The surprisingly easy to use \textit{bridge} between native code and
