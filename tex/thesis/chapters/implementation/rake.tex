@@ -22,7 +22,7 @@ task. When simply called without parameters, it builds all functions with the \t
 build} command. Internally, \texttt{faas-cli} then builds a \textit{Docker} image among other
 things. Calling \lstinline{rake build:functions} with parameters on the other hand can be used to
 build only a single function. As an example, we can call \lstinline{rake build:functions[ui]} to only
-build the \textit{UI} function.
+build the \texttt{ui} function.
 
 Because we like to upload our updated \textit{Docker} images on \textit{GitHub Container Registry}
 for more convenience when deploying the stack, we decided to automate this process with a
