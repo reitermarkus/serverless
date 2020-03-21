@@ -56,40 +56,6 @@
   \input{architecture.tex}
   \input{background.tex}
 
-  \begin{frame}{Devices -- Smartphone}
-    \begin{itemize}
-      \item gyroscope
-            \hspace*{2em}
-            \includegraphics[align=c,height=3em]{bmi160-sensor}
-      \item accelerometer
-      \item magnetometer
-      \item barometer
-            \hspace*{2em}
-            \includegraphics[align=c,height=3em]{barometric-sensor}
-      \item gravity
-      \item temperature
-      \item humidity
-            \hspace*{2em}
-            \includegraphics[align=c,height=3em]{shtc3-humidity-sensor}
-      \item possibly GPS location
-    \end{itemize}
-  \end{frame}
-
-  \begin{frame}{Devices -- Raspberry Pi}
-    \begin{itemize}
-      \item temperature sensor
-            \hspace*{2em}
-            \includegraphics[align=c,height=5em]{dht11-sensor}
-      \item humidity sensor
-      \item magnetic hall sensor
-            \hspace*{2em}
-            \includegraphics[align=c,height=4em]{hall-sensor}
-      \item light intensity sensor
-            \hspace*{2em}
-            \includegraphics[align=c,height=2em]{light-sensor}
-    \end{itemize}
-  \end{frame}
-
   \begin{frame}{Implementation -- Rakefile}
     \begin{itemize}
       \item tasks for various different jobs
@@ -162,6 +128,22 @@
   \end{frame}
 
   \input{functions.tex}
+
+  \begin{frame}{Implementation -- Mobile Application}
+    \begin{itemize}
+      \item gyroscope
+            \hspace*{2em}
+            \includegraphics[align=c,height=3em]{bmi160-sensor}
+      \item accelerometer
+      \item magnetometer
+      \item barometer
+            \hspace*{2em}
+            \includegraphics[align=c,height=3em]{barometric-sensor}
+      \item gravity
+      \item illuminance (only Android)
+      \item proximity (only Android)
+    \end{itemize}
+  \end{frame}
 
   \begin{frame}{Implementation -- Mobile Application}
     \begin{columns}
