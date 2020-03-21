@@ -1,0 +1,124 @@
+\begin{frame}{Implementation -- Rakefile}
+  \begin{itemize}
+    \item tasks for various different jobs
+    \item deployment with a single command \lstinline{rake deploy}
+    \item support for building, pushing and deploying single functions
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Implementation -- Kafka}
+  \begin{itemize}
+    \item first point of contact for edge devices
+    \item Zookeeper
+    \item Kafka REST endpoint for edge devices
+    \item Kafka Connector for invoking functions
+    \item Kafka Topics UI
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Implementation -- MongoDB}
+  \begin{columns}
+    \column{0.4\textwidth}
+      \begin{itemize}
+        \item issues
+        \item architecture of \texttt{sensordata} database
+          \begin{itemize}
+            \item collection per sensor type
+            \item differ depending on amount of returned values
+          \end{itemize}
+        \item devices have to be registered
+      \end{itemize}
+      \column{0.6\textwidth}
+        \begin{lstlisting}[language=mongo, basicstyle=\scriptsize\ttfamily]
+        {
+          _id: 'c7704c421d7491ec',
+          name: 'Samsung Galaxy S7',
+          data_types: [
+              'cpu_frequency',
+              'proximity',
+              'acceleration',
+              'rotation',
+              'pressure',
+              'orientation',
+              'gravity',
+              'illuminance',
+              'rotation_rate',
+              'rotation_rate_uncalibrated',
+              'magnetic_field',
+              'magnetic_field_uncalibrated'
+          ]
+        }
+        \end{lstlisting}
+   \end{columns}
+\end{frame}
+
+\begin{frame}{Implementation -- Serverless Stack}
+  \begin{columns}
+    \column{0.4\textwidth}
+      \begin{itemize}
+        \item central part of the technology stack
+        \item manages serverless functions
+        \item first class Docker support
+        \item configurable with a YAML file
+        \item deployable with a single RAKE task
+      \end{itemize}
+      \column{0.6\textwidth}
+      \vfill
+      \centering
+      \includegraphics[height=15em]{openfaas-dashboard-small.png}
+   \end{columns}
+\end{frame}
+
+\input{functions.tex}
+
+\begin{frame}{Implementation -- Mobile Application}
+  \begin{itemize}
+    \item gyroscope
+          \hspace*{18.4em}
+          \includegraphics[align=c,height=3em]{bmi160-sensor}
+    \item accelerometer
+    \item magnetometer
+    \item barometer
+          \hspace*{18,4em}
+          \includegraphics[align=c,height=3em]{barometric-sensor}
+    \item gravity
+    \item illuminance (only Android)
+    \item proximity (only Android)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Implementation -- Mobile Application}
+  \begin{columns}
+    \column{0.5\textwidth}
+      \begin{itemize}
+        \item basic workflow
+        \item difficulties with platform specific requirements
+        \item fist try with React Native
+        \item final Implementation in Flutter
+        \item consists of five Views
+      \end{itemize}
+      \column{0.5\textwidth}
+      \vfill
+      \vspace*{2em}
+      \centering
+      \includegraphics[height=16em]{mobile-sensor-ui.png}
+   \end{columns}
+\end{frame}
+
+\input{raspberry-pi.tex}
+
+\begin{frame}{Implementation -- UI}
+  \begin{columns}
+    \column{0.35\textwidth}
+      \begin{itemize}
+        \item MarkoJS
+        \item Babel
+        \item Webpack
+        \item SASS
+      \end{itemize}
+      \column{0.66\textwidth}
+      \vfill
+      \centering
+      \includegraphics[width=24em]{serverless-ui-small.png}
+   \end{columns}
+\end{frame}
