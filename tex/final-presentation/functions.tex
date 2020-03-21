@@ -51,38 +51,96 @@
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Functions -- Rust Function Template}
+  \begin{itemize}
+    \item watchdog uses \texttt{http} mode
+    \item function handler implemented with \texttt{hyper} crate (web client/server)
+    \item handler forwards request to function handler
+    \item function source code only has to contain the function handler
+    \item helper module
+      \begin{itemize}
+        \item accessible from function handler
+        \item reuse \texttt{hyper} dependency for calling other functions
+        \item helper function for getting secrets (e.g. database password)
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{Functions -- The \texttt{database} Function}
   \begin{itemize}
-    \item
+    \item core building block
+    \item \texttt{mongodb-rust-driver} crate for interacting with MongoDB
+    \item \texttt{lazy\_static} crate for persisting connection across function calls
+    \item supported actions:
+      \begin{itemize}
+        \item \texttt{insert}
+        \item \texttt{insert\_or\_update}
+        \item \texttt{find}
+        \item \texttt{aggregate}
+        \item \texttt{update}
+      \end{itemize}
+    \item actions callable from other functions
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Functions -- The \texttt{register-device} Function}
   \begin{itemize}
-    \item
+    \item called before a device starts sending data
+    \item triggered when a message is posted to the \texttt{register-device} Kafka topic
+    \item incoming request must contain
+      \begin{itemize}
+        \item a device ID
+        \item a device name
+      \end{itemize}
+    \item calls \texttt{database} function with \texttt{insert\_or\_update} action
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Functions -- The \texttt{log-data} Function}
   \begin{itemize}
-    \item
+    \item called when a device posts new data
+    \item triggered when a message is posted to the \texttt{log-data} Kafka topic
+    \item incoming request must contain
+      \begin{itemize}
+        \item a device ID
+        \item a valid timestamp
+        \item a supported data type
+      \end{itemize}
+    \item data type is added to the list of supported types for the device
+    \item data is persisted in the corresponding collection
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Functions -- The \texttt{devices} Function}
   \begin{itemize}
-    \item
+    \item called from the Serverless UI when showing device list
+    \item calls the \texttt{database} function with the \texttt{find} action
+    \item transforms the retrieved MongoDB documents to JSON
+    \item returns an array of devices in JSON format
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Functions -- The \texttt{filter} Function}
   \begin{itemize}
-    \item
+    \item called from the Serverless UI when showing data for a device
+    \item calls the \texttt{database} function with either
+      \begin{itemize}
+        \item \texttt{find} (incoming request without time frame)
+        \item \texttt{aggregate} (incoming request with time frame)
+      \end{itemize}
+    \item maps the MongoDB documents to JSON
+    \item returns array of values for the data type specified in the incoming request
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Functions -- The \texttt{ui} Function}
   \begin{itemize}
-    \item
+    \item not written in Rust
+    \item watchdog uses \texttt{static} mode
+    \item function template
+    \begin{itemize}
+      \item compiles JavaScript application into single bundle using Webpack
+      \item final image only contains watchdog, \texttt{index.html} and \texttt{bundle.js}
+    \end{itemize}
   \end{itemize}
 \end{frame}
