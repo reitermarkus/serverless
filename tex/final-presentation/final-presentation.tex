@@ -53,6 +53,9 @@
     \end{itemize}
   \end{frame}
 
+  \input{architecture.tex}
+  \input{background.tex}
+
   \begin{frame}{Devices -- Smartphone}
     \begin{itemize}
       \item gyroscope
@@ -90,115 +93,6 @@
   \input{functions.tex}
 
   \input{raspberry-pi.tex}
-
-  \begin{frame}{Architecture}
-    \centering
-    \vfill
-    \includegraphics[height=20em]{architecture-diagram.pdf}
-  \end{frame}
-
-  \begin{frame}{Architecture - How does it work?}
-    \begin{itemize}
-      \item edge devices sends data from sensors to Kafka
-      \item Kafka forwards stream of sensor messages to the serverless stack
-      \item message is then processes by the log function \lstinline{log-data} and calls the \lstinline{database} function
-      \item \lstinline{database} persists data in MongoDB
-      \item visualized with the \lstinline{ui} function
-    \end{itemize}
-  \end{frame}
-
-  \begin{frame}{Architecture - Hardware}
-    \begin{itemize}
-      \item fog device instead of cloud
-      \item Intel NUC
-            \hspace*{13.5em}
-            \includegraphics[align=c,height=5em]{intel-nuc.png}
-      \item Raspberry Pi
-            \hspace*{13.5em}
-            \includegraphics[align=c,height=5em]{raspberry-pi-3.png}
-      \item Smartphone
-    \end{itemize}
-  \end{frame}
-
-  \begin{frame}{Background -- Docker}
-    \includegraphics[height=5em]{docker-logo}
-
-    \vspace*{1.5em}
-
-    \begin{itemize}
-      \item software packaged into containers
-      \item Docker containers are standardised
-      \item lightweight compared to Virtual Machines
-    \end{itemize}
-  \end{frame}
-
-  \begin{frame}{Background -- Docker}
-    \vfill
-    \includegraphics[width=\textwidth]{docker-containerized-and-vm}
-  \end{frame}
-
-  \begin{frame}{Background -- Rust}
-    \includegraphics[height=6em]{rust-logo}
-
-    \vspace*{1.5em}
-
-    \begin{itemize}
-      \item safe and race-condition free
-      \item concurrent
-      \item performant
-    \end{itemize}
-  \end{frame}
-
-  \begin{frame}{Background -- OpenFaaS}
-    \includegraphics[width=\textwidth]{openfaas-stack}
-  \end{frame}
-
-  \begin{frame}{Background -- Kafka / Zookeeper}
-    \includegraphics[height=6em]{kafka-logo}
-
-    \vspace*{1.5em}
-
-    \begin{itemize}
-      \item devices post data to broker
-      \item triggers serverless functions
-    \end{itemize}
-  \end{frame}
-
-  \begin{frame}{Background -- MongoDB}
-    \includegraphics[height=5em]{mongodb-logo}
-
-    \vspace*{1.5em}
-
-    \begin{itemize}
-      \item persistence layer for sensor data
-      \item versatile due to its JavaScript origin
-      \item JSON-like documents
-    \end{itemize}
-  \end{frame}
-
-  \begin{frame}{Background -- Flutter}
-    \includegraphics[height=4.5em]{flutter-logo}
-
-    \vspace*{2em}
-
-    \begin{itemize}
-      \item cross platform UI framework from Google
-      \item Dart
-      \item compiles to platform native code
-    \end{itemize}
-  \end{frame}
-
-  \begin{frame}{Background -- MarkoJS}
-    \includegraphics[height=6em]{marko-logo}
-
-    \vspace*{2em}
-
-    \begin{itemize}
-      \item Open Source client-side web framework from ebay
-      \item similar to React
-      \item support for concise syntax
-    \end{itemize}
-  \end{frame}
 
   \begin{frame}{Implementation -- Rakefile}
     \begin{itemize}

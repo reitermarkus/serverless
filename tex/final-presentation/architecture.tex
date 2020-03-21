@@ -1,0 +1,28 @@
+\begin{frame}{Architecture}
+  \centering
+  \vfill
+  \includegraphics[height=20em]{architecture-diagram.pdf}
+\end{frame}
+
+\begin{frame}{Architecture - How does it work?}
+  \begin{itemize}
+    \item edge devices sends data from sensors to Kafka
+    \item Kafka forwards stream of sensor messages to the serverless stack
+    \item message is then processes by the log function \lstinline{log-data} and calls the \lstinline{database} function
+    \item \lstinline{database} persists data in MongoDB
+    \item visualized with the \lstinline{ui} function
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Architecture - Hardware}
+  \begin{itemize}
+    \item fog device instead of cloud
+    \item Intel NUC
+          \hspace*{13.5em}
+          \includegraphics[align=c,height=5em]{intel-nuc.png}
+    \item Raspberry Pi
+          \hspace*{13.5em}
+          \includegraphics[align=c,height=5em]{raspberry-pi-3.png}
+    \item Smartphone
+  \end{itemize}
+\end{frame}
