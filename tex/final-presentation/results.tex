@@ -1,0 +1,35 @@
+\begin{frame}{Results}
+  \begin{block}{Benchmark: NUC $\leftrightarrow$ Raspberry Pi (55 Mbit/s over WiFi)}
+    \begin{itemize}
+      \item 1 sensor, 1 request: ~8 requests per second
+      \item 8 sensors, 1 request: ~49 requests per second
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Benchmark: NUC $\leftrightarrow$ PC (940 Mbit/s over Ethernet)}
+    \begin{itemize}
+      \item 1 sensor, 1 request: ~61 requests per second
+      \item 1 sensor, 10 concurrent requests: ~239 requests per second
+      \item 1 sensor, 50 concurrent requests: ~379 requests per second
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Results}
+  \begin{block}{Assumption}
+    \begin{itemize}
+      \item NUC is able to handle 400 concurrent requests per second
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Conclusion}
+    \begin{itemize}
+      \item NUC is able to handle between 53 and 65 sensor streams
+      \item real-world usage:
+        \begin{itemize}
+          \item measurements only every few seconds
+          \item NUC able to handle 100s of sensors
+        \end{itemize}
+    \end{itemize}
+  \end{block}
+\end{frame}
