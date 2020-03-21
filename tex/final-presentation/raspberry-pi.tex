@@ -22,7 +22,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Raspberry Pi Application -- Workflow}
+\begin{frame}{Raspberry Pi Application -- Development Workflow}
   \begin{block}{“Hello, world!” program}
     \begin{itemize}
       \item develop on local machine
@@ -43,7 +43,7 @@
   \end{block}
 \end{frame}
 
-\begin{frame}{Raspberry Pi Application -- Workflow}
+\begin{frame}{Raspberry Pi Application -- Development Workflow}
   \begin{block}{More Sensors, More Dependencies}
     \begin{itemize}
       \item compile time approached 30 minutes for a fresh build
@@ -51,7 +51,6 @@
     \end{itemize}
   \end{block}
 
-  \visible<2-> {
   \begin{block}{\green{Solution:} Cross Compilation}
     \begin{itemize}
       \item code can be compiled directly on local machine
@@ -59,16 +58,13 @@
       \item avoids slow compilation on Raspberry Pi
     \end{itemize}
   \end{block}
-  }
 
-  \visible<3-> {
   \begin{block}{\red{Problem:}}
     \begin{itemize}
       \item most toolchains only available for Linux
       \item no macOS or Windows support
     \end{itemize}
   \end{block}
-  }
 \end{frame}
 
 \begin{frame}{Raspberry Pi Application -- Cross Compilation}
@@ -88,13 +84,11 @@
     \end{itemize}
   \end{block}
 
-  \visible<2-> {
   \begin{block}{Conclusion}
     \begin{itemize}
       \item Docker preferrable, but still not ideal
     \end{itemize}
   \end{block}
-  }
 \end{frame}
 
 \begin{frame}{Raspberry Pi Application -- Cross Tool}
@@ -107,21 +101,17 @@
     \end{itemize}
   \end{block}
 
-  \visible<2-> {
   \begin{block}{\red{Problem}}
     \begin{itemize}
       \item no macOS or Windows support
     \end{itemize}
   \end{block}
-  }
 
-  \visible<3-> {
   \begin{block}{\green{Solution}}
     \begin{itemize}
       \item implement macOS and Windows support
     \end{itemize}
   \end{block}
-  }
 \end{frame}
 
 \begin{frame}{Raspberry Pi Application -- How does Cross work?}
@@ -151,15 +141,12 @@
     \end{itemize}
   \end{block}
 
-  \visible<2->{
   \begin{block}{\green{Success}}
     \begin{itemize}
       \item Docker is actually invoked on macOS and on Windows
     \end{itemize}
   \end{block}
-  }
 
-  \visible<3->{
   \begin{block}{\red{Problem}}
     \begin{itemize}
       \item compilation on macOS still not working
@@ -169,56 +156,70 @@
         \end{itemize}
     \end{itemize}
   \end{block}
-  }
 \end{frame}
 
 \begin{frame}{Raspberry Pi Application -- Sensors}
+  \begin{columns}
+    \column{0.5\textwidth}
     \begin{block}{Built-in Sensors}
-      \begin{tabularx}{\textwidth}{XC}
-        \begin{itemize}
-          \item memory usage
-          \item CPU load
-          \item CPU temperature
-        \end{itemize}
-        &
-        \includegraphics[valign=t,width=5em]{rpi-cpu}
-      \end{tabularx}
+      \begin{itemize}
+        \item memory usage
+        \item CPU load
+        \item CPU temperature
+      \end{itemize}
     \end{block}
 
+    \column{0.5\textwidth}
+    \vfill
+    \centering
+    \includegraphics[valign=t,width=5em]{rpi-cpu}
+  \end{columns}
+
+  \begin{columns}
+    \column{0.5\textwidth}
     \begin{block}{ADS1115 with Photoresistor}
-       \begin{tabularx}{\textwidth}{XC}
-        \begin{itemize}
+      \begin{itemize}
           \item luminosity
-        \end{itemize}
-        &
-        \includegraphics[valign=t,width=5em]{light-sensor}
-      \end{tabularx}
+      \end{itemize}
     \end{block}
+
+    \column{0.5\textwidth}
+    \vfill
+    \centering
+    \includegraphics[valign=t,width=5em]{light-sensor}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Raspberry Pi Application -- Sensors}
+  \begin{columns}
+    \column{0.5\textwidth}
     \begin{block}{BMP180}
-      \begin{tabularx}{\textwidth}{XC}
-        \begin{itemize}
-          \item air pressure
-          \item air temperature
-        \end{itemize}
-        &
-        \includegraphics[valign=t,width=5em]{barometric-sensor}
-      \end{tabularx}
+      \begin{itemize}
+        \item air pressure
+        \item air temperature
+      \end{itemize}
     \end{block}
 
+    \column{0.5\textwidth}
+    \vfill
+    \centering
+    \includegraphics[valign=t,width=5em]{barometric-sensor}
+  \end{columns}
+
+  \begin{columns}
+    \column{0.5\textwidth}
     \begin{block}{AM2320}
-      \begin{tabularx}{\textwidth}{XC}
-
-        \begin{itemize}
-          \item air humidity
-          \item air temperature
-        \end{itemize}
-        &
-        \includegraphics[valign=t,width=5em]{am2320}
-      \end{tabularx}
+      \begin{itemize}
+        \item air humidity
+        \item air temperature
+      \end{itemize}
     \end{block}
+
+    \column{0.5\textwidth}
+    \vfill
+    \centering
+    \includegraphics[valign=t,width=5em]{am2320}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Raspberry Pi Application -- Sensor Wiring}
@@ -240,50 +241,66 @@
 \end{frame}
 
 \begin{frame}{Raspberry Pi Application -- Implementation}
-  \begin{block}{Built-in Sensors}
-    \begin{tabularx}{\textwidth}{XC}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \begin{block}{Built-in Sensors}
       \begin{itemize}
         \item \texttt{systemstat} crate
       \end{itemize}
-      &
-      \includegraphics[valign=t,width=5em]{rpi-cpu}
-    \end{tabularx}
-  \end{block}
+    \end{block}
 
-  \begin{block}{ADS1115 with Photoresistor}
-    \begin{tabularx}{\textwidth}{XC}
+    \column{0.5\textwidth}
+    \vfill
+    \centering
+    \includegraphics[valign=t,width=5em]{rpi-cpu}
+  \end{columns}
+
+  \begin{columns}
+    \column{0.5\textwidth}
+    \begin{block}{ADS1115 with Photoresistor}
       \begin{itemize}
         \item \texttt{ads1x1x} crate for ADC (analog-to-digital converter)
         \item custom module for approximating luminosity from measured ADC voltage
       \end{itemize}
-      &
-      \includegraphics[valign=t,width=5em]{light-sensor}
-    \end{tabularx}
-  \end{block}
+    \end{block}
+
+    \column{0.5\textwidth}
+    \vfill
+    \centering
+    \includegraphics[valign=t,width=5em]{light-sensor}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Raspberry Pi Application -- Implementation}
-  \begin{block}{BMP180}
-    \begin{tabularx}{\textwidth}{XC}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \begin{block}{BMP180}
       \begin{itemize}
         \item \texttt{i2cdev} crate (Linux I2C wrapper)
         \item \texttt{i2cdev\_bmp180} crate (API for BMP180)
         \item \texttt{i2csensors} crate (generalized API for thermometer)
       \end{itemize}
-      &
-      \includegraphics[valign=t,width=5em]{barometric-sensor}
-    \end{tabularx}
-  \end{block}
+    \end{block}
 
-  \begin{block}{AM2320}
-    \begin{tabularx}{\textwidth}{XC}
+    \column{0.5\textwidth}
+    \vfill
+    \centering
+    \includegraphics[valign=t,width=5em]{barometric-sensor}
+  \end{columns}
+
+  \begin{columns}
+    \column{0.5\textwidth}
+    \begin{block}{AM2320}
       \begin{itemize}
         \item \texttt{am2320} crate
       \end{itemize}
-      &
-      \includegraphics[valign=t,width=5em]{am2320}
-    \end{tabularx}
-  \end{block}
+    \end{block}
+
+    \column{0.5\textwidth}
+    \vfill
+    \centering
+    \includegraphics[valign=t,width=5em]{am2320}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Raspberry Pi Application -- Implementation}
