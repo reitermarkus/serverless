@@ -3,5 +3,86 @@
     \item can be written in any language
     \item built and deployed using \texttt{faas-cli}
     \item every function is a container
+    \item can be invoked by a web request
+    \item can also call other functions
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Functions -- Architecture}
+  \begin{itemize}
+    \item \texttt{database} - interacting with the MongoDB database
+    \item \texttt{register-device} - register new devices in database
+    \item \texttt{log-data} - log sensor data in database
+    \item \texttt{devices} - get list of registered devices
+    \item \texttt{filter} - get filtered sensor data
+    \item \texttt{ui} - show web interface
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Functions -- OpenFaaS Watchdog}
+  \begin{itemize}
+    \item needed by every function
+    \item interface between OpenFaaS Gateway and function code
+    \item multiple modes:
+      \begin{itemize}
+        \item HTTP -- forwards requests to function process running web server
+        \item Serializing -- forks funcion process and passes \texttt{stdin}/\texttt{stdout} (legacy)
+        \item Static -- used for serving static files
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Functions -- Building a Function Template}
+  \begin{itemize}
+    \item \texttt{Dockerfile}
+      \begin{itemize}
+        \item expects \texttt{function} directory containing source code
+        \item installs all dependencies
+      \end{itemize}
+    \item \texttt{template.yml}
+      \begin{itemize}
+        \item contains metadata like the programming language or build options
+      \end{itemize}
+    \item common code
+      \begin{itemize}
+        \item web server -- avoid duplication in function source code
+        \item helper functions -- i.e. for calling other functions
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Functions -- The \texttt{database} Function}
+  \begin{itemize}
+    \item
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Functions -- The \texttt{register-device} Function}
+  \begin{itemize}
+    \item
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Functions -- The \texttt{log-data} Function}
+  \begin{itemize}
+    \item
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Functions -- The \texttt{devices} Function}
+  \begin{itemize}
+    \item
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Functions -- The \texttt{filter} Function}
+  \begin{itemize}
+    \item
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Functions -- The \texttt{ui} Function}
+  \begin{itemize}
+    \item
   \end{itemize}
 \end{frame}
