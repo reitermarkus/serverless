@@ -62,7 +62,6 @@
   \begin{block}{\red{Problem:}}
     \begin{itemize}
       \item most toolchains only available for Linux
-      \item no macOS or Windows support
     \end{itemize}
   \end{block}
 \end{frame}
@@ -151,7 +150,7 @@
     \begin{itemize}
       \item compilation on macOS still not working
         \begin{itemize}
-          \item \red{Problem:} Docker container (Linux) tries to execute macOS binary
+          \item \red{Issue:} Docker container (Linux) tries to execute macOS binary
           \item \green{Solution:} override mounted binary directory with empty directory
         \end{itemize}
     \end{itemize}
