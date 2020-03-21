@@ -271,7 +271,7 @@ services:
     environment:
       gateway_url: http://gateway:8080
       broker_host: kafka:29092
-      topics: faas-request,sensor,register-device
+      topics: faas-request,log-data,register-device
       print_response: 'true'
       print_response_body: 'true'
       basic_auth: '${BASIC_AUTH:-true}'
