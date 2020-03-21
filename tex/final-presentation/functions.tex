@@ -1,4 +1,4 @@
-\begin{frame}{Functions -- Overview}
+\begin{frame}{Implementation -- Functions: Overview}
   \begin{itemize}
     \item can be written in any language
     \item built and deployed using \texttt{faas-cli}
@@ -8,7 +8,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Functions -- Architecture}
+\begin{frame}{Implementation -- Functions: Architecture}
   \begin{itemize}
     \item \texttt{database} - interacting with the MongoDB database
     \item \texttt{register-device} - register new devices in database
@@ -19,7 +19,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Functions -- OpenFaaS Watchdog}
+\begin{frame}{Implementation -- Functions: OpenFaaS Watchdog}
   \begin{itemize}
     \item needed by every function
     \item interface between OpenFaaS Gateway and function code
@@ -32,7 +32,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Functions -- Building a Function Template}
+\begin{frame}{Implementation -- Functions: Building a Function Template}
   \begin{itemize}
     \item \texttt{Dockerfile}
       \begin{itemize}
@@ -51,7 +51,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Functions -- Rust Function Template}
+\begin{frame}{Implementation -- Functions: Rust Function Template}
   \begin{itemize}
     \item watchdog uses \texttt{http} mode
     \item function handler implemented with \texttt{hyper} crate (web client/server)
@@ -66,7 +66,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Functions -- The \texttt{database} Function}
+\begin{frame}{Implementation -- Functions: The \texttt{database} Function}
   \begin{itemize}
     \item core building block
     \item \texttt{mongodb-rust-driver} crate for interacting with MongoDB
@@ -83,7 +83,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Functions -- The \texttt{register-device} Function}
+\begin{frame}{Implementation -- Functions: The \texttt{register-device} Function}
   \begin{itemize}
     \item called before a device starts sending data
     \item triggered when a message is posted to the \texttt{register-device} Kafka topic
@@ -96,7 +96,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Functions -- The \texttt{log-data} Function}
+\begin{frame}{Implementation -- Functions: The \texttt{log-data} Function}
   \begin{itemize}
     \item called when a device posts new data
     \item triggered when a message is posted to the \texttt{log-data} Kafka topic
@@ -111,7 +111,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Functions -- The \texttt{devices} Function}
+\begin{frame}{Implementation -- Functions: The \texttt{devices} Function}
   \begin{itemize}
     \item called from the Serverless UI when showing device list
     \item calls the \texttt{database} function with the \texttt{find} action
@@ -120,7 +120,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Functions -- The \texttt{filter} Function}
+\begin{frame}{Implementation -- Functions: The \texttt{filter} Function}
   \begin{itemize}
     \item called from the Serverless UI when showing data for a device
     \item calls the \texttt{database} function with either
@@ -133,7 +133,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Functions -- The \texttt{ui} Function}
+\begin{frame}{Implementation -- Functions: The \texttt{ui} Function}
   \begin{itemize}
     \item not written in Rust
     \item watchdog uses \texttt{static} mode
