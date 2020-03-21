@@ -90,10 +90,6 @@
     \end{itemize}
   \end{frame}
 
-  \input{functions.tex}
-
-  \input{raspberry-pi.tex}
-
   \begin{frame}{Implementation -- Rakefile}
     \begin{itemize}
       \item tasks for various different jobs
@@ -148,6 +144,25 @@
      \end{columns}
   \end{frame}
 
+  \begin{frame}{Implementation -- Serverless Stack}
+    \begin{columns}
+      \column{0.4\textwidth}
+        \begin{itemize}
+          \item central part of the technology stack
+          \item manages serverless functions
+          \item first class Docker support
+          \item configurable with a YAML file
+          \item deployable with a single RAKE task
+        \end{itemize}
+        \column{0.6\textwidth}
+        \vfill
+        \centering
+        \includegraphics[height=15em]{openfaas-dashboard-small.png}
+     \end{columns}
+  \end{frame}
+
+  \input{functions.tex}
+
   \begin{frame}{Implementation -- Mobile Application}
     \begin{columns}
       \column{0.5\textwidth}
@@ -165,22 +180,7 @@
      \end{columns}
   \end{frame}
 
-  \begin{frame}{Implementation -- Serverless Stack}
-    \begin{columns}
-      \column{0.4\textwidth}
-        \begin{itemize}
-          \item central part of the technology stack
-          \item manages serverless functions
-          \item first class Docker support
-          \item configurable with a YAML file
-          \item deployable with a single RAKE task
-        \end{itemize}
-        \column{0.6\textwidth}
-        \vfill
-        \centering
-        \includegraphics[height=15em]{openfaas-dashboard-small.png}
-     \end{columns}
-  \end{frame}
+  \input{raspberry-pi.tex}
 
   \begin{frame}{Implementation -- UI}
     \begin{columns}
