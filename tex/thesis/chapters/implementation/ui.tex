@@ -5,8 +5,8 @@ Another instrumental part of the project is the UI pictured in \autoref{fig:arch
 gathering process would not be of much use. For this reason we decided early on what kind of front
 end web development stack we would use. Since both us are familiar with \textit{React}.
 \textit{React} is a \textit{JavaScript} framework famous for revolutionising the use of the
-\textit{virtual DOM} to render UI elements and to update UI elements reactively on
-UI change. However we still decided on using \textit{MarkoJS} \cite{marko}.
+\textit{virtual DOM} to render UI elements and to update UI elements reactively on UI change.
+However we still decided on using \textit{MarkoJS} \cite{marko}.
 
 \subsection{MarkoJS}
 
@@ -32,12 +32,12 @@ essential tool: \textit{Webpack}
 yet it is also capable of transforming, bundling, or packaging just about any resource or asset.”
 \cite{webpack}
 
-With that being said, \textit{Webpack} can to some extend be considered as the main part of the whole
-\whitelist{frontend stack} as it is responsible for orchestrating \textit{transpiling} of
+With that being said, \textit{Webpack} can to some extend be considered as the main part of the
+whole \whitelist{frontend stack} as it is responsible for orchestrating \textit{transpiling} of
 \textit{MarkoJS} files with the help of \textit{Babel}. It is also responsible for providing
-\textit{Webpack Dev Server}, a server that reloads on file changes. Furthermore \textit{Webpack} runs
-all files through certain optimisation plugins when building in release mode, which can bring down the size of
-the code bundle quite considerably. \textit{Webpack} is also able to transform
+\textit{Webpack Dev Server}, a server that reloads on file changes. Furthermore \textit{Webpack}
+runs all files through certain optimisation plugins when building in release mode, which can bring
+down the size of the code bundle quite considerably. \textit{Webpack} is also able to transform
 \textit{SASS} into \textit{CSS}.
 
 \subsection{SASS}
@@ -49,17 +49,18 @@ structure and modularise our \textit{CSS} code.
 \subsection{UI}
 \label{sec:ui}
 
-The UI itself uses a basic layout where all sensor devices registered in the database are listed
-on the left side in a so called \textit{sidebar}. The user then can click on each individual device to
+The UI itself uses a basic layout where all sensor devices registered in the database are listed on
+the left side in a so called \textit{sidebar}. The user then can click on each individual device to
 open a view with detailed graphs of sensor data of that device. The categories of graphs are
 different according to device group. For example \textit{IoT} devices will have different sensors
 compared to phones. After a device is selected, the user can then specify the begin, end time
 interval and the amount of time slices according to which sensor data of that device will be
-filtered (\autoref{fig:ui-slider}). By default the time span is limited to 24~hours and to 24~time slices. A time slice in our
-case is a division of a time interval into equally long time units. To get a single value per time
-slice we average all sensor values of a specific sensor between two time slices. Those single values
-will then be displayed in the graphs. In \autoref{fig:ui}, the whole UI can be seen. In this case the device “Samsung Galaxy S7” is
-selected in the left sidebar and therefore all graphs for this specific device will be shown.
+filtered (\autoref{fig:ui-slider}). By default the time span is limited to 24~hours and to 24~time
+slices. A time slice in our case is a division of a time interval into equally long time units. To
+get a single value per time slice we average all sensor values of a specific sensor between two time
+slices. Those single values will then be displayed in the graphs. In \autoref{fig:ui}, the whole UI
+can be seen. In this case the device “Samsung Galaxy S7” is selected in the left sidebar and
+therefore all graphs for this specific device will be shown.
 
 \begin{figure}[H]
   \centering
