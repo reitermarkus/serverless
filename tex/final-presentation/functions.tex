@@ -32,25 +32,6 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Implementation -- Functions: Building a Function Template}
-  \begin{itemize}
-    \item \texttt{Dockerfile}
-      \begin{itemize}
-        \item expects \texttt{function} directory containing source code
-        \item installs all dependencies
-      \end{itemize}
-    \item \texttt{template.yml}
-      \begin{itemize}
-        \item contains metadata like the programming language or build options
-      \end{itemize}
-    \item common code
-      \begin{itemize}
-        \item web server -- avoid duplication in function source code
-        \item helper functions -- i.e. for calling other functions
-      \end{itemize}
-  \end{itemize}
-\end{frame}
-
 \begin{frame}{Implementation -- Functions: Rust Function Template}
   \begin{itemize}
     \item watchdog uses \texttt{http} mode
