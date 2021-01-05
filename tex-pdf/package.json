@@ -5,7 +5,7 @@
   "license": "MIT",
   "devDependencies": {},
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "unzipper": "^0.10.10"
   }
 }
